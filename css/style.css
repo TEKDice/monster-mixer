@@ -1,11 +1,36 @@
-#log, #customRoller, #monsterListCont {
+#popup {
+	margin-left: auto;
+	margin-right: auto;
+	left: 0;
+	right: 0;
+	width: 500px;
+	height: 300px;
+	position: absolute;
+	top: 70px;
+	z-index: 12;
+	display: none;
+	overflow: hidden;
+}
+
+#simple, #extra {
+	border: 1px solid #000;
+	height: 100%;
+}
+
+#simple {
+	float: left;
+	width: 100%;
+}
+
+#extra {
+	float: right;
+	display: none;
+}
+
+#log, #customRoller, #monsterListCont, #popup {
 	background-color: #fff;
 	border-radius: 5px;
 	border: 1px solid #000;
-}
-
-#main {
-	height: 90%;
 }
 
 #showFilters {
@@ -15,9 +40,12 @@
 	border-bottom-left-radius: 10px;
 	height: 24px;
 	background-color: #fff;
-	cursor: pointer;
 	font-size: 1.5em;
 	padding-top: 5px;
+}
+
+i, #showFilters {
+	cursor: pointer;
 }
 
 #monsterListCont {
