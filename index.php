@@ -16,8 +16,7 @@
 			</div>
 		</noscript>
 		<div id="hasScript">
-			<center><div id="showFilters">▲</div></center>
-			<!-- ▼ -->
+			<center><div id="showFilters"><i id="filterIcon" class="icon-arrow-down"></i></div></center>
 			<div class="container-fluid" id="mainContainer">
 				<div class="row-fluid" id="main">
 					<div class="span9" id="monstersContainer">
@@ -138,6 +137,15 @@
 							</div>
 						</div>
 					</div>
+				</div>
+			</div>
+			<div id="popup">
+				<div id="simple">
+					<i id="extraToggle" class="icon-arrow-right"></i>
+					simple stuff
+				</div>
+				<div id="extra">
+					extra stuff
 				</div>
 			</div>
 		</div>
