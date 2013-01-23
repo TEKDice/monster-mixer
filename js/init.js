@@ -17,6 +17,7 @@ $(function() {
 var myScroll;
 var resizeTimer;
 var height = 360;
+var heightAdjust = 140;
 
 //don't instantly automatically refresh everything, that's going to lag
 function timedResizeElements() {
@@ -27,9 +28,9 @@ function timedResizeElements() {
 function resizeElements() {
 	height = $(window).height();
 
-	$("#log").css('height', height-50-120+'px');
-	$("#monsterListCont").css('height',height-120+'px');
-	$(".cScrollbarV").css('height',height-120+'px');
+	$("#log").css('height', height-50-heightAdjust+'px');
+	$("#monsterListCont").css('height',height-heightAdjust+'px');
+	$(".cScrollbarV").css('height',height-heightAdjust+'px');
 
 	myScroll.refresh();
 }
