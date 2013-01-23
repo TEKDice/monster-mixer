@@ -11,8 +11,38 @@ $(function() {
 	}, false);
 
 	$(window).resize(timedResizeElements);
+
+	$("#showFilters").click(function() {
+		$("#popup").slideToggle(400, function() {
+			if($(this).is(":visible")) {
+				$("#filterIcon").attr('class', 'icon-arrow-up');	
+			} else {
+				$("#filterIcon").attr('class', 'icon-arrow-down');
+			}
+		});
+	});
+
+	$("#extraToggle").click(function() {
+		if($("#extra").is(":visible")) {
+			$("#popup").animate({width: defaultPopupSize});
+			$("#simple").animate({width: defaultPopupSize});
+			$("#extra").animate({width: 0}, function() {
+				$("#extra").css('display', 'none');
+			});
+		} else {
+			$("#popup").animate({width: extendPopupSize}, function() {
+				$("#simple").animate({width: defaultPopupSize});
+				$("#extra").css('display', 'block');
+				$("#extra").animate({width: extendPopupSize-defaultPopupSize-10});
+			});
+		}
+	});
+
 	$("#hasScript").show();
 });
+
+var defaultPopupSize=300;
+var extendPopupSize	=1000;
 			
 var myScroll;
 var resizeTimer;
