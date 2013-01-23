@@ -5,28 +5,7 @@
 }
 
 #main {
-	margin-bottom: 70px;
-}
-
-#monstersContainer {
-}
-
-#monsterListCont, #monsterList {
-}
-
-#monsterList {
-	margin-bottom: 0;
-}
-
-#log {
-	/*height: 310px;*/
-}
-
-#customRoller {
-	height: 30px;
-}
-
-#rightCol {
+	height: 90%;
 }
 
 #showFilters {
@@ -41,6 +20,19 @@
 	padding-top: 5px;
 }
 
+#monsterListCont {
+	height: 360px;
+}
+
+#log {
+	height: 310px;
+}
+
+#customRoller {
+	height: 30px;
+	margin-top: 18px;
+}
+
 .tab-content {
 	height: 100%;
 }
@@ -52,7 +44,7 @@
 	bottom:7px;
 	top:70px;
 	left:21px;
-	/*height: 360px;*/
+	height: 360px;
 }
 
 .cScrollbarV > div {
@@ -86,4 +78,8 @@
 	-moz-box-shadow:inset 1px 1px 0 rgba(255,255,255,0.5);
 	-o-box-shadow:inset 1px 1px 0 rgba(255,255,255,0.5);
 	box-shadow:inset 1px 1px 0 rgba(255,255,255,0.5);
+}
+
+#hasScript {
+	display: none;
 }
