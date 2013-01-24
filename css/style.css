@@ -12,14 +12,32 @@
 	overflow: hidden;
 }
 
-#simple, #extra {
+#simple, #extra, #median {
 	border: 1px solid #000;
 	height: 100%;
 }
 
-#simple {
+#medianArrowContainer {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+#popupLeft {
 	float: left;
 	width: 100%;
+	height: 100%;
+}
+
+#median {
+	float: right;
+	width: 7%;
+	display: table;
+}
+
+#simple {
+	float: left;
+	width: 90%;
 }
 
 #extra {
@@ -27,7 +45,7 @@
 	display: none;
 }
 
-#log, #customRoller, #monsterListCont, #popup {
+#log, #customRoller, #monsterListCont, #encounterStats, #popup {
 	background-color: #fff;
 	border-radius: 5px;
 	border: 1px solid #000;
@@ -44,7 +62,7 @@
 	padding-top: 5px;
 }
 
-i, #showFilters {
+i, #showFilters, #medianArrowContainer {
 	cursor: pointer;
 }
 
@@ -56,9 +74,16 @@ i, #showFilters {
 	height: 310px;
 }
 
-#customRoller {
+#encounterStats, #customRoller {
 	height: 30px;
+}
+
+#encounterStats {
 	margin-top: 18px;
+}
+
+#customRoller {
+	margin-bottom: 18px;
 }
 
 .tab-content {
