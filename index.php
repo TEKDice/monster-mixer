@@ -53,14 +53,16 @@ function build_autocomplete() {
 		<?php $pos='../'; include('../include/head.php'); ?>
 		<link href="../css/jquery-ui-1.10.0.custom.css" rel="stylesheet" />
 		<link href="css/style.css" rel="stylesheet" />
+		<link href="css/jquery.gridster.min.css" rel="stylesheet" />
 
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
 		<script type="application/javascript" src="js/iscroll.js"></script>
 		<script src="js/init.js"></script>
 		<script src="js/jquery.boxshadow.min.js"></script>
+		<script src="js/jquery.gridster.min.js"></script>
 		<script type="text/javascript">
 			var filterData = <?=json_encode($filterNames);?>;
-			var autocompleteList = <?=json_encode(build_autocomplete())?>;
+			var autocompleteList = <?=json_encode(build_autocomplete());?>;
 		</script>
 	</head>
 	<body>
@@ -70,11 +72,13 @@ function build_autocomplete() {
 				It looks like your browser doesn't have javascript enabled or supported. This applications makes heavy usage of javascript, so at the present time, there isn't a version available without javascript.
 			</div>
 		</noscript>
+		<?php
+		if(isLoggedIn()) {
+		?>
 		<div id="hasScript">
 			<center><div id="showFilters"><i id="filterIcon" class="icon-arrow-down"></i></div></center>
 			<div class="container-fluid" id="mainContainer">
 				<div class="row-fluid" id="main">
-
 					<div class="span9" id="monstersContainer">
 						<div class="tabbable tabs-left" id="monsterListCont">
 							<ul class="nav nav-tabs" id="monsterList">
@@ -84,7 +88,28 @@ function build_autocomplete() {
 							</ul>
 							<div class="tab-content" id="monsterData">
 								<div class="tab-pane" id="1A">
-									DevourerContent
+									<div class="header">
+										<center>Devourer</center>
+									</div>
+										<hr />
+									<div class="gridster">
+									    <ul>
+									        <li data-row="1" data-col="1" data-sizex="1" data-sizey="1"></li>
+									        <li data-row="1" data-col="1" data-sizex="1" data-sizey="1"></li>
+									        <li data-row="1" data-col="3" data-sizex="1" data-sizey="1"></li>								 
+									        <li data-row="1" data-col="4" data-sizex="1" data-sizey="1"></li>
+
+									        <li data-row="2" data-col="1" data-sizex="1" data-sizey="1"></li>
+									        <li data-row="2" data-col="2" data-sizex="1" data-sizey="1"></li>
+									        <li data-row="2" data-col="3" data-sizex="1" data-sizey="1"></li>
+									        <li data-row="2" data-col="4" data-sizex="1" data-sizey="1"></li>
+									 
+									        <li data-row="3" data-col="1" data-sizex="1" data-sizey="1"></li>
+									        <li data-row="3" data-col="2" data-sizex="1" data-sizey="1"></li>
+									        <li data-row="3" data-col="2" data-sizex="1" data-sizey="1"></li>
+									        <li data-row="3" data-col="4" data-sizex="1" data-sizey="1"></li>
+									    </ul>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -158,7 +183,7 @@ function build_autocomplete() {
 										<span class="label filter-label">Version</span>
 									</td>
 									<td>
-										<div id="Version_filters" class="inner-filter-container">
+										<div id="Version_filters" data-attr="Version" class="inner-filter-container">
 											<span class="badge badge-info Version-filter" data-value="3.5" data-sign="&gt;" style="box-shadow: rgb(255, 0, 0) 0px 0px 0px 0px;">=3.5</span>
 										</div>
 									</td>
@@ -182,6 +207,11 @@ function build_autocomplete() {
 				</div>
 			</div>
 		</div>
+		<?php } else { ?>
+		<div class="pagination-centered hero-unit">
+			You need to be logged in to use this tool.
+		</div>
+		<?php } ?>
 		<?php include('../include/foot.php'); ?>
 	</body>
 </html>
