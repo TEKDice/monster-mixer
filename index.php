@@ -59,7 +59,7 @@ function build_autocomplete() {
 		<script src="js/init.js"></script>
 		<script src="js/jquery.boxshadow.min.js"></script>
 		<script type="text/javascript">
-			var filterData = <?=json_encode($filterNames, JSON_PRETTY_PRINT);?>;
+			var filterData = <?=json_encode($filterNames);?>;
 			var autocompleteList = <?=json_encode(build_autocomplete())?>;
 		</script>
 	</head>
