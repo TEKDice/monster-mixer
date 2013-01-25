@@ -27,6 +27,23 @@ foreach($filterNamesArr as $name=>$filter) {
 	}
 }
 
+function build_autocomplete() {
+	global $conn;
+	$query = "select id,name from Monster where version_id=6 and (hidden is null or hidden = 0)";
+	$data = run_query($conn, $query);
+	
+	$acarr = array();
+	
+	while(($arr = $data->fetch_array(MYSQLI_ASSOC)) != null) {
+		$obj = new stdClass;
+		$obj->label=$arr["name"];
+		$obj->value=$arr["name"];
+		array_push($acarr, $obj);
+	}
+	
+	return $acarr;
+
+}
 ?>
 
 <!DOCTYPE html>
@@ -34,12 +51,16 @@ foreach($filterNamesArr as $name=>$filter) {
 	<head>
 		<title>TEKDice Monster Mixer</title>
 		<?php $pos='../'; include('../include/head.php'); ?>
+		<link href="../css/jquery-ui-1.10.0.custom.css" rel="stylesheet" />
 		<link href="css/style.css" rel="stylesheet" />
 
+		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
 		<script type="application/javascript" src="js/iscroll.js"></script>
 		<script src="js/init.js"></script>
+		<script src="js/jquery.boxshadow.min.js"></script>
 		<script type="text/javascript">
-			var filterData = <?=json_encode($filterNames, JSON_PRETTY_PRINT); ?>
+			var filterData = <?=json_encode($filterNames, JSON_PRETTY_PRINT);?>;
+			var autocompleteList = <?=json_encode(build_autocomplete())?>;
 		</script>
 	</head>
 	<body>
@@ -110,31 +131,39 @@ foreach($filterNamesArr as $name=>$filter) {
 			<div id="popup">
 				<div id="popupLeft">
 					<div id="simple">
-						<div class="input-append input-prepend" style="width: 100%; text-align: center;">
+						<div class="input-append input-prepend" id="filterSelectors">
 							<label class="control-label add-on">Attribute:</label>
 
-							<select id="filters" style="width: 150px;">
+							<select id="filters" style="width: 150px;"></select>
+
+							<select id="signChooser" class="numericOpt" style="width: 75px;">
+								<option value=">">&gt;</option>
+								<option value=">=">&gt;=</option>
+								<option value="=">=</option>
+								<option value="<=">&lt;=</option>
+								<option value="<">&lt;</option>
 							</select>
 
-							<select name="" id="" class="numericOpt" style="width: 75px;">
-								<option value="">></option>
-								<option value="">>=</option>
-								<option value="">=</option>
-								<option value=""><=</option>
-								<option value=""><</option>
-							</select>
-
-							<input type="number" class="numericOpt" style="width: 50px;" placeholder="####" />
+							<input type="number" id="numberInput" class="numericOpt" style="width: 50px;" placeholder="####" />
 
 							<select class="joinOpt" id="joinSelect" style="width: 139px; display: none;"></select>
 							
 							<input type="text" id="autocompleteName" class="nameOpt" style="width: 159px; display: none;" placeholder="Enter a name..." />
 							<button class="btn btn-primary numericOpt joinOpt" id="newFilter" type="button">+</button>
 						</div>
+						<div id="filterContainer">
+							<table id="filterTable">
+							</table>
+						</div>
+						<div id="leftPopupFooter">
+							<center><button class="btn btn-primary">Generate</button></center>
+						</div>
 					</div>
 					<div id="median">
-						<div id="medianArrowContainer" title="More options">
-							<i id="extraToggle" class="icon-arrow-right"></i>
+						<div style="display: table; height: 100%">
+							<div id="medianArrowContainer" title="More options">
+								<i id="extraToggle" class="icon-arrow-right"></i>
+							</div>
 						</div>
 					</div>
 				</div>
