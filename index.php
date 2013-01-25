@@ -23,6 +23,7 @@ foreach($filterNamesArr as $name=>$filter) {
 		foreach($filterData as $col=>$val) {
 			array_push($filterNames[$filter["name"]], $val[$filter['sql_name']]);
 		}
+		array_multisort($filterNames[$filter["name"]]);
 	}
 }
 
@@ -125,7 +126,7 @@ foreach($filterNamesArr as $name=>$filter) {
 
 							<input type="number" class="numericOpt" style="width: 50px;" placeholder="####" />
 
-							<select class="joinOpt" style="width: 139px; display: none;"></select>
+							<select class="joinOpt" id="joinSelect" style="width: 139px; display: none;"></select>
 							
 							<input type="text" id="autocompleteName" class="nameOpt" style="width: 159px; display: none;" placeholder="Enter a name..." />
 							<button class="btn btn-primary numericOpt joinOpt" id="newFilter" type="button">+</button>

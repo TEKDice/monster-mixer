@@ -34,6 +34,12 @@ function initializeFilterSelect() {
 		//is joinable
 		if(filterData[$(this).val()] instanceof Array) {
 			$(".joinOpt").fadeIn();
+			$("#joinSelect").empty();
+
+			var arr = filterData[$(this).val()];
+			for(var o in arr) {
+				$("#joinSelect").append("<option value='"+arr[o]+"'>"+arr[o]+"</option>");
+			}
 
 		//is numeric
 		} else if(filterData[$(this).val()]){
@@ -42,7 +48,6 @@ function initializeFilterSelect() {
 		//is name
 		} else {
 			$(".nameOpt").fadeIn();
-
 		}
 	});
 }
