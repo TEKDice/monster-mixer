@@ -18,18 +18,19 @@ require_once('../include/database.php');
 
 $json = json_decode($_POST["data"], true);
 
-foreach($json as $type=>$attrs) {
-}
-
 global $conn;
 
 $type_info = run_query_arr_name($conn, "select name,sql_name,join_table,join_table_col,link_table,is_calculated,is_numeric from GeneratorFilters");
 
-//echo json_encode(get_monster_data(70));
-
 $query = build_query($json, $type_info);
 
-echo $query;
+$monsters = run_query_arr($conn, $query);
+
+shuffle($monsters);
+
+foreach($monsters as $arr=>$id) {
+	echo json_encode(get_monster_data($id["monster_id"]));
+}
 
 function build_query($json, $type_info) {
 
@@ -74,7 +75,7 @@ function build_query($json, $type_info) {
 				$query .= "\tSELECT DISTINCT monster_id FROM ".($has_separate_table ? $_link_table : "Monster")."\n";
 				$query .= "\tWHERE ".$_join_table_col." IN\n";
 			} else {
-				$query .= "\tSELECT DISTINCT id as monster_id FROM Monster where ".$_join_table_col."=\n";
+				$query .= "\tSELECT DISTINCT id as monster_id FROM Monster where ".$_join_table_col." IN\n";
 			}
 
 			$query .= "\t\t(SELECT id FROM ".$_join_table." WHERE ";
@@ -132,6 +133,13 @@ function build_query($json, $type_info) {
 
 		$first = false;
 	}
+
+	$query .= "INNER JOIN (
+					SELECT DISTINCT id as monster_id FROM Monster
+					WHERE (Monster.hidden is null OR Monster.hidden=0)
+				) Monster_table
+
+				ON Monster_table.monster_id = $header"."_table.monster_id";
 
 	return $query;
 }
