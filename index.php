@@ -153,6 +153,16 @@ function build_autocomplete() {
 						</div>
 						<div id="filterContainer">
 							<table id="filterTable">
+								<tr data-attr="Version">
+									<td>
+										<span class="label filter-label">Version</span>
+									</td>
+									<td>
+										<div id="Version_filters" class="inner-filter-container">
+											<span class="badge badge-info Version-filter" data-value="3.5" data-sign="&gt;" style="box-shadow: rgb(255, 0, 0) 0px 0px 0px 0px;">=3.5</span>
+										</div>
+									</td>
+								</tr>
 							</table>
 						</div>
 						<div id="leftPopupFooter">
