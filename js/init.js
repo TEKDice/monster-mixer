@@ -47,10 +47,10 @@ function setupGrids() {
 }
 
 function resizeGrids() {
-	var $parent = $("#monsterData");
-	var newSize = Math.max($parent.width()/6, 170);
-	$(".draggable").width(newSize);
-	$(".draggable").height(newSize);
+	//var $parent = $("#monsterData");
+	//var newSize = Math.max($parent.width()/6, 170);
+	//$(".draggable").width(newSize);
+	//$(".draggable").height(newSize);
 }
 
 function setupGenButton() {
@@ -73,7 +73,6 @@ function setupGenButton() {
 				alert("No results");
 				return;
 			}
-			console.log(monster);
 			addNewMonster(monster);
 		});
 	});

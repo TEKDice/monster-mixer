@@ -52,7 +52,12 @@ function build_autocomplete() {
 		<title>TEKDice Monster Mixer</title>
 		<?php $pos='../'; include('../include/head.php'); ?>
 		<link href="../css/jquery-ui-1.10.0.custom.css" rel="stylesheet" />
-		<link href="css/style.css" rel="stylesheet" />
+		<link href="css/style.css" rel="stylesheet"/>
+		<link href="css/1280x1024.css" rel="stylesheet" media="screen and (min-width: 1014px) and (min-height: 1024px)" />
+		<link href="css/1280x800.css" rel="stylesheet" media="screen and (min-width: 1270px) and (min-height: 800px)" />
+		<link href="css/1366x768.css" rel="stylesheet" media="screen and (min-width: 1356px)" />
+		<link href="css/1440x900.css" rel="stylesheet" media="screen and (min-width: 1430px)" />
+		<link href="css/1680x1050.css" rel="stylesheet" media="screen and (min-width: 1640px)" />
 
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
 		<script type="application/javascript" src="js/iscroll.js"></script>
@@ -109,7 +114,7 @@ function build_autocomplete() {
 
 			<div id="dummyData" style="display: none;">
 				<div class="tab-pane" data-for="none">
-					<div class="header lead">
+					<div class="header lead" style="margin-bottom: 7px">
 						<span class="pull-left">Initiative: <span data-attr="initiative" class="roll_add_me" id="1A_init">20</span></span>
 						<span class="pull-right">CR: <span data-attr="cr" id="1A_cr">20</span></span>
 						<center>
@@ -121,12 +126,34 @@ function build_autocomplete() {
 							<span class="right"><i class="icon-forward"></i></span>
 						</center>
 					</div>
-					<hr class="clearfix" />
+					<hr class="clearfix" style="margin: 0" />
 					<div class="grid">
 						<ul class="sortable">
 							<li class="draggable rollable stats">
 								<span class="title">Stats</span>
 								<hr />
+								<table class="table table-striped table-condensed">
+									<tbody>
+										<tr>
+											<td>CHA</td><td>34</td>
+										</tr>
+										<tr>
+											<td>CHA</td><td>34</td>
+										</tr>
+										<tr>
+											<td>CHA</td><td>34</td>
+										</tr>
+										<tr>
+											<td>CHA</td><td>34</td>
+										</tr>
+										<tr>
+											<td>CHA</td><td>34</td>
+										</tr>
+										<tr>
+											<td>CHA</td><td>34</td>
+										</tr>
+									</tbody>
+								</table>
 							</li>
 							<li class="draggable rollable skills">
 								<span class="title">Skills</span>
@@ -137,7 +164,7 @@ function build_autocomplete() {
 								<hr />
 							</li>
 							<li class="draggable rollable attacks">
-								<span class="title">Weapons &amp; (Full) Attacks</span>
+								<span class="title">Weapons &amp; Attacks</span>
 								<hr />
 							</li>
 							<li class="draggable misc">

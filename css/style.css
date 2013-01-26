@@ -8,9 +8,9 @@ Grid-related
 
 .draggable {
 	border: 1px solid #000;
-	width: 200px;
-	height: 200px;
 	border-radius: 4px;
+	max-width: 200px;
+	min-width: 145px;
 }
 
 .sortable { 
@@ -25,11 +25,10 @@ Grid-related
 	margin: 3px;
 	padding: 1px; 
 	float: left;
-	width: 100px; 
-	height: 100px;
 	text-align: center; 
 	display: inline;
 	position: relative;
+	height: 200px;
 }
 
 .sortable li i {
@@ -44,6 +43,10 @@ Grid-related
 	left: 0;
 	font-weight: bold;
 	margin: 2px;
+}
+
+hr {
+	border-top: 1px solid #777;
 }
 
 /* 
@@ -176,6 +179,14 @@ Site Base
 
 --------------------------------
 */
+
+.ui-autocomplete {
+	z-index: 15!important;
+}
+
+hr {
+	margin-bottom: 0;
+}
 
 #log, #customRoller, #monsterListCont, #encounterStats, #popup {
 	background-color: #fff;

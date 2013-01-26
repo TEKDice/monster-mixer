@@ -130,17 +130,32 @@ function build_query($json, $type_info) {
 			$query .= ") ".$header."_table\n\n";
 			$query .= "ON $first_header"."_table.monster_id=$header"."_table.monster_id\n\n";
 		
+		} else {
+			$query .= "\tSELECT DISTINCT id AS monster_id FROM Monster\n";
+			$query .= "\tWHERE ";
+
+			$first_crit = true;
+			foreach($data as $criteria) {
+				if(!$first_crit) $query .= " OR ";
+				$query .= $_sql_name."='".$criteria["value"]."'";
+
+				$first_crit = false;
+			}
+
+			$query .= "\n";
+
+			$query .= ") ".$header."_table\n\n";
+			$query .= "ON $first_header"."_table.monster_id=$header"."_table.monster_id\n\n";
 		}
 
 		$first = false;
 	}
 
-	$query .= "INNER JOIN (
-					SELECT DISTINCT id as monster_id FROM Monster
-					WHERE (Monster.hidden is null OR Monster.hidden=0)
-				) Monster_table
-
-				ON Monster_table.monster_id = $header"."_table.monster_id";
+	$query .= "INNER JOIN (\n";
+	$query .= "\tSELECT DISTINCT id as monster_id FROM Monster\n";
+	$query .= "\tWHERE (Monster.hidden is null OR Monster.hidden=0)\n";
+	$query .= ") Monster_table\n";
+	$query .= "ON Monster_table.monster_id = $header"."_table.monster_id";
 
 	return $query;
 }
