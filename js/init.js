@@ -14,9 +14,16 @@ $(function() {
 
 	setupAddButton();
 
+	setupGenButton();
+
+
+	setupRollables();
+
 	$("#filters").find('option[value="Challenge Rating"]').attr('selected','selected');
 
 	$("#hasScript").show();
+
+	setupGrids();
 
 });
 
@@ -27,6 +34,91 @@ var myScroll;
 var resizeTimer;
 var height = 360;
 var heightAdjust = 140;
+
+function setupRollables() {
+	$(".rollable").append('<i class="icon-share-alt" />');
+}
+
+function setupGrids() {
+	$(".sortable").sortable();
+	$(".sortable").disableSelection();
+
+	resizeGrids();
+}
+
+function resizeGrids() {
+	var $parent = $("#monsterData");
+	var newSize = Math.max($parent.width()/6, 170);
+	$(".draggable").width(newSize);
+	$(".draggable").height(newSize);
+}
+
+function setupGenButton() {
+	$("#genButton").click(function() {
+
+		//build filters
+		var filterObj = {};
+		$(".inner-filter-container").each(function() {
+			var attr = $(this).attr('data-attr');
+			filterObj[attr] = new Array();
+			$(this).children(".badge").each(function() {
+				filterObj[attr].push({sign: $(this).attr('data-sign'), value: $(this).attr('data-value')});
+			});
+		});
+
+		//POST filters
+		$.ajax({
+			type: "POST",
+			url: "ajax.php",
+			async: true,
+			dataType: "json",
+			data: {action: "gen", data: JSON.stringify(filterObj)}
+		}).done(function(monster) {
+			addNewMonster(monster);
+		});
+	});
+}
+
+function addNewMonster(monster) {
+	var root = monster.data[0];
+
+	var uid = new Date().getTime();
+
+	var $li = $("<li/>");
+	$li.appendTo($("#monsterList"));
+
+	var $a = $("<a/>",{
+		href: "#"+uid,
+		text: "["+$("#monsterList").children().size()+"] "+root.name
+	}).attr('data-toggle','tab');
+
+	$a.appendTo($li);
+
+	var newHtml = $("#dummyData").html();
+	$("#monsterData").append(newHtml);
+
+	var $parent = $("[data-for='none']").not("#dummyData > [data-for='none']");
+
+	$parent.attr('id', uid);
+
+	$parent.find("*[id*='1A']").each(function() {
+		var attr = $(this).attr('data-attr');
+		if(root.hasOwnProperty(attr)) {
+			$(this).text(root[attr])
+		}
+		$(this).attr('id', $(this).attr('id').replace('1A', uid));
+	});
+
+	console.log(root);
+	
+	setupGrids();
+
+	myScroll.refresh();
+}
+
+function _cleanName(str) {
+	return str.split(' ').join('');
+}
 
 function addNewFilter() {
 
@@ -51,14 +143,13 @@ function addNewFilter() {
 
 	}
 	
-	var cleanName=newFilter.name.split(' ').join('');
+	var cleanName=_cleanName(newFilter.name);
 
 	var $filterDivContainer = $("#"+cleanName+"_filters");
 
 	//we have one
 	if($filterDivContainer.length) {
 
-		//CHECK DUPES
 		var hasDuplicate = false;
 		$("."+cleanName+"-filter").each(function() {
 			if($(this).attr('data-sign') == newFilter.sign &&
@@ -102,7 +193,7 @@ function addNewFilter() {
 		var $filterDiv = $("<div/>", {
 			id: cleanName+"_filters",
 			class: "inner-filter-container"
-		});
+		}).attr('data-attr', newFilter.name);
 		var $filterSpan = $("<span/>", {
 			class: "badge badge-info "+cleanName+"-filter",
 			text: getFilterText(newFilter)+" "
@@ -249,6 +340,8 @@ function resizeElements() {
 	$("#log").css('height', height-50-heightAdjust+'px');
 	$("#monsterListCont").css('height',height-50-heightAdjust+'px');
 	$(".cScrollbarV").css('height',height-heightAdjust+'px');
+
+	resizeGrids();
 
 	myScroll.refresh();
 }

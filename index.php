@@ -53,13 +53,11 @@ function build_autocomplete() {
 		<?php $pos='../'; include('../include/head.php'); ?>
 		<link href="../css/jquery-ui-1.10.0.custom.css" rel="stylesheet" />
 		<link href="css/style.css" rel="stylesheet" />
-		<link href="css/jquery.gridster.min.css" rel="stylesheet" />
 
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
 		<script type="application/javascript" src="js/iscroll.js"></script>
 		<script src="js/init.js"></script>
 		<script src="js/jquery.boxshadow.min.js"></script>
-		<script src="js/jquery.gridster.min.js"></script>
 		<script type="text/javascript">
 			var filterData = <?=json_encode($filterNames);?>;
 			var autocompleteList = <?=json_encode(build_autocomplete());?>;
@@ -81,36 +79,8 @@ function build_autocomplete() {
 				<div class="row-fluid" id="main">
 					<div class="span9" id="monstersContainer">
 						<div class="tabbable tabs-left" id="monsterListCont">
-							<ul class="nav nav-tabs" id="monsterList">
-								<li>
-									<a href="#1A" data-toggle="tab">Devourer</a>
-								</li>
-							</ul>
+							<ul class="nav nav-tabs" id="monsterList"></ul>
 							<div class="tab-content" id="monsterData">
-								<div class="tab-pane" id="1A">
-									<div class="header">
-										<center>Devourer</center>
-									</div>
-										<hr />
-									<div class="gridster">
-									    <ul>
-									        <li data-row="1" data-col="1" data-sizex="1" data-sizey="1"></li>
-									        <li data-row="1" data-col="1" data-sizex="1" data-sizey="1"></li>
-									        <li data-row="1" data-col="3" data-sizex="1" data-sizey="1"></li>								 
-									        <li data-row="1" data-col="4" data-sizex="1" data-sizey="1"></li>
-
-									        <li data-row="2" data-col="1" data-sizex="1" data-sizey="1"></li>
-									        <li data-row="2" data-col="2" data-sizex="1" data-sizey="1"></li>
-									        <li data-row="2" data-col="3" data-sizex="1" data-sizey="1"></li>
-									        <li data-row="2" data-col="4" data-sizex="1" data-sizey="1"></li>
-									 
-									        <li data-row="3" data-col="1" data-sizex="1" data-sizey="1"></li>
-									        <li data-row="3" data-col="2" data-sizex="1" data-sizey="1"></li>
-									        <li data-row="3" data-col="2" data-sizex="1" data-sizey="1"></li>
-									        <li data-row="3" data-col="4" data-sizex="1" data-sizey="1"></li>
-									    </ul>
-									</div>
-								</div>
 							</div>
 						</div>
 
@@ -131,25 +101,76 @@ function build_autocomplete() {
 						</div>
 
 						<div id="log" class="tabbable">
-							<ul class="nav nav-tabs">
-								<li class="active">
-									<a href="#allInfo" data-toggle="tab">All Info</a>
-								</li>
-								<li>
-									<a href="#curMon" data-toggle="tab">Current Monster</a>
-								</li>
-							</ul>
-							<div class="tab-content">
-								<div class="tab-pane active" id="allInfo">
-									<p>all info will be displayed here</p>
-								</div>
-								<div class="tab-pane" id="curMon">
-									<p>current monster info will be displayed here</p>
-								</div>
-							</div>
 						</div>
 					</div>
 
+				</div>
+			</div>
+
+			<div id="dummyData" style="display: none;">
+				<div class="tab-pane" data-for="none">
+					<div class="header lead">
+						<span class="pull-left">Initiative: <span data-attr="initiative" class="roll_add_me" id="1A_init">20</span></span>
+						<span class="pull-right">CR: <span data-attr="cr" id="1A_cr">20</span></span>
+						<center>
+							<span class="left"><i class="icon-backward"></i></span>
+
+							<span data-attr="name" 	id="1A_name">Devourer</span>
+							<span class="hp">		(<span data-attr="hit_dice" class="roll_me" id="1A_hp">40</span> hp)</span>
+
+							<span class="right"><i class="icon-forward"></i></span>
+						</center>
+					</div>
+					<hr class="clearfix" />
+					<div class="grid">
+						<ul class="sortable">
+							<li class="draggable rollable stats">
+								<span class="title">Stats</span>
+								<hr />
+							</li>
+							<li class="draggable rollable skills">
+								<span class="title">Skills</span>
+								<hr />
+							</li>
+							<li class="draggable rollable cstats">
+								<span class="title">Combat Stats</span>
+								<hr />
+							</li>
+							<li class="draggable rollable attacks">
+								<span class="title">Weapons &amp; (Full) Attacks</span>
+								<hr />
+							</li>
+							<li class="draggable misc">
+								<span class="title">Misc. Info.</span>
+								<hr />
+							</li>
+							<li class="draggable speeds">
+								<span class="title">Speeds</span>
+								<hr />
+							</li>
+							<li class="draggable qualities">
+								<span class="title">Qualities</span>
+								<hr />
+							</li>
+							<li class="draggable armor">
+								<span class="title">Armor, AC &amp; DR</span>
+								<hr />
+							</li>
+							<li class="draggable feats">
+								<span class="title">Feats</span>
+								<hr />
+							</li>
+							<li class="draggable specials">
+								<span class="title">Special Attacks</span>
+								<hr />
+							</li>
+							<li class="draggable invisible"></li>
+							<li class="draggable invisible"></li>
+							<li class="draggable invisible"></li>
+							<li class="draggable invisible"></li>
+							<li class="draggable invisible"></li>
+						</ul>
+					</div>
 				</div>
 			</div>
 
@@ -184,14 +205,14 @@ function build_autocomplete() {
 									</td>
 									<td>
 										<div id="Version_filters" data-attr="Version" class="inner-filter-container">
-											<span class="badge badge-info Version-filter" data-value="3.5" data-sign="&gt;" style="box-shadow: rgb(255, 0, 0) 0px 0px 0px 0px;">=3.5</span>
+											<span class="badge badge-info Version-filter" data-value="3.5" style="box-shadow: rgb(255, 0, 0) 0px 0px 0px 0px;">3.5</span>
 										</div>
 									</td>
 								</tr>
 							</table>
 						</div>
 						<div id="leftPopupFooter">
-							<center><button class="btn btn-primary">Generate</button></center>
+							<center><button class="btn btn-primary" id="genButton">Generate</button></center>
 						</div>
 					</div>
 					<div id="median">

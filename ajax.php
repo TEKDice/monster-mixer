@@ -30,6 +30,7 @@ shuffle($monsters);
 
 foreach($monsters as $arr=>$id) {
 	echo json_encode(get_monster_data($id["monster_id"]));
+	return;
 }
 
 function build_query($json, $type_info) {

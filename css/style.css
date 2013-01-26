@@ -1,6 +1,58 @@
-.inner-filter-container > span.badge {
-	margin-right: 3px;
+/* 
+--------------------------------
+
+Grid-related
+
+--------------------------------
+*/
+
+.draggable {
+	border: 1px solid #000;
+	width: 200px;
+	height: 200px;
+	border-radius: 4px;
 }
+
+.sortable { 
+	list-style-type: none; 
+	margin: auto; 
+	padding: 0; 
+	width: 100%; 
+	height: 100%;
+}
+
+.sortable li { 
+	margin: 3px;
+	padding: 1px; 
+	float: left;
+	width: 100px; 
+	height: 100px;
+	text-align: center; 
+	display: inline;
+	position: relative;
+}
+
+.sortable li i {
+	top: 0;
+	right: 0;
+	position: absolute;
+}
+
+.title {
+	position: absolute;
+	top: 0;
+	left: 0;
+	font-weight: bold;
+	margin: 2px;
+}
+
+/* 
+--------------------------------
+
+Filters in Popup 
+
+--------------------------------
+*/
 
 #filterContainer {
 	width: 100%;
@@ -22,6 +74,10 @@
 	padding-left: 10px;
 }
 
+.inner-filter-container > span.badge {
+	margin-right: 3px;
+}
+
 .filter-remover:hover {
 	text-decoration: underline;
 }
@@ -30,12 +86,13 @@
 	cursor: pointer;
 }
 
-#leftPopupFooter {
-	width: 100%;
-	right: 0;
-	left: 0;
-	margin-bottom: 0;
-}
+/* 
+--------------------------------
+
+Base Popup
+
+--------------------------------
+*/
 
 #popup {
 	margin-left: auto;
@@ -46,19 +103,9 @@
 	height: 300px;
 	position: absolute;
 	top: 70px;
-	z-index: 2;
+	z-index: 12;
 	display: none;
 	overflow: hidden;
-}
-
-#simple, #extra, #median {
-	height: 100%;
-}
-
-#medianArrowContainer {
-	display: table-cell;
-	vertical-align: middle;
-	text-align: center;
 }
 
 #popupLeft {
@@ -67,10 +114,38 @@
 	height: 100%;
 }
 
+#leftPopupFooter {
+	width: 100%;
+	right: 0;
+	left: 0;
+	margin-bottom: 0;
+}
+
+#filterSelectors {
+	width: 100%; 
+	text-align: center;
+	display: table-row;
+}
+
+#simple, #extra, #median {
+	height: 100%;
+}
+
+#simple {
+	float: left;
+	width: 95%;
+	display: table;
+}
+
+#extra {
+	display: none;
+	float: right;
+}
+
 #median {
 	overflow: hidden;
 	background-image: linear-gradient(left , rgb(255,255,255) 70%, rgb(0,0,0) 100%);
-background-image: -o-linear-gradient(left , rgb(255,255,255) 70%, rgb(0,0,0) 100%);
+	background-image: -o-linear-gradient(left , rgb(255,255,255) 70%, rgb(0,0,0) 100%);
 	background-image: -moz-linear-gradient(left , rgb(255,255,255) 70%, rgb(0,0,0) 100%);
 	background-image: -webkit-linear-gradient(left , rgb(255,255,255) 70%, rgb(0,0,0) 100%);
 	background-image: -ms-linear-gradient(left , rgb(255,255,255) 70%, rgb(0,0,0) 100%);
@@ -84,26 +159,23 @@ background-image: -o-linear-gradient(left , rgb(255,255,255) 70%, rgb(0,0,0) 100
 	);
 }
 
-#filterSelectors {
-	width: 100%; 
-	text-align: center;
-	display: table-row;
-}
-
-#simple {
-	float: left;
-	width: 95%;
-	display: table;
-}
-
 #median:hover {
 	background-color: #ccc;
 }
 
-#extra {
-	display: none;
-	float: right;
+#medianArrowContainer {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
 }
+
+/* 
+--------------------------------
+
+Site Base 
+
+--------------------------------
+*/
 
 #log, #customRoller, #monsterListCont, #encounterStats, #popup {
 	background-color: #fff;
@@ -148,7 +220,20 @@ i, #showFilters, #medianArrowContainer {
 
 .tab-content {
 	height: 100%;
+	overflow: hidden;
 }
+
+#hasScript {
+	display: none;
+}
+
+/* 
+--------------------------------
+
+Scrollbars 
+
+--------------------------------
+*/
 
 .cScrollbarV {	
 	position:absolute;
@@ -191,8 +276,4 @@ i, #showFilters, #medianArrowContainer {
 	-moz-box-shadow:inset 1px 1px 0 rgba(255,255,255,0.5);
 	-o-box-shadow:inset 1px 1px 0 rgba(255,255,255,0.5);
 	box-shadow:inset 1px 1px 0 rgba(255,255,255,0.5);
-}
-
-#hasScript {
-	display: none;
 }
