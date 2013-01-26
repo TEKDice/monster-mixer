@@ -67,13 +67,13 @@ function setupGenButton() {
 		});
 
 		//POST filters
-		$.ajax({
-			type: "POST",
-			url: "ajax.php",
-			async: true,
-			dataType: "json",
-			data: {action: "gen", data: JSON.stringify(filterObj)}
-		}).done(function(monster) {
+		$.post('ajax.php', {action: "gen", data: JSON.stringify(filterObj)}, function(monster) {
+			monster = $.parseJSON(monster);
+			if(monster=='') {
+				alert("No results");
+				return;
+			}
+			console.log(monster);
 			addNewMonster(monster);
 		});
 	});
@@ -100,6 +100,7 @@ function addNewMonster(monster) {
 	var $parent = $("[data-for='none']").not("#dummyData > [data-for='none']");
 
 	$parent.attr('id', uid);
+	$parent.attr('data-for', uid);
 
 	$parent.find("*[id*='1A']").each(function() {
 		var attr = $(this).attr('data-attr');
@@ -108,8 +109,6 @@ function addNewMonster(monster) {
 		}
 		$(this).attr('id', $(this).attr('id').replace('1A', uid));
 	});
-
-	console.log(root);
 	
 	setupGrids();
 
@@ -238,9 +237,11 @@ function makeSpansRemovable() {
 function initializeAutocomplete() {
 	$("#autocompleteName").autocomplete( {
 		source: autocompleteList,
-		minLength: 3,
 		select: function(event, ui) {
-			return true;
+			$("#autocompleteName").val(ui.item.label);
+			addNewFilter();
+			$("#autocompleteName").val('');
+			return false;
 		}
 	});
 }
