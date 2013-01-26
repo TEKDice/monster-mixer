@@ -53,11 +53,11 @@ function build_autocomplete() {
 		<?php $pos='../'; include('../include/head.php'); ?>
 		<link href="../css/jquery-ui-1.10.0.custom.css" rel="stylesheet" />
 		<link href="css/style.css" rel="stylesheet"/>
-		<link href="css/1280x1024.css" rel="stylesheet" media="screen and (min-width: 1014px) and (min-height: 1024px)" />
+		<link href="css/1280x1024.css" rel="stylesheet" media="screen and (min-width: 1019px) and (min-height: 1024px)" />
 		<link href="css/1280x800.css" rel="stylesheet" media="screen and (min-width: 1270px) and (min-height: 800px)" />
 		<link href="css/1366x768.css" rel="stylesheet" media="screen and (min-width: 1356px)" />
 		<link href="css/1440x900.css" rel="stylesheet" media="screen and (min-width: 1430px)" />
-		<link href="css/1680x1050.css" rel="stylesheet" media="screen and (min-width: 1640px)" />
+		<link href="css/1680x1050.css" rel="stylesheet" media="screen and (min-width: 1645px)" />
 
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
 		<script type="application/javascript" src="js/iscroll.js"></script>
