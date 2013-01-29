@@ -60,9 +60,7 @@ function build_autocomplete() {
 		<link href="css/1680x1050.css" 	rel="stylesheet" media="screen and (min-width: 1645px)" />
 
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
-		<script type="application/javascript" src="js/iscroll.js"></script>
 		<script src="js/jquery.boxshadow.min.js"></script>
-
 		<script src="js/jquery.nicescroll.min.js"></script>
 
 		<script src="js/init.js"></script>
@@ -158,7 +156,7 @@ function build_autocomplete() {
 												<td>CHA</td><td>34</td>
 											</tr>
 											<tr>
-												<td>CHA</td><td>345</td>
+												<td>CHA</td><td>34</td>
 											</tr>
 											<tr>
 												<td>CHA</td><td>34</td>

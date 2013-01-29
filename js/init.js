@@ -29,8 +29,6 @@ $(function() {
 var defaultPopupSize=500;
 var extendPopupSize	=1200;
 			
-var myScroll;
-var resizeTimer;
 var height = 360;
 var heightAdjust = 140;
 
@@ -341,7 +339,6 @@ function resizeElements() {
 	$("#log").css('height', height-50-heightAdjust+'px');
 	$("#monsterListCont").css('height',height-50-heightAdjust+'px');
 	$("#monsterList").css('height',height-50-heightAdjust+'px');
-	$(".cScrollbarV").css('height',height-heightAdjust+'px');
 
 	resizeGrids();
 }

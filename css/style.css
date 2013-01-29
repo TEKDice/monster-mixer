@@ -32,7 +32,6 @@ Grid-related
 }
 
 .minibox-content {
-	height: 178px;
 	overflow: auto;
 }
 
@@ -214,6 +213,10 @@ i, #showFilters, #medianArrowContainer {
 
 #monsterListCont {
 	height: 360px;
+}
+
+#monsterList {
+	overflow-x: hidden;
 }
 
 #log {
