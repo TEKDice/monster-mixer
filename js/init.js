@@ -1,6 +1,6 @@
 $(function() {
 
-	initializeScrollbars();
+	handleResizing();
 
 	initializeArrowToggler();
 
@@ -15,7 +15,6 @@ $(function() {
 	setupAddButton();
 
 	setupGenButton();
-
 
 	setupRollables();
 
@@ -43,14 +42,15 @@ function setupGrids() {
 	$(".sortable").sortable();
 	$(".sortable").disableSelection();
 
+	$(".minibox-content").niceScroll();
+
 	resizeGrids();
 }
 
 function resizeGrids() {
-	//var $parent = $("#monsterData");
-	//var newSize = Math.max($parent.width()/6, 170);
-	//$(".draggable").width(newSize);
-	//$(".draggable").height(newSize);
+	$(".minibox-content").each(function() {
+		$(this).height($(this).parent().height()-22);
+	});
 }
 
 function setupGenButton() {
@@ -74,6 +74,7 @@ function setupGenButton() {
 				return;
 			}
 			addNewMonster(monster);
+			setupGrids();
 		});
 	});
 }
@@ -104,14 +105,22 @@ function addNewMonster(monster) {
 	$parent.find("*[id*='1A']").each(function() {
 		var attr = $(this).attr('data-attr');
 		if(root.hasOwnProperty(attr)) {
-			$(this).text(root[attr])
+			$(this).text(root[attr]);
 		}
 		$(this).attr('id', $(this).attr('id').replace('1A', uid));
 	});
-	
-	setupGrids();
 
-	myScroll.refresh();
+	$('#monsterList').niceScroll({horizrailenabled: false});
+	$('#monsterList').css('overflow','hidden');
+
+	tabChangeScrollbars();
+}
+
+function tabChangeScrollbars() {
+	$('a[data-toggle="tab"]').on('shown', function (e) {
+		$(".minibox-content").niceScroll();
+		$(".minibox-content").css('overflow','hidden');
+	});
 }
 
 function _cleanName(str) {
@@ -306,6 +315,8 @@ function initializeArrowToggler() {
 			if($(this).is(":visible")) {
 				$("#filterIcon").attr('class', 'icon-arrow-up');	
 				$("#popup").attr('display','inline-block');
+				$("#filterContainer").niceScroll({zindex: 14});
+				$("#filterContainer").css('overflow','hidden');
 			} else {
 				$("#filterIcon").attr('class', 'icon-arrow-down');
 			}
@@ -313,19 +324,9 @@ function initializeArrowToggler() {
 	});
 }
 
-function initializeScrollbars() {
-	//scrollbar for the monster list
-	window.addEventListener('load', function() {
-		setTimeout(function () {
-			myScroll = new iScroll('monsterListCont', {
-				hScroll: false,
-				scrollbarClass: "cScrollbar"
-			});
-			resizeElements();
-		}, 100);
-	}, false);
-
+function handleResizing() {
 	$(window).resize(timedResizeElements);
+	resizeElements();
 }
 
 //don't instantly automatically refresh everything, that's going to lag
@@ -339,9 +340,8 @@ function resizeElements() {
 
 	$("#log").css('height', height-50-heightAdjust+'px');
 	$("#monsterListCont").css('height',height-50-heightAdjust+'px');
+	$("#monsterList").css('height',height-50-heightAdjust+'px');
 	$(".cScrollbarV").css('height',height-heightAdjust+'px');
 
 	resizeGrids();
-
-	myScroll.refresh();
 }

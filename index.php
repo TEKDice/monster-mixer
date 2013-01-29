@@ -29,7 +29,7 @@ foreach($filterNamesArr as $name=>$filter) {
 
 function build_autocomplete() {
 	global $conn;
-	$query = "select id,name from Monster where version_id=6 and (hidden is null or hidden = 0)";
+	$query = "select id,name from Monster where (hidden is null or hidden = 0)";
 	$data = run_query($conn, $query);
 	
 	$acarr = array();
@@ -52,17 +52,21 @@ function build_autocomplete() {
 		<title>TEKDice Monster Mixer</title>
 		<?php $pos='../'; include('../include/head.php'); ?>
 		<link href="../css/jquery-ui-1.10.0.custom.css" rel="stylesheet" />
-		<link href="css/style.css" rel="stylesheet"/>
-		<link href="css/1280x1024.css" rel="stylesheet" media="screen and (min-width: 1019px) and (min-height: 1024px)" />
-		<link href="css/1280x800.css" rel="stylesheet" media="screen and (min-width: 1270px) and (min-height: 800px)" />
-		<link href="css/1366x768.css" rel="stylesheet" media="screen and (min-width: 1356px)" />
-		<link href="css/1440x900.css" rel="stylesheet" media="screen and (min-width: 1430px)" />
-		<link href="css/1680x1050.css" rel="stylesheet" media="screen and (min-width: 1645px)" />
+		<link href="css/style.css" 		rel="stylesheet" />
+		<link href="css/1280x1024.css" 	rel="stylesheet" media="screen and (min-width: 1019px) and (min-height: 1024px)" />
+		<link href="css/1280x800.css" 	rel="stylesheet" media="screen and (min-width: 1270px) and (min-height: 800px)" />
+		<link href="css/1366x768.css" 	rel="stylesheet" media="screen and (min-width: 1356px)" />
+		<link href="css/1440x900.css" 	rel="stylesheet" media="screen and (min-width: 1430px)" />
+		<link href="css/1680x1050.css" 	rel="stylesheet" media="screen and (min-width: 1645px)" />
 
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
 		<script type="application/javascript" src="js/iscroll.js"></script>
-		<script src="js/init.js"></script>
 		<script src="js/jquery.boxshadow.min.js"></script>
+
+		<script src="js/jquery.nicescroll.min.js"></script>
+
+		<script src="js/init.js"></script>
+
 		<script type="text/javascript">
 			var filterData = <?=json_encode($filterNames);?>;
 			var autocompleteList = <?=json_encode(build_autocomplete());?>;
@@ -132,28 +136,39 @@ function build_autocomplete() {
 							<li class="draggable rollable stats">
 								<span class="title">Stats</span>
 								<hr />
-								<table class="table table-striped table-condensed">
-									<tbody>
-										<tr>
-											<td>CHA</td><td>34</td>
-										</tr>
-										<tr>
-											<td>CHA</td><td>34</td>
-										</tr>
-										<tr>
-											<td>CHA</td><td>34</td>
-										</tr>
-										<tr>
-											<td>CHA</td><td>34</td>
-										</tr>
-										<tr>
-											<td>CHA</td><td>34</td>
-										</tr>
-										<tr>
-											<td>CHA</td><td>34</td>
-										</tr>
-									</tbody>
-								</table>
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed">
+										<tbody>
+											<tr>
+												<td>CHA</td><td>34</td>
+											</tr>
+											<tr>
+												<td>CHA</td><td>34</td>
+											</tr>
+											<tr>
+												<td>CHA</td><td>34</td>
+											</tr>
+											<tr>
+												<td>CHA</td><td>348</td>
+											</tr>
+											<tr>
+												<td>CHA</td><td>34</td>
+											</tr>
+											<tr>
+												<td>CHA</td><td>34</td>
+											</tr>
+											<tr>
+												<td>CHA</td><td>345</td>
+											</tr>
+											<tr>
+												<td>CHA</td><td>34</td>
+											</tr>
+											<tr>
+												<td>CHA</td><td>34</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 							</li>
 							<li class="draggable rollable skills">
 								<span class="title">Skills</span>
@@ -245,7 +260,7 @@ function build_autocomplete() {
 					<div id="median">
 						<div style="display: table; height: 100%">
 							<div id="medianArrowContainer" title="More options">
-								<i id="extraToggle" class="icon-arrow-right"></i>
+								<i id="extraToggle" style="z-index: 17" class="icon-arrow-right"></i>
 							</div>
 						</div>
 					</div>
