@@ -37,7 +37,11 @@ function setupRollables() {
 }
 
 function setupGrids() {
-	$(".sortable").sortable();
+	$(".sortable").sortable({
+		sort: function(e, u) {
+			setupGrids();
+		}
+	});
 	$(".sortable").disableSelection();
 
 	$(".minibox-content").niceScroll();

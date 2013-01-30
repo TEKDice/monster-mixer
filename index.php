@@ -138,31 +138,22 @@ function build_autocomplete() {
 									<table class="table table-striped table-condensed">
 										<tbody>
 											<tr>
-												<td>CHA</td><td>34</td>
+												<td>STR</td><td data-attr="str" id="1A_str"></td>
 											</tr>
 											<tr>
-												<td>CHA</td><td>34</td>
+												<td>DEX</td><td data-attr="dex" id="1A_dex"></td>
 											</tr>
 											<tr>
-												<td>CHA</td><td>34</td>
+												<td>CON</td><td data-attr="con" id="1A_con"></td>
 											</tr>
 											<tr>
-												<td>CHA</td><td>348</td>
+												<td>INT</td><td data-attr="int" id="1A_int"></td>
 											</tr>
 											<tr>
-												<td>CHA</td><td>34</td>
+												<td>WIS</td><td data-attr="wis" id="1A_wis"></td>
 											</tr>
 											<tr>
-												<td>CHA</td><td>34</td>
-											</tr>
-											<tr>
-												<td>CHA</td><td>34</td>
-											</tr>
-											<tr>
-												<td>CHA</td><td>34</td>
-											</tr>
-											<tr>
-												<td>CHA</td><td>34</td>
+												<td>CHA</td><td data-attr="cha" id="1A_cha"></td>
 											</tr>
 										</tbody>
 									</table>
@@ -175,6 +166,30 @@ function build_autocomplete() {
 							<li class="draggable rollable cstats">
 								<span class="title">Combat Stats</span>
 								<hr />
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed">
+										<tbody>
+											<tr>
+												<td>Fortitude</td><td data-attr="fort" id="1A_fort"></td>
+											</tr>
+											<tr>
+												<td>Reflex</td><td data-attr="ref" id="1A_ref"></td>
+											</tr>
+											<tr>
+												<td>Will</td><td data-attr="will" id="1A_will"></td>
+											</tr>
+											<tr>
+												<td>CMD</td><td data-attr="cmd" id="1A_cmd"></td>
+											</tr>
+											<tr>
+												<td>CMB</td><td data-attr="cmb" id="1A_cmb"></td>
+											</tr>
+											<tr>
+												<td>Grapple</td><td data-attr="grapple" id="1A_grapple"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 							</li>
 							<li class="draggable rollable attacks">
 								<span class="title">Weapons &amp; Attacks</span>
@@ -183,18 +198,60 @@ function build_autocomplete() {
 							<li class="draggable misc">
 								<span class="title">Misc. Info.</span>
 								<hr />
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed">
+										<tbody>
+											<tr>
+												<td>Level Adjustment</td><td data-attr="level_adjustment" id="1A_level_adjustment"></td>
+											</tr>
+											<tr>
+												<td>Reach</td><td data-attr="reach" id="1A_reach"></td>
+											</tr>
+											<tr>
+												<td>Space Taken</td><td data-attr="space_taken" id="1A_space_taken"></td>
+											</tr>
+											<tr>
+												<td>Treasure</td><td data-attr="treasure" id="1A_treasure"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 							</li>
 							<li class="draggable speeds">
 								<span class="title">Speeds</span>
 								<hr />
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed">
+										<tbody>
+											<tr>
+												<td>Base Speed</td><td data-attr="base_spd" id="1A_base_spd"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 							</li>
 							<li class="draggable qualities">
 								<span class="title">Qualities</span>
 								<hr />
 							</li>
 							<li class="draggable armor">
-								<span class="title">Armor, AC &amp; DR</span>
+								<span class="title">AC, Armor &amp; DR</span>
 								<hr />
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed">
+										<tbody>
+											<tr>
+												<td>Total AC</td><td data-attr="ac" id="1A_ac"></td>
+											</tr>
+											<tr>
+												<td>Flatfoot AC</td><td data-attr="flatfoot_ac" id="1A_flatfoot_ac"></td>
+											</tr>
+											<tr>
+												<td>Touch AC</td><td data-attr="touch_ac" id="1A_touch_ac"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 							</li>
 							<li class="draggable feats">
 								<span class="title">Feats</span>
