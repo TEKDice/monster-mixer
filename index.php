@@ -118,11 +118,10 @@ function build_autocomplete() {
 								</li>                                                        
 							</ul>
 							<div class="tab-content">
-								<div class="tab-pane active" id="allInfo">
-									<p>all info will be displayed here</p>                                                                
+								<div class="tab-pane active" id="allInfo">                                                             
 								</div>
 								<div class="tab-pane" id="curMon">
-									<p>current monster info will be displayed here</p>
+									<p>I'm not implementing this yet.</p>
 								</div>
 							</div>
 						</div>

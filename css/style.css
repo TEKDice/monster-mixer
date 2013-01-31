@@ -1,3 +1,20 @@
+/*
+--------------------------------
+
+Log-related
+
+--------------------------------
+*/
+
+#log .nav {
+	margin-bottom: 0;
+}
+
+#log .tab-content {
+	padding-left: 5px;
+	overflow-y: scroll;
+}
+
 /* 
 --------------------------------
 
@@ -5,6 +22,11 @@ Grid-related
 
 --------------------------------
 */
+
+.tooltip {
+	width: 300px;
+	z-index: 9999;
+}
 
 .rightalign {
 	text-align: right;
@@ -47,7 +69,7 @@ Grid-related
 	font-weight: bold;
 }
 
-.sortable li i {
+.sortable li i.icon-share-alt {
 	top: 0;
 	right: 0;
 	position: absolute;
