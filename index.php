@@ -162,6 +162,13 @@ function build_autocomplete() {
 							<li class="draggable rollable skills">
 								<span class="title">Skills</span>
 								<hr />
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed">
+										<tbody class="skills" id="1A_skillstable">
+											<tr class="no-data"><td>None</td></tr>
+										</tbody>
+									</table>
+								</div> 
 							</li>
 							<li class="draggable rollable cstats">
 								<span class="title">Combat Stats</span>
@@ -194,6 +201,20 @@ function build_autocomplete() {
 							<li class="draggable rollable attacks">
 								<span class="title">Weapons &amp; Attacks</span>
 								<hr />
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed">
+										<caption>Weapons</caption>
+										<tbody class="weapons" id="1A_weaponstable">
+											<tr class="no-data"><td>None</td></tr>
+										</tbody>
+									</table>
+									<table class="table table-striped table-condensed">
+										<caption>Attacks</caption>
+										<tbody class="attacks" id="1A_attackstable">
+											<tr class="no-data"><td>None</td></tr>
+										</tbody>
+									</table>
+								</div> 
 							</li>
 							<li class="draggable misc">
 								<span class="title">Misc. Info.</span>
@@ -202,7 +223,7 @@ function build_autocomplete() {
 									<table class="table table-striped table-condensed">
 										<tbody>
 											<tr>
-												<td>Level Adjustment</td><td data-attr="level_adjustment" id="1A_level_adjustment"></td>
+												<td>Level Adjust</td><td data-attr="level_adjustment" id="1A_level_adjustment"></td>
 											</tr>
 											<tr>
 												<td>Reach</td><td data-attr="reach" id="1A_reach"></td>
@@ -233,6 +254,13 @@ function build_autocomplete() {
 							<li class="draggable qualities">
 								<span class="title">Qualities</span>
 								<hr />
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed">
+										<tbody class="qualities" id="1A_qualitiestable">
+											<tr class="no-data"><td>None</td></tr>
+										</tbody>
+									</table>
+								</div> 
 							</li>
 							<li class="draggable armor">
 								<span class="title">AC, Armor &amp; DR</span>
@@ -251,15 +279,41 @@ function build_autocomplete() {
 											</tr>
 										</tbody>
 									</table>
+									<table class="table table-striped table-condensed">
+										<caption>Armor</caption>
+										<tbody class="armor" id="1A_armortable">
+											<tr class="no-data"><td>None</td></tr>
+										</tbody>
+									</table>
+									<table class="table table-striped table-condensed">
+										<caption>Damage Reductions</caption>
+										<tbody class="damagereductions" id="1A_damagereductionstable">
+											<tr class="no-data"><td>None</td></tr>
+										</tbody>
+									</table>
 								</div>
 							</li>
 							<li class="draggable feats">
 								<span class="title">Feats</span>
 								<hr />
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed">
+										<tbody class="feats" id="1A_featstable">
+											<tr class="no-data"><td>None</td></tr>
+										</tbody>
+									</table>
+								</div> 
 							</li>
 							<li class="draggable specials">
 								<span class="title">Special Attacks</span>
 								<hr />
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed">
+										<tbody class="specialattacks" id="1A_specialattackstable">
+											<tr class="no-data"><td>None</td></tr>
+										</tbody>
+									</table>
+								</div> 
 							</li>
 							<li class="draggable invisible"></li>
 							<li class="draggable invisible"></li>
