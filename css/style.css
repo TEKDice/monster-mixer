@@ -6,6 +6,10 @@ Grid-related
 --------------------------------
 */
 
+.rightalign {
+	text-align: right;
+}
+
 .draggable {
 	border: 1px solid #000;
 	border-radius: 4px;
@@ -33,6 +37,14 @@ Grid-related
 
 .minibox-content {
 	overflow: auto;
+}
+
+.minibox-content .table {
+	margin-bottom: 0;
+}
+
+.minibox-content .table caption {
+	font-weight: bold;
 }
 
 .sortable li i {
