@@ -64,6 +64,7 @@ function build_autocomplete() {
 		<script src="js/jquery.nicescroll.min.js"></script>
 
 		<script src="js/init.js"></script>
+		<script src="js/roll.js"></script>
 
 		<script type="text/javascript">
 			var filterData = <?=json_encode($filterNames);?>;
@@ -108,6 +109,22 @@ function build_autocomplete() {
 						</div>
 
 						<div id="log" class="tabbable">
+							<ul class="nav nav-tabs">
+								<li class="active">
+									<a href="#allInfo" data-toggle="tab">All Info</a>
+								</li>
+								<li>
+									<a href="#curMon" data-toggle="tab">Current Monster</a>                                                                
+								</li>                                                        
+							</ul>
+							<div class="tab-content">
+								<div class="tab-pane active" id="allInfo">
+									<p>all info will be displayed here</p>                                                                
+								</div>
+								<div class="tab-pane" id="curMon">
+									<p>current monster info will be displayed here</p>
+								</div>
+							</div>
 						</div>
 					</div>
 
