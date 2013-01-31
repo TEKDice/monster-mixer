@@ -109,6 +109,20 @@ function addNewMonster(monster) {
 	$('#monsterList').css('overflow','hidden');
 
 	tabChangeScrollbars();
+
+	rollableRowHighlighting($parent);
+}
+
+function rollableRowHighlighting($parent) {
+	$parent.find("tr[data-roll]").each(function() {
+		$(this).click(function() {
+			$(this).siblings(".info").removeClass('info');
+			if($(this).hasClass('info'))
+				$(this).removeClass('info');
+			else
+				$(this).addClass('info');
+		});
+	});
 }
 
 function addDataToMonster($parent, monster, uid) {
@@ -118,9 +132,19 @@ function addDataToMonster($parent, monster, uid) {
 	$parent.find("*[id*='1A']").each(function() {
 		var attr = $(this).attr('data-attr');
 		if(root.hasOwnProperty(attr)) {
-			$(this).text(root[attr]);
+			$(this).text(root[attr] + (attr=='base_spd' ? 'ft' : ''));
 		}
 		$(this).attr('id', $(this).attr('id').replace('1A', uid));
+	});
+
+	$parent.find(".stats tr").each(function() {
+		var num = get_bonus($(this).children("td").eq(1).text());
+		$(this).attr('data-roll', '1d20'+(num<0 ? num : "+"+num));
+	});
+
+	$parent.find(".cstats tr").each(function() {
+		var num = parseInt($(this).children("td").eq(1).text());
+		$(this).attr('data-roll', '1d20'+(num<0 ? num : "+"+num));
 	});
 
 	for(var prop in monster) {
@@ -130,7 +154,6 @@ function addDataToMonster($parent, monster, uid) {
 			appendToTable($table, root.name, prop, monster[prop]);
 		}
 	}
-
 }
 
 var defaultFunction = function() {
@@ -144,7 +167,7 @@ var formatting = {
 		return obj.aname + (obj.enchantment_bonus != "0" ? " +"+obj.enchantment_bonus : "");
 	},
 	mattack:  	function(obj) {
-		return obj.aname + "</td><td>("+obj.hitdc+")";
+		return obj.aname + "</td><td>"+obj.hitdc;
 	},
 	mdmgred: 	function(obj) {
 		return obj.name + "</td><td>" + (obj.reduction_amount=="0" ? "--" : obj.reduction_amount);
@@ -155,7 +178,7 @@ var formatting = {
 	mfatk: 		defaultFunction,
 	mlang: 		defaultFunction,
 	mmove:    	function(obj) {
-		return obj.movement_type + " " + obj.movement_speed+"ft";
+		return obj.movement_type + "</td><td>" + obj.movement_speed+"ft";
 	},
 	morgani: 	defaultFunction,
 	mqualit:  	function(obj) {
@@ -171,26 +194,46 @@ var formatting = {
 	mterr: 		defaultFunction,
 	mtype: 		defaultFunction,
 	mweapon: 	function(obj) {
-		return obj.extra_wsize + " " + obj.wname + " " + (obj.enchantment_bonus != "0" ? " +"+obj.enchantment_bonus : "") + "</td><td>" + obj.hitdc + "</td><td class='rightalign'>" + (obj.dmgname != null ? "+"+obj.dmgred_hd + " " + obj.dmgname : "");
+		return obj.extra_wsize + " " + obj.wname + (obj.enchantment_bonus != "0" ? " +"+obj.enchantment_bonus : "") + "</td><td>" + obj.hitdc + "</td><td class='rightalign'>" + (obj.dmgname != null ? "+"+obj.dmgred_hd + " " + obj.dmgname : "");
 	}
 };
+
+function get_bonus(num) {
+	num=parseInt(num);
+	if(num == 0) return 0;
+	return Math.floor(num/2)-5;
+}
 
 var rollable = {
 	mattack: function(obj) {
 		return obj.hitdc;
+	},
+	mskill: function(obj) {
+		return "1d20+"+(obj.skill_level<0 ? obj.skill_level : "+"+obj.skill_level);
+	},
+	mweapon: function(obj) {
+		return obj.hitdc + (obj.dmgname != null ? "+"+obj.dmgred_hd : "");
 	}
+
 }
 
 function appendToTable($table, monsterName, attr, arr) {
-	$table.empty();
-	console.log(attr);
-	console.log(arr);
+	if(attr!='mmove')
+		$table.empty();
 	$.each(arr, function(i, obj) {
 		var $tr = $("<tr/>");
+		if(rollable.hasOwnProperty(attr)) 
+			$tr.attr('data-roll', rollable[attr](obj));
 		$tr.appendTo($table);
 		var inner = formatting[attr](obj);
 		if(inner.indexOf(monsterName) != -1) inner = inner.substring(monsterName.length);
-		$tr.append("<td>"+inner+"</td>");
+		$tr.append("<td"+(obj.hasOwnProperty('descript') ? " class='has-tooltip' data-desc='"+obj.descript.split("\n").join("<br>")+"'" : "")+">"+inner+"</td>");
+	});
+	$table.find("td.has-tooltip").each(function() {
+		var text = $(this).text();
+		$(this).text('');
+		$(this).prepend('<i class="icon-bookmark"></i><a href="#" rel="tooltip" title="'+$(this).attr('data-desc')+'">'+text+"</a>");
+		$(this).find('a').tooltip({html: true, placement: 'bottom'});
 	});
 
 }
@@ -407,6 +450,8 @@ function handleResizing() {
 	$(window).resize(timedResizeElements);
 	resizeElements();
 }
+
+var resizeTimer;
 
 //don't instantly automatically refresh everything, that's going to lag
 function timedResizeElements() {
