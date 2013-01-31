@@ -82,8 +82,7 @@ function setupGenButton() {
 }
 
 function addNewMonster(monster) {
-	var root = monster.data[0];
-
+	
 	var uid = new Date().getTime();
 
 	var $li = $("<li/>");
@@ -91,7 +90,7 @@ function addNewMonster(monster) {
 
 	var $a = $("<a/>",{
 		href: "#"+uid,
-		text: "["+$("#monsterList").children().size()+"] "+root.name
+		text: "["+$("#monsterList").children().size()+"] "+monster.data[0].name
 	}).attr('data-toggle','tab');
 
 	$a.appendTo($li);
@@ -104,6 +103,17 @@ function addNewMonster(monster) {
 	$parent.attr('id', uid);
 	$parent.attr('data-for', uid);
 
+	addDataToMonster($parent, monster)
+
+	$('#monsterList').niceScroll({horizrailenabled: false});
+	$('#monsterList').css('overflow','hidden');
+
+	tabChangeScrollbars();
+}
+
+function addDataToMonster($parent, monster) {
+	var root = monster.data[0];
+
 	$parent.find("*[id*='1A']").each(function() {
 		var attr = $(this).attr('data-attr');
 		if(root.hasOwnProperty(attr)) {
@@ -112,10 +122,6 @@ function addNewMonster(monster) {
 		$(this).attr('id', $(this).attr('id').replace('1A', uid));
 	});
 
-	$('#monsterList').niceScroll({horizrailenabled: false});
-	$('#monsterList').css('overflow','hidden');
-
-	tabChangeScrollbars();
 }
 
 function tabChangeScrollbars() {
