@@ -82,7 +82,7 @@ function setupGenButton() {
 }
 
 function addNewMonster(monster) {
-	
+
 	var uid = new Date().getTime();
 
 	var $li = $("<li/>");
@@ -103,7 +103,7 @@ function addNewMonster(monster) {
 	$parent.attr('id', uid);
 	$parent.attr('data-for', uid);
 
-	addDataToMonster($parent, monster)
+	addDataToMonster($parent, monster, uid);
 
 	$('#monsterList').niceScroll({horizrailenabled: false});
 	$('#monsterList').css('overflow','hidden');
@@ -111,15 +111,86 @@ function addNewMonster(monster) {
 	tabChangeScrollbars();
 }
 
-function addDataToMonster($parent, monster) {
+function addDataToMonster($parent, monster, uid) {
 	var root = monster.data[0];
 
+	//all of the base attributes in the data object
 	$parent.find("*[id*='1A']").each(function() {
 		var attr = $(this).attr('data-attr');
 		if(root.hasOwnProperty(attr)) {
 			$(this).text(root[attr]);
 		}
 		$(this).attr('id', $(this).attr('id').replace('1A', uid));
+	});
+
+	for(var prop in monster) {
+		if(prop!='data' && isNaN(parseInt(prop))) {
+			var $table = $("#"+uid+"_"+prop+"_table");
+			if($table.length == 0 || monster[prop].length == 0) continue;
+			appendToTable($table, root.name, prop, monster[prop]);
+		}
+	}
+
+}
+
+var defaultFunction = function() {
+	return "THIS IS AN ERROR";
+}
+
+var formatting = {
+	madvanc: 	defaultFunction,
+	malign: 	defaultFunction,
+	marmor: 	function(obj) {
+		return obj.aname + (obj.enchantment_bonus != "0" ? " +"+obj.enchantment_bonus : "");
+	},
+	mattack:  	function(obj) {
+		return obj.aname + "</td><td>("+obj.hitdc+")";
+	},
+	mdmgred: 	function(obj) {
+		return obj.name + "</td><td>" + (obj.reduction_amount=="0" ? "--" : obj.reduction_amount);
+	},
+	mfeat: 		function(obj) {
+		return obj.name;
+	},
+	mfatk: 		defaultFunction,
+	mlang: 		defaultFunction,
+	mmove:    	function(obj) {
+		return obj.movement_type + " " + obj.movement_speed+"ft";
+	},
+	morgani: 	defaultFunction,
+	mqualit:  	function(obj) {
+		return obj.name + "</td><td>" + (obj.value != "0" ? obj.value+"ft" : "");
+	},
+	mskill: 	function(obj) {
+		return obj.name + (obj.sub_skill!="" ? " ("+obj.sub_skill+")" : "") + "</td><td>" + (parseInt(obj.skill_level)<0 ? obj.skill_level : "+"+obj.skill_level);
+	},
+	mspatk: 	function(obj) {
+		return obj.name + "</td><td>" + (obj.range != "0" ? obj.range+"ft" : "") + "</td><td>" + (obj.hit_dice != "0" ? obj.hit_dice : "");
+	},
+	msubcat: 	defaultFunction,
+	mterr: 		defaultFunction,
+	mtype: 		defaultFunction,
+	mweapon: 	function(obj) {
+		return obj.extra_wsize + " " + obj.wname + " " + (obj.enchantment_bonus != "0" ? " +"+obj.enchantment_bonus : "") + "</td><td>" + obj.hitdc + "</td><td class='rightalign'>" + (obj.dmgname != null ? "+"+obj.dmgred_hd + " " + obj.dmgname : "");
+	}
+};
+
+var rollable = {
+	mattack: function(obj) {
+		return obj.hitdc;
+	}
+}
+
+function appendToTable($table, monsterName, attr, arr) {
+	$table.empty();
+	console.log(attr);
+	console.log(arr);
+	$.each(arr, function(i, obj) {
+		var $tr = $("<tr/>");
+		$tr.appendTo($table);
+		var inner = formatting[attr](obj);
+		if(inner.indexOf(monsterName) != -1) inner = inner.substring(monsterName.length);
+		$tr.append("<td>"+inner+"</td>");
 	});
 
 }
