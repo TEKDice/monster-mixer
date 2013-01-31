@@ -40,12 +40,14 @@ function addToLog(string, selector) {
 	}).addClass(selector).appendTo("#allInfo");
 
 	clearTimeout(logTimer);
-	logTimer = setTimeout($("#allInfo.tab-content").animate({scrollTop: $("#allInfo").height()}, 50), 200);
+	logTimer = setTimeout( function() {
+		$("#allInfo").parent().animate( {scrollTop: $("#allInfo").height() }, 50);
+	}, 200);
 }
 
 function rollDice(str) {
 	var result = rollExpression(str);
-	if(result == undefined) {
+	if(result === undefined) {
 		alert("The roll "+str+" is invalid.");
 		return 0;
 	}
@@ -58,7 +60,7 @@ function setupRoller() {
 		e.preventDefault();
 		var toRoll = $(this).val();
 		var roll = rollDice(toRoll);
-		if(roll == 0) return;
+		if(roll === 0) return;
 		addToLog("Custom roll: "+toRoll+" rolled "+roll+".", "customRoll");
 	});
 }
@@ -68,7 +70,7 @@ function setupRollables($parent) {
 		var $roller = $("<i/>").addClass('icon-share-alt');
 		$roller.click(function() {
 			var $rollable = $(this).parent().find('.info');
-			if($rollable.length == 0) {
+			if($rollable.length === 0) {
 				alert("Nothing to roll.");
 				return;
 			}
@@ -111,7 +113,7 @@ function setupGenButton() {
 		var filterObj = {};
 		$(".inner-filter-container").each(function() {
 			var attr = $(this).attr('data-attr');
-			filterObj[attr] = new Array();
+			filterObj[attr] = [];
 			$(this).children(".badge").each(function() {
 				filterObj[attr].push({sign: $(this).attr('data-sign'), value: $(this).attr('data-value')});
 			});
@@ -120,7 +122,7 @@ function setupGenButton() {
 		//POST filters
 		$.post('ajax.php', {action: "gen", data: JSON.stringify(filterObj)}, function(monster) {
 			monster = $.parseJSON(monster);
-			if(monster=='') {
+			if(monster==='') {
 				alert("No results");
 				return;
 			}
@@ -211,7 +213,7 @@ function addDataToMonster($parent, monster, uid) {
 
 var defaultFunction = function() {
 	return "THIS IS AN ERROR";
-}
+};
 
 var formatting = {
 	madvanc: 	defaultFunction,
@@ -268,7 +270,7 @@ var rollable = {
 		return obj.hitdc + (obj.dmgname != null ? "+"+obj.dmgred_hd : "");
 	}
 
-}
+};
 
 var mainStat = {
 	mattack: function(obj) {
@@ -280,7 +282,7 @@ var mainStat = {
 	mweapon: function(obj) {
 		return obj.wname;
 	}
-}
+};
 
 function appendToTable($table, monsterName, attr, arr) {
 	if(attr!='mmove')
@@ -361,13 +363,11 @@ function addNewFilter() {
 		if(hasDuplicate) return;
 
 		var $filterSpan = $("<span/>", {
-			class: "badge badge-info "+cleanName+"-filter",
 			text: getFilterText(newFilter)+" "
-		}).attr('data-value',newFilter.value).attr('data-sign',newFilter.sign);
+		}).attr('data-value',newFilter.value).attr('data-sign',newFilter.sign).addClass('badge').addClass('badge-info').addClass(cleanName+'-filter');
 		var $removal = $("<sup/>", {
-			class: "filter-remover",
 			text: "[x]"
-		});
+		}).addClass('filter-remover');
 
 		$filterSpan.appendTo($filterDivContainer);
 		$removal.appendTo($filterSpan);
@@ -405,7 +405,7 @@ function addNewFilter() {
 		$removal.appendTo($filterSpan);
 	}
 
-	makeSpansRemovable()
+	makeSpansRemovable();
 }
 
 function getFilterText(obj) {
