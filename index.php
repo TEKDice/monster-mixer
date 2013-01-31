@@ -164,7 +164,7 @@ function build_autocomplete() {
 								<hr />
 								<div class="minibox-content">
 									<table class="table table-striped table-condensed">
-										<tbody class="skills" id="1A_skillstable">
+										<tbody class="mskill" id="1A_mskill_table">
 											<tr class="no-data"><td>None</td></tr>
 										</tbody>
 									</table>
@@ -204,13 +204,13 @@ function build_autocomplete() {
 								<div class="minibox-content">
 									<table class="table table-striped table-condensed">
 										<caption>Weapons</caption>
-										<tbody class="weapons" id="1A_weaponstable">
+										<tbody class="mweapon" id="1A_mweapon_table">
 											<tr class="no-data"><td>None</td></tr>
 										</tbody>
 									</table>
 									<table class="table table-striped table-condensed">
 										<caption>Attacks</caption>
-										<tbody class="attacks" id="1A_attackstable">
+										<tbody class="mattack" id="1A_mattack_table">
 											<tr class="no-data"><td>None</td></tr>
 										</tbody>
 									</table>
@@ -243,7 +243,7 @@ function build_autocomplete() {
 								<hr />
 								<div class="minibox-content">
 									<table class="table table-striped table-condensed">
-										<tbody>
+										<tbody class="mmove" id="1A_mmove_table">
 											<tr>
 												<td>Base Speed</td><td data-attr="base_spd" id="1A_base_spd"></td>
 											</tr>
@@ -256,7 +256,7 @@ function build_autocomplete() {
 								<hr />
 								<div class="minibox-content">
 									<table class="table table-striped table-condensed">
-										<tbody class="qualities" id="1A_qualitiestable">
+										<tbody class="mqualit" id="1A_mqualit_table">
 											<tr class="no-data"><td>None</td></tr>
 										</tbody>
 									</table>
@@ -281,13 +281,13 @@ function build_autocomplete() {
 									</table>
 									<table class="table table-striped table-condensed">
 										<caption>Armor</caption>
-										<tbody class="armor" id="1A_armortable">
+										<tbody class="marmor" id="1A_marmor_table">
 											<tr class="no-data"><td>None</td></tr>
 										</tbody>
 									</table>
 									<table class="table table-striped table-condensed">
 										<caption>Damage Reductions</caption>
-										<tbody class="damagereductions" id="1A_damagereductionstable">
+										<tbody class="mdmgred" id="1A_mdmgred_table">
 											<tr class="no-data"><td>None</td></tr>
 										</tbody>
 									</table>
@@ -298,18 +298,18 @@ function build_autocomplete() {
 								<hr />
 								<div class="minibox-content">
 									<table class="table table-striped table-condensed">
-										<tbody class="feats" id="1A_featstable">
+										<tbody class="mfeat" id="1A_mfeat_table">
 											<tr class="no-data"><td>None</td></tr>
 										</tbody>
 									</table>
 								</div> 
 							</li>
-							<li class="draggable specials">
+							<li class="draggable rollable specials">
 								<span class="title">Special Attacks</span>
 								<hr />
 								<div class="minibox-content">
 									<table class="table table-striped table-condensed">
-										<tbody class="specialattacks" id="1A_specialattackstable">
+										<tbody class="mspatk" id="1A_mspatk_table">
 											<tr class="no-data"><td>None</td></tr>
 										</tbody>
 									</table>
