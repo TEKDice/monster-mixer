@@ -164,6 +164,17 @@ function addNewMonster(monster) {
 	rollableRowHighlighting($parent);
 
 	setupRollables($parent);
+
+	$("body").on('click', '.modify-hp', function() {
+		var uid = $(this).attr('data-uid');
+		var curHp = $("#"+uid+"_hp").contents(':not(i,div)').text();
+		var modHp = $("#"+uid+"_hp_mod").val();
+		//put that stupid hp value in a span so it can be changed as necessary.
+	});
+
+	$("body").on('click', '.reroll-hp', function() {
+		alert("not implemented");
+	});
 }
 
 function rollableRowHighlighting($parent) {
@@ -186,9 +197,13 @@ function addDataToMonster($parent, monster, uid) {
 		var attr = $(this).attr('data-attr');
 		if(root.hasOwnProperty(attr)) {
 			$(this).text(root[attr] + (attr=='base_spd' ? 'ft' : ''));
+			$(this).attr('data-base-value',$(this).text());
+			determineRoll($(this));
 		}
 		$(this).attr('id', $(this).attr('id').replace('1A', uid));
 	});
+
+	setUpHp($parent, uid);
 
 	$parent.find(".stats tr").each(function() {
 		var num = get_bonus($(this).children("td").eq(1).text());
@@ -209,6 +224,29 @@ function addDataToMonster($parent, monster, uid) {
 			appendToTable($table, root.name, prop, monster[prop]);
 		}
 	}
+}
+
+function determineRoll($node) {
+	if($node.hasClass('roll_me')) {
+		var hp = rollExpression($node.attr('data-base-value'));
+		$node.attr('data-initial-roll', hp);
+		$node.text(hp);
+	}
+}
+
+function setUpHp($parent, uid) {
+	$hpNode = $parent.find("span[data-attr='hit_dice']");
+	$hpNode.append('<i id="health_'+uid+'" class="icon-heart"></i>');
+	var popover = $("#dummyModifiable").html();
+	popover = popover.split("1A").join(uid);
+	$("#health_"+uid).popover({
+		html: true,
+		placement: 'bottom',
+		content: popover,
+		title: "Modify HP"
+	});
+
+
 }
 
 var defaultFunction = function() {
