@@ -16,13 +16,13 @@ $(function() {
 
 	setupGenButton();
 
-	setupRollables();
-
 	$("#filters").find('option[value="Challenge Rating"]').attr('selected','selected');
 
 	$("#hasScript").show();
 
 	setupGrids();
+
+	setupRoller();
 
 });
 
@@ -32,8 +32,57 @@ var extendPopupSize	=1200;
 var height = 360;
 var heightAdjust = 140;
 
-function setupRollables() {
-	$(".rollable").append('<i class="icon-share-alt" />');
+var logTimer;
+
+function addToLog(string, selector) {
+	$("<p/>", {
+		text: string
+	}).addClass(selector).appendTo("#allInfo");
+
+	clearTimeout(logTimer);
+	logTimer = setTimeout($("#allInfo.tab-content").animate({scrollTop: $("#allInfo").height()}, 50), 200);
+}
+
+function rollDice(str) {
+	var result = rollExpression(str);
+	if(result == undefined) {
+		alert("The roll "+str+" is invalid.");
+		return 0;
+	}
+	return result;
+}
+
+function setupRoller() {
+	$("#roll").keypress(function(e) {
+		if(e.which != 13) return;
+		e.preventDefault();
+		var toRoll = $(this).val();
+		var roll = rollDice(toRoll);
+		if(roll == 0) return;
+		addToLog("Custom roll: "+toRoll+" rolled "+roll+".", "customRoll");
+	});
+}
+
+function setupRollables($parent) {
+	$parent.find(".rollable").each(function() {
+		var $roller = $("<i/>").addClass('icon-share-alt');
+		$roller.click(function() {
+			var $rollable = $(this).parent().find('.info');
+			if($rollable.length == 0) {
+				alert("Nothing to roll.");
+				return;
+			}
+			var expr = $rollable.attr('data-roll');
+			var exprFor = $rollable.attr('data-roll-for');
+			var roll = rollDice(expr);
+			var idFor = $(this).closest('div[data-for]').attr('id');
+			var nameFor = $("a[href='#"+idFor+"']").text();
+
+			addToLog(nameFor + " rolled \""+exprFor+"\" ("+expr+") for "+roll+".");
+		});
+		$(this).append($roller);
+	});
+
 }
 
 function setupGrids() {
@@ -111,6 +160,8 @@ function addNewMonster(monster) {
 	tabChangeScrollbars();
 
 	rollableRowHighlighting($parent);
+
+	setupRollables($parent);
 }
 
 function rollableRowHighlighting($parent) {
@@ -140,11 +191,13 @@ function addDataToMonster($parent, monster, uid) {
 	$parent.find(".stats tr").each(function() {
 		var num = get_bonus($(this).children("td").eq(1).text());
 		$(this).attr('data-roll', '1d20'+(num<0 ? num : "+"+num));
+		$(this).attr('data-roll-for', $(this).children("td").eq(0).text());
 	});
 
 	$parent.find(".cstats tr").each(function() {
 		var num = parseInt($(this).children("td").eq(1).text());
 		$(this).attr('data-roll', '1d20'+(num<0 ? num : "+"+num));
+		$(this).attr('data-roll-for', $(this).children("td").eq(0).text());
 	});
 
 	for(var prop in monster) {
@@ -209,7 +262,7 @@ var rollable = {
 		return obj.hitdc;
 	},
 	mskill: function(obj) {
-		return "1d20+"+(obj.skill_level<0 ? obj.skill_level : "+"+obj.skill_level);
+		return "1d20"+(obj.skill_level<0 ? obj.skill_level : "+"+obj.skill_level);
 	},
 	mweapon: function(obj) {
 		return obj.hitdc + (obj.dmgname != null ? "+"+obj.dmgred_hd : "");
@@ -217,13 +270,27 @@ var rollable = {
 
 }
 
+var mainStat = {
+	mattack: function(obj) {
+		return obj.aname;
+	},
+	mskill: function(obj) {
+		return obj.name;
+	},
+	mweapon: function(obj) {
+		return obj.wname;
+	}
+}
+
 function appendToTable($table, monsterName, attr, arr) {
 	if(attr!='mmove')
 		$table.empty();
 	$.each(arr, function(i, obj) {
 		var $tr = $("<tr/>");
-		if(rollable.hasOwnProperty(attr)) 
+		if(rollable.hasOwnProperty(attr))  {
 			$tr.attr('data-roll', rollable[attr](obj));
+			$tr.attr('data-roll-for', mainStat[attr](obj));
+		}
 		$tr.appendTo($table);
 		var inner = formatting[attr](obj);
 		if(inner.indexOf(monsterName) != -1) inner = inner.substring(monsterName.length);
@@ -465,6 +532,8 @@ function resizeElements() {
 	$("#log").css('height', height-50-heightAdjust+'px');
 	$("#monsterListCont").css('height',height-50-heightAdjust+'px');
 	$("#monsterList").css('height',height-50-heightAdjust+'px');
+
+	$(".tab-content").css('height', $("#log").height()-38);
 
 	resizeGrids();
 }
