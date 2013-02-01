@@ -173,7 +173,12 @@ function addNewMonster(monster) {
 	});
 
 	$("body").on('click', '.reroll-hp', function() {
-		alert("not implemented");
+		var uid = $(this).attr('data-uid');
+		var roll = $(this).parent().attr('data-base-value');
+		var $rootNode = $(this).closest("span[data-attr='hit_dice']");
+		var newHp = rollExpression($rootNode.attr('data-base-value'));
+		$("#"+uid+"_hp").children(".hp_val").text(newHp);
+		$rootNode.attr('data-initial-roll', newHp);
 	});
 }
 
