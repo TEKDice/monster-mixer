@@ -341,6 +341,16 @@ function build_autocomplete() {
 				</div>
 			</div>
 
+			<div id="dummyModifiable" style="display: none;">
+				<div id="1A_popover">
+					<div class="input-append">
+						<input type="number" class="input-small" id="1A_hp_mod" placeholder="####" />
+						<button class="btn btn-primary modify-hp" data-uid='1A' id="1A_hp_button" type="button">Add</button>
+					</div>
+					<button class="btn btn-warning reroll-hp" data-uid='1A' id="1A_reroll_button" type="button">Reroll HP</button>
+				</div>
+			</div>
+
 			<div id="popup">
 				<div id="popupLeft">
 					<div id="simple">
