@@ -167,9 +167,9 @@ function addNewMonster(monster) {
 
 	$("body").on('click', '.modify-hp', function() {
 		var uid = $(this).attr('data-uid');
-		var curHp = $("#"+uid+"_hp").contents(':not(i,div)').text();
-		var modHp = $("#"+uid+"_hp_mod").val();
-		//put that stupid hp value in a span so it can be changed as necessary.
+		var curHp = parseInt($("#"+uid+"_hp").children(".hp_val").text());
+		var modHp = parseInt($("#"+uid+"_hp_mod").val());
+		$("#"+uid+"_hp").children(".hp_val").text(eval(curHp+modHp));
 	});
 
 	$("body").on('click', '.reroll-hp', function() {
@@ -230,12 +230,14 @@ function determineRoll($node) {
 	if($node.hasClass('roll_me')) {
 		var hp = rollExpression($node.attr('data-base-value'));
 		$node.attr('data-initial-roll', hp);
-		$node.text(hp);
 	}
 }
 
 function setUpHp($parent, uid) {
 	$hpNode = $parent.find("span[data-attr='hit_dice']");
+	var hp = $hpNode.attr('data-initial-roll');
+	$hpNode.text('');
+	$hpNode.append("<span class='hp_val'>"+hp+'</span>');
 	$hpNode.append('<i id="health_'+uid+'" class="icon-heart"></i>');
 	var popover = $("#dummyModifiable").html();
 	popover = popover.split("1A").join(uid);
@@ -245,8 +247,6 @@ function setUpHp($parent, uid) {
 		content: popover,
 		title: "Modify HP"
 	});
-
-
 }
 
 var defaultFunction = function() {
