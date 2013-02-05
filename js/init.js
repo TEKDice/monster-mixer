@@ -167,9 +167,8 @@ function addNewMonster(monster) {
 
 	$("body").on('click', '.modify-hp', function() {
 		var uid = $(this).attr('data-uid');
-		var curHp = parseInt($("#"+uid+"_hp").children(".hp_val").text());
 		var modHp = parseInt($("#"+uid+"_hp_mod").val());
-		$("#"+uid+"_hp").children(".hp_val").text(eval(curHp+modHp));
+		modifyHp(uid, modHp);
 	});
 
 	$("body").on('click', '.reroll-hp', function() {
@@ -335,6 +334,9 @@ function appendToTable($table, monsterName, attr, arr) {
 		if(rollable.hasOwnProperty(attr))  {
 			$tr.attr('data-roll', rollable[attr](obj));
 			$tr.attr('data-roll-for', mainStat[attr](obj));
+			if(attr == 'mweapon') {
+				$tr.attr('data-range',obj.is_ranged);
+			}
 		}
 		$tr.appendTo($table);
 		var inner = formatting[attr](obj);
