@@ -13,8 +13,11 @@ function hasQuality(id, quality) {
 function hasNeedle(id, table, needle, returnVal) {
 	var $table = $("#"+id+"_"+table+"_table");
 
+	console.log("searching "+needle + " in "+"#"+id+"_"+table+"_table");
+
 	var hasNeedle = false;
 	$table.find("td a").each(function() {
+		console.log($(this).text());
 		if($(this).text().indexOf(needle) != -1) {
 			if(returnVal != null) {
 				hasNeedle = $(this).closest("tr").attr('data-'+returnVal);
@@ -49,4 +52,27 @@ function rollHp(uid, $rootNode, newHp) {
 	$("#"+uid+"_hp").children(".hp_val").text(newHp);
 	$rootNode.attr('data-initial-roll', newHp);
 
+}
+
+function rollInit($node) {
+
+	var title = '';
+
+	var roll = parseInt(rollExpression('1d20'));
+	title += "1d20: "+roll+"<br>";
+
+	var base = parseInt($node.attr('data-base-value'));
+	title += "Modifier: "+base+"<br>";
+
+	var num=0;
+
+	if(num = hasFeat($node.attr('data-uid'), "Improved Initiative")) {
+		num = 4*parseInt(num);
+		title += "Improved Initiative: "+num+"<br>";
+	}
+
+	$node.attr('data-initial-roll', roll+base);
+	$node.text(base+roll+num);
+	$node.attr('rel','tooltip').attr('title',title);
+	$node.tooltip({html: true, placement: 'bottom'});
 }
