@@ -94,7 +94,14 @@ function build_autocomplete() {
 						</div>
 
 						<div id="encounterStats">
-							Encounter Statistics (CR, Avg. Level, Avg. Dmg. Dealt, Avg. Creature Dmg. Taken, Total Damage Dealt/Taken)
+							<div class="btn-group">
+								<button class="btn">Encounter CR</button>
+								<button class="btn">Average Level</button>
+								<button class="btn">Average Damage Dealt</button>
+								<button class="btn">Average Damage Taken</button>
+								<button class="btn">Total Damage Dealt</button>
+								<button class="btn">Total Damage Taken</button>
+							</div>
 						</div>
 					</div>
 

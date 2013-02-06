@@ -13,11 +13,8 @@ function hasQuality(id, quality) {
 function hasNeedle(id, table, needle, returnVal) {
 	var $table = $("#"+id+"_"+table+"_table");
 
-	console.log("searching "+needle + " in "+"#"+id+"_"+table+"_table");
-
 	var hasNeedle = false;
 	$table.find("td a").each(function() {
-		console.log($(this).text());
 		if($(this).text().indexOf(needle) != -1) {
 			if(returnVal != null) {
 				hasNeedle = $(this).closest("tr").attr('data-'+returnVal);
