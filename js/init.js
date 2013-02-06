@@ -55,13 +55,21 @@ function rollDice(str) {
 }
 
 function setupRoller() {
-	$("#roll").keypress(function(e) {
+	$("#roll").keyup(function(e) {
+		if(e.keyCode == 27) {
+			$("#roll").val('');
+		}
 		if(e.which != 13) return;
 		e.preventDefault();
 		var toRoll = $(this).val();
 		var roll = rollDice(toRoll);
 		if(roll === 0) return;
 		addToLog("Custom roll: "+toRoll+" rolled "+roll+".", "customRoll");
+	});
+
+	$("#dice button").click(function() {
+		var val = $("#roll").val() == '' ? "1"+$(this).text() : "+1"+$(this).text();
+		$("#roll").val($("#roll").val() + val);
 	});
 }
 
@@ -173,16 +181,18 @@ function addNewMonster(monster) {
 
 	$("body").on('click', '.reroll-hp', function() {
 		var uid = $(this).attr('data-uid');
-		var roll = $(this).parent().attr('data-base-value');
+		//var roll = $(this).parent().attr('data-base-value');
 		var $rootNode = $(this).closest("span[data-attr='hit_dice']");
 		var newHp = rollExpression($rootNode.attr('data-base-value'));
-		$("#"+uid+"_hp").children(".hp_val").text(newHp);
-		$rootNode.attr('data-initial-roll', newHp);
+		rollHp(uid, $rootNode, newHp);
 	});
+
+
+
 }
 
 function rollableRowHighlighting($parent) {
-	$parent.find("tr[data-roll]").each(function() {
+	$parent.find("tr[data-roll]:not(.unrollable)").each(function() {
 		$(this).click(function() {
 			$(this).siblings(".info").removeClass('info');
 			if($(this).hasClass('info'))
@@ -194,23 +204,25 @@ function rollableRowHighlighting($parent) {
 }
 
 function addDataToMonster($parent, monster, uid) {
+
 	var root = monster.data[0];
 
 	//all of the base attributes in the data object
 	$parent.find("*[id*='1A']").each(function() {
 		var attr = $(this).attr('data-attr');
 		if(root.hasOwnProperty(attr)) {
-			$(this).text(root[attr] + (attr=='base_spd' ? 'ft' : ''));
+			var val = root[attr] == '0' && attr!='initiative' ? '--' : root[attr] + (attr=='base_spd' ? 'ft' : '');
+			$(this).text(val);
 			$(this).attr('data-base-value',$(this).text());
 			determineRoll($(this));
 		}
 		$(this).attr('id', $(this).attr('id').replace('1A', uid));
 	});
 
-	setUpHp($parent, uid);
-
 	$parent.find(".stats tr").each(function() {
-		var num = get_bonus($(this).children("td").eq(1).text());
+		var stat = $(this).children("td").eq(1).text();
+		var num = get_bonus(stat);
+		$(this).children("td").eq(1).text(stat + (stat != '--' ? " ("+(num < 0 ? num : "+"+num) + ")" : ''));
 		$(this).attr('data-roll', '1d20'+(num<0 ? num : "+"+num));
 		$(this).attr('data-roll-for', $(this).children("td").eq(0).text());
 	});
@@ -228,6 +240,8 @@ function addDataToMonster($parent, monster, uid) {
 			appendToTable($table, root.name, prop, monster[prop]);
 		}
 	}
+
+	setUpHp($parent, uid);
 }
 
 function determineRoll($node) {
@@ -241,7 +255,8 @@ function setUpHp($parent, uid) {
 	$hpNode = $parent.find("span[data-attr='hit_dice']");
 	var hp = $hpNode.attr('data-initial-roll');
 	$hpNode.text('');
-	$hpNode.append("<span class='hp_val'>"+hp+'</span>');
+	$hpNode.append("<span class='hp_val'></span>");
+	rollHp(uid, $hpNode, hp);
 	$hpNode.append('<i id="health_'+uid+'" class="icon-heart"></i>');
 	var popover = $("#dummyModifiable").html();
 	popover = popover.split("1A").join(uid);
@@ -264,13 +279,13 @@ var formatting = {
 		return obj.aname + (obj.enchantment_bonus != "0" ? " +"+obj.enchantment_bonus : "");
 	},
 	mattack:  	function(obj) {
-		return obj.aname + "</td><td>"+obj.hitdc;
+		return obj.aname + "</td><td>"+obj.hitdc+"</td><td class='rightalign'>" + (obj.dmgname != null ? "+"+obj.dmgred_hd + " " + obj.dmgname : "");
 	},
 	mdmgred: 	function(obj) {
-		return obj.name + "</td><td>" + (obj.reduction_amount=="0" ? "--" : obj.reduction_amount);
+		return obj.name + "</td><td>" + (obj.reduction_amount=="0" ? "Immune" : obj.reduction_amount);
 	},
 	mfeat: 		function(obj) {
-		return obj.name;
+		return obj.name + (obj.feat_level > 1 ? " (x"+obj.feat_level+")" : "");
 	},
 	mfatk: 		defaultFunction,
 	mlang: 		defaultFunction,
@@ -279,7 +294,7 @@ var formatting = {
 	},
 	morgani: 	defaultFunction,
 	mqualit:  	function(obj) {
-		return obj.name + "</td><td>" + (obj.value != "0" ? obj.value+"ft" : "");
+		return obj.name + "</td><td>" + (obj.value != "0" ? obj.value+ (obj.name!="Spell Resistance" && obj.name!="Regeneration" && obj.name!="Turn Resistance" ? "ft" : "") : "");
 	},
 	mskill: 	function(obj) {
 		return obj.name + (obj.sub_skill!="" ? " ("+obj.sub_skill+")" : "") + "</td><td>" + (parseInt(obj.skill_level)<0 ? obj.skill_level : "+"+obj.skill_level);
@@ -297,13 +312,13 @@ var formatting = {
 
 function get_bonus(num) {
 	num=parseInt(num);
-	if(num == 0) return 0;
+	if(num == 0 || isNaN(num)) return 0;
 	return Math.floor(num/2)-5;
 }
 
 var rollable = {
 	mattack: function(obj) {
-		return obj.hitdc;
+		return obj.hitdc + (obj.dmgname != null ? "+"+obj.dmgred_hd : "");
 	},
 	mskill: function(obj) {
 		return "1d20"+(obj.skill_level<0 ? obj.skill_level : "+"+obj.skill_level);
@@ -334,9 +349,14 @@ function appendToTable($table, monsterName, attr, arr) {
 		if(rollable.hasOwnProperty(attr))  {
 			$tr.attr('data-roll', rollable[attr](obj));
 			$tr.attr('data-roll-for', mainStat[attr](obj));
-			if(attr == 'mweapon') {
+			if(attr == 'mweapon' || attr == 'mattack') {
 				$tr.attr('data-range',obj.is_ranged);
+				$tr.attr('data-min-crit');
+				$tr.attr('data-crit-mult');
 			}
+		}
+		if(attr == 'mfeat') {
+			$tr.attr('data-times-taken',obj.feat_level);
 		}
 		$tr.appendTo($table);
 		var inner = formatting[attr](obj);
@@ -574,7 +594,7 @@ function timedResizeElements() {
 function resizeElements() {
 	height = $(window).height();
 
-	$("#log").css('height', height-50-heightAdjust+'px');
+	$("#log").css('height', height-80-heightAdjust+'px');
 	$("#monsterListCont").css('height',height-50-heightAdjust+'px');
 	$("#monsterList").css('height',height-50-heightAdjust+'px');
 

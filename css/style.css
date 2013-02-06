@@ -257,7 +257,15 @@ i, #showFilters, #medianArrowContainer {
 	height: 310px;
 }
 
-#encounterStats, #customRoller {
+#customRoller {
+	height: 60px;
+}
+
+#dice {
+	text-align: center;
+}
+
+#encounterStats {
 	height: 30px;
 }
 

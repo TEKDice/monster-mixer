@@ -65,6 +65,7 @@ function build_autocomplete() {
 
 		<script src="js/init.js"></script>
 		<script src="js/roll.js"></script>
+		<script src="js/monster.js"></script>
 
 		<script type="text/javascript">
 			var filterData = <?=json_encode($filterNames);?>;
@@ -102,6 +103,15 @@ function build_autocomplete() {
 							<div class="control-group" id="rollerContainer">
 								<div class="controls">
 									<div class="input-append">
+										<div id="dice">
+											<button class="btn btn-link">d4</button>
+											<button class="btn btn-link">d6</button>
+											<button class="btn btn-link">d8</button>
+											<button class="btn btn-link">d10</button>
+											<button class="btn btn-link">d12</button>
+											<button class="btn btn-link">d20</button>
+											<button class="btn btn-link">d100</button>
+										</div>
 										<input type="text" class="input-block-level" id="roll" placeholder="Custom roll..." />
 									</div>
 								</div>
@@ -202,13 +212,13 @@ function build_autocomplete() {
 												<td>Will</td><td data-attr="will" id="1A_will"></td>
 											</tr>
 											<tr>
-												<td>CMD</td><td data-attr="cmd" id="1A_cmd"></td>
+												<td>Grapple</td><td data-attr="grapple" id="1A_grapple"></td>
 											</tr>
 											<tr>
 												<td>CMB</td><td data-attr="cmb" id="1A_cmb"></td>
 											</tr>
-											<tr>
-												<td>Grapple</td><td data-attr="grapple" id="1A_grapple"></td>
+											<tr class="unrollable">
+												<td>CMD</td><td data-attr="cmd" id="1A_cmd"></td>
 											</tr>
 										</tbody>
 									</table>
@@ -237,10 +247,16 @@ function build_autocomplete() {
 								<hr />
 								<div class="minibox-content">
 									<table class="table table-striped table-condensed">
-										<tbody>
+										<caption>Speeds</caption>
+										<tbody class="mmove" id="1A_mmove_table">
 											<tr>
-												<td>Level Adjust</td><td data-attr="level_adjustment" id="1A_level_adjustment"></td>
+												<td>Base Speed</td><td data-attr="base_spd" id="1A_base_spd"></td>
 											</tr>
+										</tbody>
+									</table>
+									<table class="table table-striped table-condensed">
+										<caption>Misc</caption>
+										<tbody>
 											<tr>
 												<td>Reach</td><td data-attr="reach" id="1A_reach"></td>
 											</tr>
@@ -255,16 +271,9 @@ function build_autocomplete() {
 								</div>
 							</li>
 							<li class="draggable speeds">
-								<span class="title">Speeds</span>
+								<span class="title">Combat Maneuvers</span>
 								<hr />
 								<div class="minibox-content">
-									<table class="table table-striped table-condensed">
-										<tbody class="mmove" id="1A_mmove_table">
-											<tr>
-												<td>Base Speed</td><td data-attr="base_spd" id="1A_base_spd"></td>
-											</tr>
-										</tbody>
-									</table>
 								</div>
 							</li>
 							<li class="draggable qualities">
