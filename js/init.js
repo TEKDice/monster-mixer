@@ -210,13 +210,14 @@ function addDataToMonster($parent, monster, uid) {
 	//all of the base attributes in the data object
 	$parent.find("*[id*='1A']").each(function() {
 		var attr = $(this).attr('data-attr');
+		$(this).attr('id', $(this).attr('id').replace('1A', uid));
+		$(this).attr('data-uid', uid);
 		if(root.hasOwnProperty(attr)) {
 			var val = root[attr] == '0' && attr!='initiative' ? '--' : root[attr] + (attr=='base_spd' ? 'ft' : '');
 			$(this).text(val);
 			$(this).attr('data-base-value',$(this).text());
 			determineRoll($(this));
 		}
-		$(this).attr('id', $(this).attr('id').replace('1A', uid));
 	});
 
 	$parent.find(".stats tr").each(function() {
@@ -242,6 +243,7 @@ function addDataToMonster($parent, monster, uid) {
 	}
 
 	setUpHp($parent, uid);
+	rollInit($("#"+uid+"_init"));
 }
 
 function determineRoll($node) {
