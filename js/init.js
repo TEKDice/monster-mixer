@@ -499,6 +499,7 @@ function makeSpansRemovable() {
 function initializeAutocomplete() {
 	$("#autocompleteName").autocomplete( {
 		source: autocompleteList,
+		minLength: 2,
 		select: function(event, ui) {
 			$("#autocompleteName").val(ui.item.label);
 			addNewFilter();
