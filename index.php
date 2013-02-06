@@ -6,7 +6,7 @@ include('../include/database.php');
 
 global $conn;
 	
-$filterNamesArr = run_query_arr($conn, "select name,is_numeric,sql_name,join_table,join_table_col,link_table from GeneratorFilters");
+$filterNamesArr = run_query_arr($conn, "select name,is_numeric,sql_name,join_table,join_table_col,link_table from GeneratorFilters order by name");
 $filterNames = array();
 
 $json_obj = new stdClass;
@@ -143,7 +143,7 @@ function build_autocomplete() {
 			<div id="dummyData" style="display: none;">
 				<div class="tab-pane" data-for="none">
 					<div class="header lead" style="margin-bottom: 7px">
-						<span class="pull-left">Initiative: <span data-attr="initiative" class="roll_add_me" id="1A_init">20</span></span>
+						<span class="pull-left">Initiative: <span data-attr="initiative" class="roll_add_me" data-uid="1A" id="1A_init">20</span></span>
 						<span class="pull-right">CR: <span data-attr="cr" id="1A_cr">20</span></span>
 						<center>
 							<span class="left"><i class="icon-backward"></i></span>
