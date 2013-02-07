@@ -62,7 +62,13 @@ function build_autocomplete() {
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
 		<script src="js/jquery.boxshadow.min.js"></script>
 		<script src="js/jquery.nicescroll.min.js"></script>
+		<script src="js/bootbox.min.js"></script>
 
+		<script src="js/log.js"></script>
+		<script src="js/init.ui.js"></script>
+		<script src="js/init.monster.js"></script>
+		<script src="js/init.globals.js"></script>
+		<script src="js/init.filters.js"></script>
 		<script src="js/init.js"></script>
 		<script src="js/roll.js"></script>
 		<script src="js/monster.js"></script>
