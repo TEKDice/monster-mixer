@@ -134,7 +134,23 @@ function appendToTable($table, monsterName, attr, arr) {
 		var text = $(this).text();
 		$(this).text('');
 		$(this).prepend('<i class="icon-bookmark"></i><a href="#" rel="tooltip" title="'+$(this).attr('data-desc')+'">'+text+"</a>");
-		$(this).find('a').tooltip({html: true, placement: 'bottom'});
+		$(this).find('a').tooltip({html: true, placement: 'bottom', trigger: 'manual'});
+
+		$(this).find('a').click(function() {
+
+			var $me = $(this);
+			var doShow = true;
+
+			$(".in").each(function() {
+				if($(this).siblings("a").is($me)) {
+					doShow = false;
+				}
+				$(this).siblings("a").tooltip('hide');
+
+			});
+			if(doShow)
+				$(this).tooltip('show');
+		});
 	});
 
 }

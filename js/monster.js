@@ -34,6 +34,8 @@ function modifyHp(uid, mod) {
 
 function rollHp(uid, $rootNode, newHp) {
 
+	var title = '';
+
 	newHp = parseInt(newHp);
 
 	var num;

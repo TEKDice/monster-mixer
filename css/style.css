@@ -279,7 +279,8 @@ i, #showFilters, #medianArrowContainer {
 
 .tab-content {
 	height: 100%;
-	overflow: hidden;
+	overflow: visible!important;
+	overflow-y: hidden;
 }
 
 #hasScript {
