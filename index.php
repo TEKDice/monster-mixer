@@ -342,7 +342,7 @@ function build_autocomplete() {
 									</table>
 								</div> 
 							</li>
-							<li class="draggable rollable specials">
+							<li class="draggable specials">
 								<span class="title">Special Attacks</span>
 								<hr />
 								<div class="minibox-content">

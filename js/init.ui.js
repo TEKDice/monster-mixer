@@ -110,6 +110,11 @@ function tabChangeScrollbars() {
 	$('a[data-toggle="tab"]').on('shown', function (e) {
 		$(".minibox-content").niceScroll();
 		$(".minibox-content").css('overflow','hidden');
+
+		//hide the popup if it's visible
+		if($("#popup").is(":visible")) {
+			_togglePopup();
+		}
 	});
 }
 
@@ -131,40 +136,44 @@ function makeSpansRemovable() {
 
 function initializePopupToggler() {
 	//toggle the sizes between the two popup possibilities
-	$("#medianArrowContainer").click(function() {
-		if($("#extra").is(":visible")) {
-			$("#popup").animate({width: defaultPopupSize});
+	$("#medianArrowContainer").click(_togglePopupInsides);
+}
+
+function _togglePopupInsides() {
+	if($("#extra").is(":visible")) {
+		$("#popup").animate({width: defaultPopupSize});
+		$("#popupLeft").animate({width: defaultPopupSize});
+		$("#extra").animate({width: 0}, function() {
+			$("#extra").css('display', 'none');
+			$("#extraToggle").attr('class', 'icon-arrow-right');	
+			$("#medianArrowContainer").attr('title', 'More options');	
+		});
+	} else {
+		$("#popup").animate({width: extendPopupSize}, function() {
 			$("#popupLeft").animate({width: defaultPopupSize});
-			$("#extra").animate({width: 0}, function() {
-				$("#extra").css('display', 'none');
-				$("#extraToggle").attr('class', 'icon-arrow-right');	
-				$("#medianArrowContainer").attr('title', 'More options');	
-			});
-		} else {
-			$("#popup").animate({width: extendPopupSize}, function() {
-				$("#popupLeft").animate({width: defaultPopupSize});
-				$("#extra").css('display', 'block');
-				$("#extra").animate({width: extendPopupSize-defaultPopupSize});
-				$("#extraToggle").attr('class', 'icon-arrow-left');	
-				$("#medianArrowContainer").attr('title', 'Less options');	
-			});
-		}
-	});
+			$("#extra").css('display', 'block');
+			$("#extra").animate({width: extendPopupSize-defaultPopupSize});
+			$("#extraToggle").attr('class', 'icon-arrow-left');	
+			$("#medianArrowContainer").attr('title', 'Less options');	
+		});
+	}
 }
 
 function initializeArrowToggler() {
 	//change the arrow from up to down
-	$("#showFilters").click(function() {
-		$("#popup").slideToggle(400, function() {
-			if($(this).is(":visible")) {
-				$("#filterIcon").attr('class', 'icon-arrow-up');	
-				$("#popup").attr('display','inline-block');
-				$("#filterContainer").niceScroll({zindex: 14});
-				$("#filterContainer").css('overflow','hidden');
-			} else {
-				$("#filterIcon").attr('class', 'icon-arrow-down');
-			}
-		});
+	$("#showFilters").click(_togglePopup);
+}
+
+function _togglePopup() {
+	$("#popup").slideToggle(400, function() {
+		if($(this).is(":visible")) {
+			$("#filterIcon").attr('class', 'icon-arrow-up');	
+			$("#popup").attr('display','inline-block');
+			$("#filterContainer").niceScroll({zindex: 14});
+			$("#filterContainer").css('overflow','hidden');
+		} else {
+			$("#filterIcon").attr('class', 'icon-arrow-down');
+		}
 	});
 }
 

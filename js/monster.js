@@ -30,26 +30,60 @@ function hasNeedle(id, table, needle, returnVal) {
 function modifyHp(uid, mod) {
 	var curHp = parseInt($("#"+uid+"_hp").children(".hp_val").text());
 	$("#"+uid+"_hp").children(".hp_val").text(eval(curHp+mod));
+
+	var maxHp = parseInt($("#"+uid+"_hp").attr('data-initial-roll'));
+
+	var text = $("#"+uid+"_hp").children(".hp_val").attr('data-original-title');
+	if(text.indexOf("Modification")!=-1) {
+		var newText = '';
+		text = text.split("<br>");
+		$.each(text, function(i, e) {
+			if(e.indexOf("Modification")!=-1) {
+				if((curHp+mod) == maxHp) return;
+				var newMod = parseInt(e.split(" ")[1]);
+				newText += "Modification: "+(mod+newMod);
+			} else {
+				newText += e;
+			}
+			if(i!=text.length-1)newText+="<br>";
+		});
+		$("#"+uid+"_hp").children(".hp_val").attr('data-original-title', newText);
+	} else {
+		$("#"+uid+"_hp").children(".hp_val").attr('data-original-title', text+"<br>Modification: "+(maxHp-curHp+mod));
+	}
 }
 
 function rollHp(uid, $rootNode, newHp) {
 
 	var title = '';
 
+	title += $rootNode.attr('data-base-value')+": "+newHp+"<br>";
 	newHp = parseInt(newHp);
 
 	var num;
 	if(num = hasFeat(uid, "Toughness")) {
-		newHp += 3*parseInt(num);
+		num = 3*parseInt(num);
+		newHp += num;
+		title += "Toughness: "+num+"<br>";
 		num = null;
 	}
 
 	var con = get_bonus(parseInt($("#"+uid+"_con").text()));
-
 	newHp += con;
+	if(con > 0)
+		title += "CON Bonus: "+con;
 
 	$("#"+uid+"_hp").children(".hp_val").text(newHp);
 	$rootNode.attr('data-initial-roll', newHp);
+
+	var attr = $("#"+uid+"_hp").children(".hp_val").attr('data-original-title');
+	if (typeof attr !== 'undefined' && attr !== false) {
+		$("#"+uid+"_hp").children(".hp_val").attr('data-original-title',title);
+	} else {
+		$("#"+uid+"_hp").children(".hp_val").attr('rel','tooltip').attr('title',title);
+	}
+
+	$("#"+uid+"_hp").children(".hp_val").tooltip({html: true, placement: 'bottom'});
 
 }
 
