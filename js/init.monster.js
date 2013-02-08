@@ -88,10 +88,12 @@ function addDataToMonster($parent, monster, uid) {
 
 	var nameTooltip = root.size + " " + root.category;
 	if(monster.msubcat.length > 0) {
-		console.log(monster.msubcat);
+		var subcats = [];
 		$.each(monster.msubcat, function(i, e) {
-
+			subcats.push(e.subcategory);
 		});
+		if(subcats.length > 0)
+			nameTooltip += " ("+subcats.join(', ')+")";
 	}
 	$("#"+uid+"_name").attr('title', nameTooltip).tooltip();
 
