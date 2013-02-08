@@ -29,7 +29,7 @@ foreach($filterNamesArr as $name=>$filter) {
 
 function build_autocomplete() {
 	global $conn;
-	$query = "select id,name from Monster where (hidden is null or hidden = 0)";
+	$query = "select id,name from Monster where (hidden is null or hidden = 0) and name != '@____'";
 	$data = run_query($conn, $query);
 	
 	$acarr = array();
@@ -156,13 +156,13 @@ function build_autocomplete() {
 			<div id="dummyData" style="display: none;">
 				<div class="tab-pane" data-for="none">
 					<div class="header lead" style="margin-bottom: 7px">
-						<span class="pull-left">Initiative: <span data-attr="initiative" class="roll_add_me" data-uid="1A" id="1A_init">20</span></span>
-						<span class="pull-right">CR: <span data-attr="cr" id="1A_cr">20</span></span>
+						<span class="pull-left">Initiative: <span data-attr="initiative" class="roll_add_me" data-uid="1A" id="1A_init"></span></span>
+						<span class="pull-right">CR: <span data-attr="cr" id="1A_cr"></span></span>
 						<center>
 							<span class="left"><i class="icon-backward"></i></span>
 
-							<span data-attr="name" 	id="1A_name">Devourer</span>
-							<span class="hp">		(<span data-attr="hit_dice" class="roll_me" id="1A_hp">40</span> hp)</span>
+							<span data-attr="name" 	id="1A_name" rel='tooltip' href='#'></span>
+							<span class="hp">		(<span data-attr="hit_dice" class="roll_me" id="1A_hp"></span> hp)</span>
 
 							<span class="right"><i class="icon-forward"></i></span>
 						</center>

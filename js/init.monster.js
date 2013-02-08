@@ -41,7 +41,6 @@ function addNewMonster(monster) {
 
 	$("body").on('click', '.reroll-hp', function() {
 		var uid = $(this).attr('data-uid');
-		//var roll = $(this).parent().attr('data-base-value');
 		var $rootNode = $(this).closest("span[data-attr='hit_dice']");
 		var newHp = rollExpression($rootNode.attr('data-base-value'));
 		rollHp(uid, $rootNode, newHp);
@@ -86,6 +85,15 @@ function addDataToMonster($parent, monster, uid) {
 			appendToTable($table, root.name, prop, monster[prop]);
 		}
 	}
+
+	var nameTooltip = root.size + " " + root.category;
+	if(monster.msubcat.length > 0) {
+		console.log(monster.msubcat);
+		$.each(monster.msubcat, function(i, e) {
+
+		});
+	}
+	$("#"+uid+"_name").attr('title', nameTooltip).tooltip();
 
 	setUpHp($parent, uid);
 	rollInit($("#"+uid+"_init"));

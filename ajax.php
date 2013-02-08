@@ -153,7 +153,7 @@ function build_query($json, $type_info) {
 
 	$query .= "INNER JOIN (\n";
 	$query .= "\tSELECT DISTINCT id as monster_id FROM Monster\n";
-	$query .= "\tWHERE (Monster.hidden is null OR Monster.hidden=0)\n";
+	$query .= "\tWHERE ((Monster.hidden is null OR Monster.hidden=0) AND Monster.id != 135)\n";
 	$query .= ") Monster_table\n";
 	$query .= "ON Monster_table.monster_id = $header"."_table.monster_id";
 

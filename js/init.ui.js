@@ -33,7 +33,7 @@ function setupRollables($parent) {
 		$roller.click(function() {
 			var $rollable = $(this).parent().find('.info');
 			if($rollable.length === 0) {
-				alert("Nothing to roll.");
+				bootbox.alert("Please select an attribute to roll.");
 				return;
 			}
 			var expr = $rollable.attr('data-roll');
@@ -92,11 +92,11 @@ function setupGenButton() {
 
 		//POST filters
 		$.post('ajax.php', {action: "gen", data: JSON.stringify(filterObj)}, function(monster) {
-			monster = $.parseJSON(monster);
 			if(monster==='') {
 				bootbox.alert("No results were found with your filters. Try broadening your search.");
 				return;
 			}
+			monster = $.parseJSON(monster);
 			addNewMonster(monster);
 			setupGrids();
 		});
