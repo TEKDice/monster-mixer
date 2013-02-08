@@ -1,10 +1,23 @@
 
 
 function rollDice(str) {
-	var result = rollExpression(str);
+	var result;
+	try {
+		var rolls = $.parseJSON(str);
+		result = [];
+		$.each(rolls, function(i, e) {
+			if(e.indexOf('d') != -1) 
+				result[i] = parseInt(rollExpression(e));
+			else
+				result[i] = parseInt(e);
+		});
+
+	} catch(e) {
+		result = rollExpression(str);
+	}
 	if(result === undefined) {
 		bootbox.alert("The roll '"+str+"'' is invalid.");
-		return 0;
+		return null;
 	}
 	return result;
 }
@@ -70,13 +83,24 @@ var formatting = {
 
 var rollable = {
 	mattack: function(obj) {
-		return obj.hitdc + (obj.dmgname != null ? "+"+obj.dmgred_hd : "");
+		var ret = {};
+		ret["Base"] = obj.hitdc;
+		if(obj.dmgname != null) 
+			ret[obj.dmgname] = obj.dmgred_hd;
+		return JSON.stringify(ret);
 	},
 	mskill: function(obj) {
-		return "1d20"+(obj.skill_level<0 ? obj.skill_level : "+"+obj.skill_level);
+		var ret = {};
+		ret["Base"] = "1d20";
+		ret["Bonus"] = obj.skill_level;
+		return JSON.stringify(ret);
 	},
 	mweapon: function(obj) {
-		return obj.hitdc + (obj.dmgname != null ? "+"+obj.dmgred_hd : "");
+		var ret = {};
+		ret["Base"] = obj.hitdc;
+		if(obj.dmgname != null) 
+			ret[obj.dmgname] = obj.dmgred_hd;
+		return JSON.stringify(ret);
 	}
 
 };

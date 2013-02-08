@@ -2,9 +2,11 @@
 var logTimer;
 
 function addToLog(string, selector) {
-	$("<p/>", {
-		text: string
-	}).addClass(selector).appendTo("#allInfo");
+	var $container = $("<p/>").html(string);
+
+	$container.addClass(selector).appendTo("#allInfo");
+
+	$container.find('a').tooltip({html: true});
 
 	clearTimeout(logTimer);
 	logTimer = setTimeout( function() {

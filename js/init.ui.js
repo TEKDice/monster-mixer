@@ -39,10 +39,19 @@ function setupRollables($parent) {
 			var expr = $rollable.attr('data-roll');
 			var exprFor = $rollable.attr('data-roll-for');
 			var roll = rollDice(expr);
+
 			var idFor = $(this).closest('div[data-for]').attr('id');
 			var nameFor = $("a[href='#"+idFor+"']").text();
 
-			addToLog(nameFor + " rolled \""+exprFor+"\" ("+expr+") for "+roll+".");
+			var result = 0;
+			var resultText = '';
+
+			for(var i in roll) {
+				result += roll[i];
+				resultText += i + ": "+roll[i]+"<br>";
+			}
+
+			addToLog(nameFor + " rolled \""+exprFor+"\" for <a rel='tooltip' href='#' title='"+resultText+"'>"+result+"</a>.");
 		});
 		$(this).append($roller);
 	});
