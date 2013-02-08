@@ -6,7 +6,7 @@ function rollDice(str) {
 		var rolls = $.parseJSON(str);
 		result = [];
 		$.each(rolls, function(i, e) {
-			if(e.indexOf('d') != -1) 
+			if(typeof e == 'string' && e.indexOf('d') != -1) 
 				result[i] = parseInt(rollExpression(e));
 			else
 				result[i] = parseInt(e);

@@ -69,13 +69,13 @@ function addDataToMonster($parent, monster, uid) {
 		var stat = $(this).children("td").eq(1).text();
 		var num = get_bonus(stat);
 		$(this).children("td").eq(1).text(stat + (stat != '--' ? " ("+(num < 0 ? num : "+"+num) + ")" : ''));
-		$(this).attr('data-roll', '1d20'+(num<0 ? num : "+"+num));
+		$(this).attr('data-roll', JSON.stringify({Base: "1d20", Bonus:num}));
 		$(this).attr('data-roll-for', $(this).children("td").eq(0).text());
 	});
 
 	$parent.find(".cstats tr").each(function() {
 		var num = parseInt($(this).children("td").eq(1).text());
-		$(this).attr('data-roll', '1d20'+(num<0 ? num : "+"+num));
+		$(this).attr('data-roll', JSON.stringify({Base: "1d20", Bonus:num}));
 		$(this).attr('data-roll-for', $(this).children("td").eq(0).text());
 	});
 
