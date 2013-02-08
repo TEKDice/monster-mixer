@@ -87,12 +87,12 @@ hr {
 	border-top: 1px solid #777;
 }
 
-span[data-attr='initiative'], span[data-attr='name'], span[data-attr='hit_dice'] {
+.reg-has-tt {
 	color: #08c;
 	cursor: pointer;
 }
 
-span[data-attr='initiative']:hover, span[data-attr='name']:hover, span[data-attr='hit_dice']:hover {
+.reg-has-tt:hover {
 	text-decoration: underline;
 }
 
