@@ -14,7 +14,7 @@ function addToLog(string, selector) {
 		$("#allInfo").animate( {scrollTop: $("#allInfo")[0].scrollHeight }, 50);
 	}, 100);
 
-	$("#log .tab-pane > div").niceScroll();
+	$("#log .tab-pane > div").niceScroll({horizrailenabled: false});
 	$("#log .tab-pane > div").css('overflow','hidden');
 
 }
