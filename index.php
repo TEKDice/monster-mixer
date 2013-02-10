@@ -117,14 +117,15 @@ function build_autocomplete() {
 								<div class="controls">
 									<div class="input-append">
 										<div id="dice">
-											<button class="btn btn-link">d4</button>
-											<button class="btn btn-link">d6</button>
-											<button class="btn btn-link">d8</button>
-											<button class="btn btn-link">d10</button>
-											<button class="btn btn-link">d12</button>
-											<button class="btn btn-link">d20</button>
-											<button class="btn btn-link">d100</button>
+											<button class="btn btn-link span1">d4</button>
+											<button class="btn btn-link span1">d6</button>
+											<button class="btn btn-link span1">d8</button>
+											<button class="btn btn-link span1">d10</button>
+											<button class="btn btn-link span1">d12</button>
+											<button class="btn btn-link span1">d20</button>
+											<button class="btn btn-link span1">d100</button>
 										</div>
+										<div class='clearfix'></div>
 										<input type="text" class="input-block-level" id="roll" placeholder="Custom roll..." />
 									</div>
 								</div>
