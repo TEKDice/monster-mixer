@@ -1,7 +1,8 @@
 
 
 function addNewMonster(monster) {
-	$(".alert").alert('close')
+	$(".alert").alert('close');
+	$("#monsterList").show();
 
 	var uid = new Date().getTime();
 

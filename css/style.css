@@ -265,6 +265,8 @@ i, #showFilters, #medianArrowContainer {
 
 #monsterList {
 	overflow-x: hidden;
+	min-width: 125px;
+	display: none;
 }
 
 #log {
