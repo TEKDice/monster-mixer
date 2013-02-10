@@ -39,6 +39,43 @@ function _cleanName(str) {
 	return str.split(' ').join('');
 }
 
+function bodyBinding() {
+	$("body").on('click', '.modify-hp', function() {
+		var uid = $(this).attr('data-uid');
+		var modHp = parseInt($("#"+uid+"_hp_mod").val());
+		modifyHp(uid, modHp);
+	});
+
+	$("body").on('click', '.reroll-hp', function() {
+		var uid = $(this).attr('data-uid');
+		var $rootNode = $(this).closest("span[data-attr='hit_dice']");
+		var newHp = rollExpression($rootNode.attr('data-base-value'));
+		rollHp(uid, $rootNode, newHp);
+	});
+
+	$("body").on('click', '.left', function() {
+		var $cur = $("#monsterList").children(".active");
+		var $newtab;
+		if($cur.is($("#monsterList").children().first())) {
+			$newtab = $("#monsterList").children().last();
+		} else {
+			$newtab = $("#monsterList").children(".active").prev();
+		}
+		$newtab.children("a").tab('show');
+	});
+
+	$("body").on('click', '.right', function() {
+		var $cur = $("#monsterList").children(".active");
+		var $newtab;
+		if($cur.is($("#monsterList").children().last())) {
+			$newtab = $("#monsterList").children().first();
+		} else {
+			$newtab = $("#monsterList").children(".active").next();
+		}
+		$newtab.children("a").tab('show');
+	});
+}
+
 var defaultFunction = function() {
 	return "THIS IS AN ERROR";
 };
