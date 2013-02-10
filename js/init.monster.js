@@ -125,7 +125,10 @@ function appendToTable($table, monsterName, attr, arr) {
 		var $tr = $("<tr/>");
 		if(rollable.hasOwnProperty(attr))  {
 			$tr.attr('data-roll', rollable[attr](obj));
-			$tr.attr('data-roll-for', mainStat[attr](obj));
+
+			var rollFor = mainStat[attr](obj);
+			if(rollFor.indexOf(monsterName) != -1) rollFor = rollFor.substring(monsterName.length);
+			$tr.attr('data-roll-for', rollFor);
 			if(attr == 'mweapon' || attr == 'mattack') {
 				$tr.attr('data-range',obj.is_ranged);
 
