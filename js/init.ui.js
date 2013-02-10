@@ -47,6 +47,7 @@ function setupRollables($parent) {
 			var resultText = '';
 
 			for(var i in roll) {
+				if(roll[i] == 0) continue;
 				result += roll[i];
 				resultText += i + ": "+roll[i]+"<br>";
 			}
@@ -204,6 +205,8 @@ function resizeElements() {
 	$("#monsterList").css('height',height-50-heightAdjust+'px');
 
 	$(".tab-content").css('height', $("#log").height()-38);
+
+	$("#log .tab-pane > div").css('height', $("#log").height()-38);
 
 	resizeGrids();
 }

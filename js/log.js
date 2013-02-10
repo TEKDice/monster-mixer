@@ -10,6 +10,10 @@ function addToLog(string, selector) {
 
 	clearTimeout(logTimer);
 	logTimer = setTimeout( function() {
-		$("#allInfo").parent().animate( {scrollTop: $("#allInfo").height() }, 50);
-	}, 200);
+		$("#allInfo").animate( {scrollTop: $("#allInfo").height() }, 50);
+	}, 100);
+
+	$("#log .tab-pane > div").niceScroll();
+	$("#log .tab-pane > div").css('overflow','hidden');
+
 }

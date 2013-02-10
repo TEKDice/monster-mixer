@@ -30,6 +30,7 @@ function hasNeedle(id, table, needle, returnVal) {
 function modifyHp(uid, mod) {
 	var curHp = parseInt($("#"+uid+"_hp").children(".hp_val").text());
 	$("#"+uid+"_hp").children(".hp_val").text(eval(curHp+mod));
+	console.log(curHp + " " + mod);
 
 	var maxHp = parseInt($("#"+uid+"_hp").attr('data-initial-roll'));
 

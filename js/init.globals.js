@@ -9,7 +9,7 @@ function rollDice(str) {
 			if(typeof e == 'string' && e.indexOf('d') != -1) 
 				result[i] = parseInt(rollExpression(e));
 			else
-				result[i] = parseInt(e);
+				result[i] = isNaN(parseInt(e)) ? 0 : parseInt(e);
 		});
 
 	} catch(e) {
@@ -40,11 +40,6 @@ function _cleanName(str) {
 }
 
 function bodyBinding() {
-	$("body").on('click', '.modify-hp', function() {
-		var uid = $(this).attr('data-uid');
-		var modHp = parseInt($("#"+uid+"_hp_mod").val());
-		modifyHp(uid, modHp);
-	});
 
 	$("body").on('click', '.reroll-hp', function() {
 		var uid = $(this).attr('data-uid');

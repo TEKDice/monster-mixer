@@ -142,7 +142,8 @@ function build_autocomplete() {
 								</li>                                                        
 							</ul>
 							<div class="tab-content">
-								<div class="tab-pane active" id="allInfo">                                                             
+								<div class="tab-pane active" >                    
+									<div id="allInfo"></div>                                         
 								</div>
 								<div class="tab-pane" id="curMon">
 									<p>I'm not implementing this yet.</p>
@@ -178,22 +179,22 @@ function build_autocomplete() {
 									<table class="table table-striped table-condensed">
 										<tbody>
 											<tr>
-												<td>STR</td><td data-attr="str" id="1A_str"></td>
+												<td>STR</td><td data-attr="str" id="1A_str" class="dashable"></td>
 											</tr>
 											<tr>
-												<td>DEX</td><td data-attr="dex" id="1A_dex"></td>
+												<td>DEX</td><td data-attr="dex" id="1A_dex" class="dashable"></td>
 											</tr>
 											<tr>
-												<td>CON</td><td data-attr="con" id="1A_con"></td>
+												<td>CON</td><td data-attr="con" id="1A_con" class="dashable"></td>
 											</tr>
 											<tr>
-												<td>INT</td><td data-attr="int" id="1A_int"></td>
+												<td>INT</td><td data-attr="int" id="1A_int" class="dashable"></td>
 											</tr>
 											<tr>
-												<td>WIS</td><td data-attr="wis" id="1A_wis"></td>
+												<td>WIS</td><td data-attr="wis" id="1A_wis" class="dashable"></td>
 											</tr>
 											<tr>
-												<td>CHA</td><td data-attr="cha" id="1A_cha"></td>
+												<td>CHA</td><td data-attr="cha" id="1A_cha" class="dashable"></td>
 											</tr>
 										</tbody>
 									</table>

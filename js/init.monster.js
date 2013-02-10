@@ -33,18 +33,7 @@ function addNewMonster(monster) {
 
 	setupRollables($parent);
 
-	$("body").on('click', '.modify-hp', function() {
-		var uid = $(this).attr('data-uid');
-		var modHp = parseInt($("#"+uid+"_hp_mod").val());
-		modifyHp(uid, modHp);
-	});
-
-	$("body").on('click', '.reroll-hp', function() {
-		var uid = $(this).attr('data-uid');
-		var $rootNode = $(this).closest("span[data-attr='hit_dice']");
-		var newHp = rollExpression($rootNode.attr('data-base-value'));
-		rollHp(uid, $rootNode, newHp);
-	});
+	$a.tab('show');
 }
 
 function addDataToMonster($parent, monster, uid) {
@@ -57,7 +46,7 @@ function addDataToMonster($parent, monster, uid) {
 		$(this).attr('id', $(this).attr('id').replace('1A', uid));
 		$(this).attr('data-uid', uid);
 		if(root.hasOwnProperty(attr)) {
-			var val = root[attr] == '0' && attr!='initiative' ? '--' : root[attr] + (attr=='base_spd' ? 'ft' : '');
+			var val = root[attr] == '0' && $(this).hasClass('dashable') ? '--' : root[attr] + (attr=='base_spd' ? 'ft' : '');
 			$(this).text(val);
 			$(this).attr('data-base-value',$(this).text());
 			determineRoll($(this));
@@ -115,6 +104,12 @@ function setUpHp($parent, uid) {
 		placement: 'bottom',
 		content: popover,
 		title: "Modify HP"
+	}).click(function() {
+		$(".modify-hp").click(function() {
+			var uid = $(this).attr('data-uid');
+			var modHp = parseInt($("#"+uid+"_hp_mod").val());
+			modifyHp(uid, modHp);
+		});
 	});
 }
 
