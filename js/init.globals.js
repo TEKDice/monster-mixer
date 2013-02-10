@@ -213,6 +213,10 @@ var attackRolls = {
 		if(range == "0") {
 			var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
 			if(strBonus!=0)	ret["STR Mod"] = strBonus;
+
+			if(obj.wname.indexOf('Javelin') != -1)
+				ret["Javelin"] = -4;
+
 		} else {
 			var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
 			if(dexBonus!=0)	ret["DEX Mod"] = dexBonus;
