@@ -12,6 +12,7 @@ Log-related
 
 #allInfo, #curMon {
 	padding-left: 5px;
+	padding-right: 5px;
 	overflow: hidden;
 	height: 100%;
 }
@@ -20,6 +21,32 @@ Log-related
 	overflow: hidden;
 }
 
+#log div.fail:after {
+	content: "[FAIL]";
+	color: #b94a48;
+}
+
+#log div.threat:after {
+	content: "[THREAT]";
+	color: #f89406;
+}
+
+#log div.success:after {
+	content: "[SUCCESS]";
+	color: #468847;
+}
+
+html {
+	overflow-x: hidden;
+}
+
+#log .tab-pane div p {
+	width: 80%;
+}
+
+.threat-status {
+	width: 15%;
+}
 /* 
 --------------------------------
 

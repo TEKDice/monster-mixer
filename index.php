@@ -93,24 +93,23 @@ function build_autocomplete() {
 			<div class="container-fluid" id="mainContainer">
 				<div class="row-fluid" id="main">
 					<div class="span9" id="monstersContainer">
-						<div class="tabbable tabs-left" id="monsterListCont">
-							<ul class="nav nav-tabs" id="monsterList"></ul>
-							<div class="tab-content" id="monsterData">
-								<div class="alert">
-									<strong>Hey!</strong> You should click the arrow above this to generate some monsters.
+						<div class="row-fluid">
+							<div class="tabbable tabs-left" id="monsterListCont">
+								<ul class="nav nav-tabs" id="monsterList"></ul>
+								<div class="tab-content" id="monsterData">
+									<div class="alert">
+										<strong>Hey!</strong> You should click the arrow above this to generate some monsters.
+									</div>
 								</div>
 							</div>
 						</div>
-
-						<div id="encounterStats">
-							<div class="btn-group">
-								<button class="btn">Encounter CR</button>
-								<button class="btn">Average Level</button>
-								<button class="btn">Average Damage Dealt</button>
-								<button class="btn">Average Damage Taken</button>
-								<button class="btn">Total Damage Dealt</button>
-								<button class="btn">Total Damage Taken</button>
-							</div>
+						<div id="encounterStats" class="row-fluid">
+								<button class="btn span2">Encounter CR</button>
+								<button class="btn span2">Average Level</button>
+								<button class="btn span2">Average Damage Dealt</button>
+								<button class="btn span2">Average Damage Taken</button>
+								<button class="btn span2">Total Damage Dealt</button>
+								<button class="btn span2">Total Damage Taken</button>
 						</div>
 					</div>
 

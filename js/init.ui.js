@@ -29,34 +29,119 @@ function setupRoller() {
 
 function setupRollables($parent) {
 	$parent.find(".rollable").each(function() {
+		var isAttack = $(this).hasClass('attacks');
 		var $roller = $("<i/>").addClass('icon-share-alt');
 		$roller.click(function() {
 			var $rollable = $(this).parent().find('.info');
 			if($rollable.length === 0) {
-				bootbox.alert("Please select an attribute to roll.");
+				bootbox.alert("Please select a feature to roll.");
 				return;
 			}
-			var expr = $rollable.attr('data-roll');
-			var exprFor = $rollable.attr('data-roll-for');
-			var roll = rollDice(expr);
-
-			var idFor = $(this).closest('div[data-for]').attr('id');
-			var nameFor = $("a[href='#"+idFor+"']").text();
 
 			var result = 0;
 			var resultText = '';
+			var iters=1;
 
-			for(var i in roll) {
-				if(roll[i] == 0) continue;
-				result += roll[i];
-				resultText += i + ": "+roll[i]+"<br>";
+			var exprFor = $rollable.attr('data-roll-for');
+			var idFor = $(this).closest('div[data-for]').attr('id');
+			var nameFor = $("a[href='#"+idFor+"']").text();
+
+			if(isAttack) {
+				var attackRoll = rollDice($rollable.attr('data-attack-roll'));
+				for(var i in attackRoll) {
+					if(attackRoll[i] == 0) continue;
+					result += attackRoll[i];
+					resultText += i + ": "+attackRoll[i]+"<br>";
+
+					var critStatus='';
+					var threatRange = parseInt($rollable.attr('data-min-crit'));
+
+					if(attackRoll[i] <= 1) {
+						critStatus='fail';
+
+					} else if(attackRoll[i] >= 20) {
+						critStatus='success';
+						iters = parseInt($rollable.attr('data-crit-mult'));
+
+					} else if(attackRoll[i] >= threatRange) {
+						critStatus='threat';
+						var threatRoll = rollDice($rollable.attr('data-attack-roll'));
+
+						var threatData = _rollArray(threatRoll);
+
+						var expr = $rollable.attr('data-roll');
+						var roll = rollDice(expr);
+
+						var threatBasicAttack = _rollArray(roll);
+						iters = parseInt($rollable.attr('data-crit-mult'));
+					}
+				}
+				if(critStatus == 'threat') {
+					addToLog(logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus);
+					addToLog(logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result), critStatus);
+					addToLog(logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus);
+				} else {
+					addToLog(logMessages.initiate(nameFor, exprFor, resultText, result), critStatus);
+				}
+				if(critStatus == 'fail') return;
 			}
 
-			addToLog(nameFor + " rolled \""+exprFor+"\" for <a rel='tooltip' href='#' title='"+resultText+"'>"+result+"</a>.");
+			var expr = $rollable.attr('data-roll');
+
+			result = 0;
+			resultText = '';
+
+			for(var x=0; x<iters; x++) {
+				var roll = rollDice(expr);
+				result += _rollArray(roll).result;
+				resultText += _rollArray(roll).text;
+			}
+
+			if(critStatus == 'threat') {
+				addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result), critStatus);
+			} else {
+				addToLog(logMessages.hit(nameFor, exprFor, resultText, result));
+			}
 		});
 		$(this).append($roller);
 	});
 
+}
+
+var logMessages = {
+	hit: function(ent, att, text, num) {
+		return ent + " rolled \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+	},
+
+	initiate: function(ent, att, text, num) {
+		return ent + " initiated \""+att+"\" with <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+	},
+
+	critAttempt: function(ent, att, text, num) {
+		return ent + " attempted to crit using \""+att+"\" with <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+	},
+
+	critSecond: function(ent, att, text, num) {
+		return ent + " attempted to finish crit using \""+att+"\" with <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+	},
+
+	critMiss: function(ent, att, text, num) {
+		return ">> If "+ent+" fails critical hit, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+	},
+
+	critSuccess: function(ent, att, text, num) {
+		return ">> If "+ent+" succeeds critical hit, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+	}
+};
+
+function _rollArray(arr) {
+	var ret = {result: 0, text: ''};
+	for(var i in arr) {
+		if(arr[i] == 0) continue;
+		ret.result += arr[i];
+		ret.text += i + ": "+arr[i]+"<br>";
+	}
+	return ret;
 }
 
 function setupGrids() {

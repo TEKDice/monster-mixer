@@ -6,6 +6,7 @@ function rollDice(str) {
 		var rolls = $.parseJSON(str);
 		result = [];
 		$.each(rolls, function(i, e) {
+			if(i == 'Base') i = 'Base ('+e+')';
 			if(typeof e == 'string' && e.indexOf('d') != -1) 
 				result[i] = parseInt(rollExpression(e));
 			else
@@ -13,6 +14,7 @@ function rollDice(str) {
 		});
 
 	} catch(e) {
+		console.warn(e + " " + str);
 		result = rollExpression(str);
 	}
 	if(result === undefined) {
@@ -135,6 +137,19 @@ var rollable = {
 		return JSON.stringify(ret);
 	}
 
+};
+
+var attackRolls = {
+	mattack: function(obj, uid) {
+		var ret = {};
+		ret["Base"] = "1d20";
+		return JSON.stringify(ret);
+	},
+	mweapon: function(obj, uid) {
+		var ret = {};
+		ret["Base"] = "1d20";
+		return JSON.stringify(ret);
+	}
 };
 
 var mainStat = {

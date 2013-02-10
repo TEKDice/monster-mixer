@@ -118,6 +118,9 @@ function setUpHp($parent, uid) {
 function appendToTable($table, monsterName, attr, arr) {
 	if(attr!='mmove')
 		$table.empty();
+
+	var uid = $table.attr('data-uid');
+
 	$.each(arr, function(i, obj) {
 		var $tr = $("<tr/>");
 		if(rollable.hasOwnProperty(attr))  {
@@ -125,12 +128,27 @@ function appendToTable($table, monsterName, attr, arr) {
 			$tr.attr('data-roll-for', mainStat[attr](obj));
 			if(attr == 'mweapon' || attr == 'mattack') {
 				$tr.attr('data-range',obj.is_ranged);
-				$tr.attr('data-min-crit');
-				$tr.attr('data-crit-mult');
+
+				if(obj.critical.indexOf('-') != -1) {
+					var critArr = obj.critical.split("-");
+					$tr.attr('data-min-crit', critArr[0]);
+					$tr.attr('data-crit-mult', critArr[1].split("x")[1]);
+				} else if(obj.critical == '0'){
+					$tr.attr('data-min-crit', 20);
+					$tr.attr('data-crit-mult', 1);
+				} else if(obj.critical.indexOf("x") != -1) {
+					$tr.attr('data-min-crit', 20);
+					$tr.attr('data-crit-mult', obj.critical.substring(1));
+				} else {
+					console.warn("critical wasn't parseable: "+obj.critical);
+				}
 			}
 		}
 		if(attr == 'mfeat') {
 			$tr.attr('data-times-taken',obj.feat_level);
+		}
+		if(attackRolls.hasOwnProperty(attr)) {
+			$tr.attr('data-attack-roll', attackRolls[attr](obj, uid));
 		}
 		$tr.appendTo($table);
 		var inner = formatting[attr](obj);
