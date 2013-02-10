@@ -200,7 +200,7 @@ var attackRolls = {
 
 		return JSON.stringify(ret);
 	},
-	mweapon: function(obj, uid) {
+	mweapon: function(obj, uid, range) {
 		var ret = {};
 		ret["Base"] = "1d20";
 
@@ -210,7 +210,7 @@ var attackRolls = {
 		var bab = parseInt($("#"+uid+"_bab").attr('data-base-value'));
 		if(bab!=0)		ret["BAB"] = bab;
 
-		if(obj.is_ranged == "0") {
+		if(range == "0") {
 			var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
 			if(strBonus!=0)	ret["STR Mod"] = strBonus;
 		} else {

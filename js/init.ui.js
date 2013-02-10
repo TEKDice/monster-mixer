@@ -56,14 +56,14 @@ function setupRollables($parent) {
 					var critStatus='';
 					var threatRange = parseInt($rollable.attr('data-min-crit'));
 
-					if(attackRoll[i] <= 1 && i == '1d20') {
+					if(attackRoll[i] <= 1 && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
 						critStatus='fail';
 
-					} else if(attackRoll[i] >= 20 && i == '1d20') {
+					} else if(attackRoll[i] >= 20 && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
 						critStatus='success';
 						iters = parseInt($rollable.attr('data-crit-mult'));
 
-					} else if(attackRoll[i] >= threatRange && i == '1d20') {
+					} else if(attackRoll[i] >= threatRange && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
 						critStatus='threat';
 						var threatRoll = rollDice($rollable.attr('data-attack-roll'));
 
@@ -97,10 +97,10 @@ function setupRollables($parent) {
 					result += roll[i];
 					resultText += i + ": "+roll[i]+"<br>";
 
-					if(roll[i] <= 1 && i == '1d20') {
+					if(roll[i] <= 1 && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
 						critStatus='fail';
 
-					} else if(roll[i] >= 20 && i == '1d20') {
+					} else if(roll[i] >= 20 && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
 						critStatus='success';
 					}
 				}
