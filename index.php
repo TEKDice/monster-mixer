@@ -96,6 +96,9 @@ function build_autocomplete() {
 						<div class="tabbable tabs-left" id="monsterListCont">
 							<ul class="nav nav-tabs" id="monsterList"></ul>
 							<div class="tab-content" id="monsterData">
+								<div class="alert">
+									<strong>Hey!</strong> You should click the arrow above this to generate some monsters.
+								</div>
 							</div>
 						</div>
 
@@ -135,18 +138,20 @@ function build_autocomplete() {
 						<div id="log" class="tabbable">
 							<ul class="nav nav-tabs">
 								<li class="active">
-									<a href="#allInfo" data-toggle="tab">All Info</a>
+									<a href="#allTab" data-toggle="tab">All Info</a>
 								</li>
 								<li>
-									<a href="#curMon" data-toggle="tab">Current Monster</a>                                                                
+									<a href="#curTab" data-toggle="tab">Current Monster</a>                                                                
 								</li>                                                        
 							</ul>
 							<div class="tab-content">
-								<div class="tab-pane active" >                    
+								<div class="tab-pane active" id="allTab">                    
 									<div id="allInfo"></div>                                         
 								</div>
-								<div class="tab-pane" id="curMon">
-									<p>I'm not implementing this yet.</p>
+								<div class="tab-pane" id="curTab">                 
+									<div id="curMon">
+										<p>I'm not implementing this yet.</p>
+									</div>    
 								</div>
 							</div>
 						</div>
@@ -265,7 +270,7 @@ function build_autocomplete() {
 										<caption>Speeds</caption>
 										<tbody class="mmove" id="1A_mmove_table">
 											<tr>
-												<td>Base Speed</td><td data-attr="base_spd" id="1A_base_spd"></td>
+												<td>Base Speed</td><td data-attr="base_spd" id="1A_base_spd" class="ftable"></td>
 											</tr>
 										</tbody>
 									</table>
@@ -273,10 +278,10 @@ function build_autocomplete() {
 										<caption>Misc</caption>
 										<tbody>
 											<tr>
-												<td>Reach</td><td data-attr="reach" id="1A_reach"></td>
+												<td>Reach</td><td data-attr="reach" id="1A_reach" class="ftable"></td>
 											</tr>
 											<tr>
-												<td>Space Taken</td><td data-attr="space_taken" id="1A_space_taken"></td>
+												<td>Space Taken</td><td data-attr="space_taken" id="1A_space_taken" class="ftable"></td>
 											</tr>
 											<tr>
 												<td>Treasure</td><td data-attr="treasure" id="1A_treasure"></td>

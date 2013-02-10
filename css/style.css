@@ -301,6 +301,10 @@ i, #showFilters, #medianArrowContainer {
 	height: 100%;
 }
 
+#monsterData {
+	overflow: visible;
+}
+
 #monstersContainer {
 	overflow: visible!important;
 	overflow-y: hidden;

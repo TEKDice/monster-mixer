@@ -2,9 +2,10 @@
 var logTimer;
 
 function addToLog(string, selector) {
-	var $container = $("<p/>").html(string);
+	var $div = $("<div/>").appendTo("#allInfo");
+	var $container = $("<p/>").html(string).appendTo($div);
 
-	$container.addClass(selector).appendTo("#allInfo");
+	$container.addClass(selector);
 
 	$container.find('a').tooltip({html: true});
 

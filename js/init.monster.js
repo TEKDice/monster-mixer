@@ -1,6 +1,7 @@
 
 
 function addNewMonster(monster) {
+	$(".alert").alert('close')
 
 	var uid = new Date().getTime();
 
@@ -46,7 +47,7 @@ function addDataToMonster($parent, monster, uid) {
 		$(this).attr('id', $(this).attr('id').replace('1A', uid));
 		$(this).attr('data-uid', uid);
 		if(root.hasOwnProperty(attr)) {
-			var val = root[attr] == '0' && $(this).hasClass('dashable') ? '--' : root[attr] + (attr=='base_spd' ? 'ft' : '');
+			var val = root[attr] == '0' && $(this).hasClass('dashable') ? '--' : root[attr] + ($(this).hasClass('ftable') ? 'ft' : '');
 			$(this).text(val);
 			$(this).attr('data-base-value',$(this).text());
 			determineRoll($(this));
