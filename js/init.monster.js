@@ -3,6 +3,7 @@
 function addNewMonster(monster) {
 	$(".alert").alert('close');
 	$("#monsterList").show();
+	$("#encounterStats").css('margin-top','0');
 
 	var uid = new Date().getTime();
 
@@ -74,6 +75,7 @@ function addDataToMonster($parent, monster, uid) {
 			var $table = $("#"+uid+"_"+prop+"_table");
 			if($table.length == 0 || monster[prop].length == 0) continue;
 			appendToTable($table, root.name, prop, monster[prop]);
+			$table.append("<tr class='loaded' style='display: none;'></tr>");
 		}
 	}
 
@@ -123,8 +125,18 @@ function appendToTable($table, monsterName, attr, arr) {
 
 	$.each(arr, function(i, obj) {
 		var $tr = $("<tr/>");
+		$tr.appendTo($table);
+		if(attr == 'mfeat') {
+			$tr.attr('data-times-taken',obj.feat_level);
+			$tr.attr('data-full-name',obj.name);
+		}
 		if(rollable.hasOwnProperty(attr))  {
-			$tr.attr('data-roll', rollable[attr](obj));
+
+			$tr.attr('data-roll', '0');
+
+			$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
+				$tr.attr('data-roll', rollable[attr](obj, uid));
+			});
 
 			var rollFor = mainStat[attr](obj);
 			if(rollFor.indexOf(monsterName) != -1) rollFor = rollFor.substring(monsterName.length);
@@ -132,32 +144,50 @@ function appendToTable($table, monsterName, attr, arr) {
 			if(attr == 'mweapon' || attr == 'mattack') {
 				$tr.attr('data-range',obj.is_ranged);
 
+				var minCrit = 0;
+
 				if(obj.critical.indexOf('-') != -1) {
 					var critArr = obj.critical.split("-");
-					$tr.attr('data-min-crit', critArr[0]);
 					$tr.attr('data-crit-mult', critArr[1].split("x")[1]);
+					minCrit = parseInt(critArr[0]);
 				} else if(obj.critical == '0'){
-					$tr.attr('data-min-crit', 20);
+					minCrit = 20;
 					$tr.attr('data-crit-mult', 1);
 				} else if(obj.critical.indexOf("x") != -1) {
-					$tr.attr('data-min-crit', 20);
+					minCrit = 20;
 					$tr.attr('data-crit-mult', obj.critical.substring(1));
 				} else {
 					console.warn("critical wasn't parseable: "+obj.critical);
 				}
+
+				$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
+					if(hasFeat(uid, "Improved Critical")) {
+						var name = fullFeatName(uid, "Improved Critical");
+						var atk = name.substring(name.indexOf("(")+1, name.indexOf(")"));
+						if(obj.aname != undefined) {
+							if(atk.toLowerCase() == obj.aname.toLowerCase())
+								minCrit = 21 - ((20 - minCrit + 1) * 2);
+						}
+						if(obj.wname != undefined) {
+							if(atk.toLowerCase() == obj.wname.toLowerCase())
+								minCrit = 21 - ((20 - minCrit + 1) * 2);
+						}
+					}
+					$tr.attr('data-min-crit', minCrit);
+				});
 			}
 		}
-		if(attr == 'mfeat') {
-			$tr.attr('data-times-taken',obj.feat_level);
-		}
 		if(attackRolls.hasOwnProperty(attr)) {
-			$tr.attr('data-attack-roll', attackRolls[attr](obj, uid));
+			$tr.attr('data-attack-roll', '0');
+			$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
+				$tr.attr('data-attack-roll', attackRolls[attr](obj, uid));
+			});
 		}
-		$tr.appendTo($table);
 		var inner = formatting[attr](obj);
 		if(inner.indexOf(monsterName) != -1) inner = inner.substring(monsterName.length);
 		$tr.append("<td"+(obj.hasOwnProperty('descript') ? " class='has-tooltip' data-desc='"+obj.descript.split("\n").join("<br>")+"'" : "")+">"+inner+"</td>");
 	});
+
 	$table.find("td.has-tooltip").each(function() {
 		var text = $(this).text();
 		$(this).text('');

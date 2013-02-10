@@ -56,14 +56,14 @@ function setupRollables($parent) {
 					var critStatus='';
 					var threatRange = parseInt($rollable.attr('data-min-crit'));
 
-					if(attackRoll[i] <= 1) {
+					if(attackRoll[i] <= 1 && i == '1d20') {
 						critStatus='fail';
 
-					} else if(attackRoll[i] >= 20) {
+					} else if(attackRoll[i] >= 20 && i == '1d20') {
 						critStatus='success';
 						iters = parseInt($rollable.attr('data-crit-mult'));
 
-					} else if(attackRoll[i] >= threatRange) {
+					} else if(attackRoll[i] >= threatRange && i == '1d20') {
 						critStatus='threat';
 						var threatRoll = rollDice($rollable.attr('data-attack-roll'));
 
@@ -83,7 +83,6 @@ function setupRollables($parent) {
 				} else {
 					addToLog(logMessages.initiate(nameFor, exprFor, resultText, result), critStatus);
 				}
-				if(critStatus == 'fail') return;
 			}
 
 			var expr = $rollable.attr('data-roll');
@@ -93,14 +92,24 @@ function setupRollables($parent) {
 
 			for(var x=0; x<iters; x++) {
 				var roll = rollDice(expr);
-				result += _rollArray(roll).result;
-				resultText += _rollArray(roll).text;
+				for(var i in roll) {
+					if(roll[i] == 0) continue;
+					result += roll[i];
+					resultText += i + ": "+roll[i]+"<br>";
+
+					if(roll[i] <= 1 && i == '1d20') {
+						critStatus='fail';
+
+					} else if(roll[i] >= 20 && i == '1d20') {
+						critStatus='success';
+					}
+				}
 			}
 
 			if(critStatus == 'threat') {
 				addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result), critStatus);
 			} else {
-				addToLog(logMessages.hit(nameFor, exprFor, resultText, result));
+				addToLog(logMessages.hit(nameFor, exprFor, resultText, result), critStatus);
 			}
 		});
 		$(this).append($roller);
@@ -190,15 +199,6 @@ function setupGenButton() {
 }
 
 function rollableRowHighlighting($parent) {
-	$parent.find("tr[data-roll]:not(.unrollable)").each(function() {
-		$(this).click(function() {
-			$(this).siblings(".info").removeClass('info');
-			if($(this).hasClass('info'))
-				$(this).removeClass('info');
-			else
-				$(this).addClass('info');
-		});
-	});
 }
 
 function tabChangeScrollbars() {

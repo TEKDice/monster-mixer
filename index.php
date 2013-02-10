@@ -62,6 +62,7 @@ function build_autocomplete() {
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
 		<script src="js/jquery.boxshadow.min.js"></script>
 		<script src="js/jquery.nicescroll.min.js"></script>
+		<script src="js/jquery.livequery.min.js"></script>
 		<script src="js/bootbox.min.js"></script>
 
 		<script src="js/log.js"></script>
@@ -200,6 +201,7 @@ function build_autocomplete() {
 											<tr>
 												<td>CHA</td><td data-attr="cha" id="1A_cha" class="dashable"></td>
 											</tr>
+											<tr class="loaded" style="display: none"><td></td></tr>
 										</tbody>
 									</table>
 								</div>
@@ -239,6 +241,10 @@ function build_autocomplete() {
 											<tr class="unrollable">
 												<td>CMD</td><td data-attr="cmd" id="1A_cmd"></td>
 											</tr>
+											<tr class="unrollable">
+												<td>Base Attack Bonus</td><td data-attr="base_atk" id="1A_bab"></td>
+											</tr>
+											<tr class="loaded" style="display: none"><td></td></tr>
 										</tbody>
 									</table>
 								</div>

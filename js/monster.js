@@ -2,6 +2,10 @@ function hasFeat(id, feat) {
 	return hasNeedle(id, "mfeat", feat, "times-taken");
 }
 
+function fullFeatName(id, feat) {
+	return hasNeedle(id, "mfeat", feat, "full-name");
+}
+
 function hasSkill(id, skill) {
 	return hasNeedle(id, "mskill", skill);
 }
@@ -30,7 +34,6 @@ function hasNeedle(id, table, needle, returnVal) {
 function modifyHp(uid, mod) {
 	var curHp = parseInt($("#"+uid+"_hp").children(".hp_val").text());
 	$("#"+uid+"_hp").children(".hp_val").text(eval(curHp+mod));
-	console.log(curHp + " " + mod);
 
 	var maxHp = parseInt($("#"+uid+"_hp").attr('data-initial-roll'));
 
@@ -95,7 +98,8 @@ function rollInit($node) {
 	var roll = parseInt(rollExpression('1d20'));
 	title += "1d20: "+roll+"<br>";
 
-	var base = parseInt($node.attr('data-base-value'));
+	var uid = $node.attr('data-uid');
+	var base = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
 	title += "Modifier: "+base+"<br>";
 
 	var num=0;
