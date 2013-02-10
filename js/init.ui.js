@@ -152,7 +152,7 @@ function setupGrids() {
 	});
 	$(".sortable").disableSelection();
 
-	$(".minibox-content").niceScroll();
+	$(".minibox-content").niceScroll({horizrailenabled: false});
 
 	resizeGrids();
 }
