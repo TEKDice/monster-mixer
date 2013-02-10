@@ -124,5 +124,5 @@ function roll(string) {
 	var x = parseInt(xdy[0]);
 	var y = parseInt(xdy[1]);
 	if(x <= 0 || y <= 0) return 0;
-	return Math.round(Math.random()*((x*y)-x))+x;
+	return Math.floor(Math.random()*(((x*y)-x)+1))+x;
 }
