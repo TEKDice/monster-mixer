@@ -274,6 +274,12 @@ i, #showFilters, #medianArrowContainer {
 	text-align: center;
 }
 
+#dice > button {
+	width: 45px;
+	float: none;
+	margin-left: -10px;
+}
+
 #encounterStats {
 	height: 30px;
 }
