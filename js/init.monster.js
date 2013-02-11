@@ -50,7 +50,18 @@ function addDataToMonster($parent, monster, uid) {
 		$(this).attr('data-uid', uid);
 		if(root.hasOwnProperty(attr)) {
 			var val = root[attr] == '0' && $(this).hasClass('dashable') ? '--' : root[attr] + ($(this).hasClass('ftable') ? 'ft' : '');
-			$(this).text(val);
+			if(attr == 'cr') {
+				if(root[attr] < 1) {
+					console.log(root[attr]);
+					switch(root[attr]) {
+						case '0.25': $(this).html($("<div/>").html("&frac14;").text()); break;
+						case '0.33': $(this).html($("<div/>").html("&frac13;").text()); break;
+						case '0.50':  $(this).html($("<div/>").html("&frac12;").text()); break;
+					}
+				} else 
+					$(this).text(parseInt(root[attr]));
+			} else 
+				$(this).text(val);
 			$(this).attr('data-base-value',$(this).text());
 			determineRoll($(this));
 		}
