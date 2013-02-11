@@ -148,6 +148,10 @@ var rollable = {
 		ret["Base"] = obj.hitdc;
 		if(obj.dmgname != null) 
 			ret[obj.dmgname] = obj.dmgred_hd;
+
+		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
+		ret["STR Mod"] = Math.floor(strBonus*parseFloat(obj.max_str_mod));
+
 		return JSON.stringify(ret);
 	},
 	mskill: function(obj, uid) {
@@ -164,18 +168,12 @@ var rollable = {
 
 		if(obj.is_melee == "1") {
 
-			if(hasFeat(uid, "Weapon Finesse")) {
-				var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
-				ret["DEX Mod"] = dexBonus;
+			var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
 
+			if(obj.is_one_handed == "0") {
+				ret["STR Mod (2h)"] = strBonus*1.5;
 			} else {
-				var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
-
-				if(obj.is_one_handed == "0") {
-					ret["STR Mod (2h)"] = strBonus*1.5;
-				} else {
-					ret["STR Mod"] = strBonus;
-				}
+				ret["STR Mod"] = strBonus;
 			}
 
 		} else {
@@ -198,6 +196,29 @@ var attackRolls = {
 		if(hasWeaponFocus(obj, uid)) 
 			ret["Weapon Focus"] = 1;
 
+		var bab = parseInt($("#"+uid+"_bab").attr('data-base-value'));
+		if(bab!=0)		ret["BAB"] = bab;
+
+		var size = $("#"+uid+"_size").attr('data-base-value');
+		var sizeNum = sizeModifier(size);
+		if(sizeNum != 0) 
+			ret["Size ("+size+")"] = sizeNum;
+
+		if(obj.is_strictly_melee == "0") {
+			if(hasFeat(uid, "Weapon Finesse")) {
+				var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
+				ret["DEX Mod"] = dexBonus;
+
+			} else {
+				var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
+				if(strBonus!=0)	ret["STR Mod"] = strBonus;
+			}
+
+		} else {
+			var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
+			if(dexBonus!=0)	ret["DEX Mod"] = dexBonus;
+		}
+
 		return JSON.stringify(ret);
 	},
 	mweapon: function(obj, uid, range) {
@@ -210,9 +231,21 @@ var attackRolls = {
 		var bab = parseInt($("#"+uid+"_bab").attr('data-base-value'));
 		if(bab!=0)		ret["BAB"] = bab;
 
+		var size = $("#"+uid+"_size").attr('data-base-value');
+		var sizeNum = sizeModifier(size);
+		if(sizeNum != 0) 
+			ret["Size ("+size+")"] = sizeNum;
+
 		if(range == "0") {
-			var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
-			if(strBonus!=0)	ret["STR Mod"] = strBonus;
+
+			if(hasFeat(uid, "Weapon Finesse")) {
+				var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
+				ret["DEX Mod"] = dexBonus;
+
+			} else {
+				var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
+				if(strBonus!=0)	ret["STR Mod"] = strBonus;
+			}
 
 			if(obj.wname.indexOf('Javelin') != -1)
 				ret["Javelin"] = -4;
@@ -223,6 +256,14 @@ var attackRolls = {
 		}
 
 		return JSON.stringify(ret);
+	},
+	mfatk: function(obj, uid, range) {
+		if(obj.class_mult == 0.5) {
+			if(hasFeat(uid, "Multiattack")) 
+				ret["Secondary Penalty"] = -2;
+			else
+				ret["Secondary Penalty"] = -5;
+		}
 	}
 };
 

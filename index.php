@@ -65,6 +65,7 @@ function build_autocomplete() {
 		<script src="js/jquery.livequery.min.js"></script>
 		<script src="js/bootbox.min.js"></script>
 
+		<script src="js/serverfunctions.js"></script>
 		<script src="js/log.js"></script>
 		<script src="js/init.ui.js"></script>
 		<script src="js/init.monster.js"></script>
@@ -173,6 +174,7 @@ function build_autocomplete() {
 
 							<span class="right"><i class="icon-forward"></i></span>
 						</center>
+						<span style="display: none;" id="1A_size" data-attr="size"></span>
 					</div>
 					<hr class="clearfix" style="margin: 0" />
 					<div class="grid">
