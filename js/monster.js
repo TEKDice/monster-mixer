@@ -35,7 +35,8 @@ function modifyHp(uid, mod) {
 	var curHp = parseInt($("#"+uid+"_hp").children(".hp_val").text());
 	$("#"+uid+"_hp").children(".hp_val").text(eval(curHp+mod));
 
-	
+	var monsterName = $("[href=#"+uid+"]").text();
+	addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp.");
 
 	var maxHp = parseInt($("#"+uid+"_hp").attr('data-initial-roll'));
 
