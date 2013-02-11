@@ -47,6 +47,7 @@ function build_autocomplete() {
 
 function is_dev() {
 	$parsedUrl = parse_url($_SERVER['HTTP_HOST']);
+	print_r($parsedUrl);
 
 	$host = explode('.', $parsedUrl['host']);
 
