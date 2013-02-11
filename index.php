@@ -385,7 +385,7 @@ function build_autocomplete() {
 									</table>
 								</div> 
 							</li>
-							<li class="draggable specials">
+							<li class="draggable rollable specials">
 								<span class="title">Special Attacks</span>
 								<hr />
 								<div class="minibox-content">
@@ -454,7 +454,7 @@ function build_autocomplete() {
 							</table>
 						</div>
 						<div id="leftPopupFooter">
-							<center><button class="btn btn-primary" id="genButton">Generate</button></center>
+							<center><button class="btn btn-primary" id="genButton" data-loading-text="Generating...">Generate</button></center>
 						</div>
 					</div>
 					<div id="median">

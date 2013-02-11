@@ -165,9 +165,6 @@ var rollable = {
 		ret["Base"] = obj.hitdc;
 		if(obj.dmgname != null) 
 			ret[obj.dmgname] = obj.dmgred_hd;
-
-		console.log(obj);
-		console.log(melee);
 			
 		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
 
@@ -191,6 +188,12 @@ var rollable = {
 					ret["STR Mod"] = strBonus > strMod ? strMod : strBonus;
 			}
 		}
+		return JSON.stringify(ret);
+	},
+	mspatk: function(obj, uid) {
+		var ret = {};
+		if(obj.hit_dice!='0')
+			ret["Base"] = obj.hit_dice;
 		return JSON.stringify(ret);
 	}
 
@@ -284,5 +287,8 @@ var mainStat = {
 	},
 	mweapon: function(obj) {
 		return obj.wname;
+	},
+	mspatk: function(obj) {
+		return obj.name;
 	}
 };

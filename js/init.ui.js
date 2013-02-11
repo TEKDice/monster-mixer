@@ -175,6 +175,10 @@ function resizeGrids() {
 function setupGenButton() {
 	$("#genButton").click(function() {
 
+		$(this).button('loading');
+
+		var $button = $(this);
+
 		//build filters
 		var filterObj = {};
 		$(".inner-filter-container").each(function() {
@@ -187,6 +191,7 @@ function setupGenButton() {
 
 		//POST filters
 		$.post('ajax.php', {action: "gen", data: JSON.stringify(filterObj)}, function(monster) {
+			$button.button('reset');	
 			if(monster==='') {
 				bootbox.alert("No results were found with your filters. Try broadening your search.");
 				return;
@@ -208,7 +213,7 @@ function tabChangeScrollbars() {
 
 		//hide the popup if it's visible
 		if($("#popup").is(":visible")) {
-			_togglePopup();
+			_togglePopup(true);
 		}
 	});
 }
@@ -259,7 +264,7 @@ function initializeArrowToggler() {
 	$("#showFilters").click(_togglePopup);
 }
 
-function _togglePopup() {
+function _togglePopup(ext) {
 	$("#popup").slideToggle(400, function() {
 		if($(this).is(":visible")) {
 			$("#filterIcon").attr('class', 'icon-arrow-up');	
