@@ -297,10 +297,39 @@ function build_autocomplete() {
 									</table>
 								</div>
 							</li>
-							<li class="draggable speeds">
+							<li class="draggable maneuvers">
 								<span class="title">Combat Maneuvers</span>
 								<hr />
 								<div class="minibox-content">
+									<table class="table table-striped table-condensed">
+										<tbody>
+											<tr>
+												<td>Bullrush</td>
+											</tr>
+											<tr>
+												<td>Charge</td>
+											</tr>
+											<tr>
+												<td>Disarm</td>
+											</tr>
+											<tr>
+												<td>Feint</td>
+											</tr>
+											<tr>
+												<td>Grapple</td>
+											</tr>
+											<tr>
+												<td>Overrun</td>
+											</tr>
+											<tr>
+												<td>Sunder</td>
+											</tr>
+											<tr>
+												<td>Trip</td>
+											</tr>
+											<tr class="loaded" style="display: none"><td></td></tr>
+										</tbody>
+									</table>
 								</div>
 							</li>
 							<li class="draggable qualities">

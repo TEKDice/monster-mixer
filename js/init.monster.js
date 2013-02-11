@@ -131,13 +131,11 @@ function appendToTable($table, monsterName, attr, arr) {
 
 			obj.wname = oldName + " (Melee)";
 			obj.is_ranged = "0";
-			console.log(obj);
 			_createRow($table, monsterName, attr, arr, i, obj, uid);
 
 			obj.is_ranged = range;
 			obj.is_melee = "0";
 			obj.wname =  oldName + " (Ranged)";
-			console.log(obj);
 			_createRow($table, monsterName, attr, arr, i, obj, uid);
 
 		} else {

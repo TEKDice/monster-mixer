@@ -41,6 +41,7 @@ function setupRollables($parent) {
 			var result = 0;
 			var resultText = '';
 			var iters=1;
+			var critStatus='';
 
 			var exprFor = $rollable.attr('data-roll-for');
 			var idFor = $(this).closest('div[data-for]').attr('id');
@@ -53,10 +54,9 @@ function setupRollables($parent) {
 					result += attackRoll[i];
 					resultText += i + ": "+attackRoll[i]+"<br>";
 
-					var critStatus='';
 					var threatRange = parseInt($rollable.attr('data-min-crit'));
 
-					if(attackRoll[i] <= 1 && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
+					if(attackRoll[i] <= 1 && (i.indexOf('Base') != -1)) {
 						critStatus='fail';
 
 					} else if(attackRoll[i] >= 20 && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
@@ -203,7 +203,7 @@ function rollableRowHighlighting($parent) {
 
 function tabChangeScrollbars() {
 	$('a[data-toggle="tab"]').on('shown', function (e) {
-		$(".minibox-content").niceScroll();
+		$(".minibox-content").niceScroll({zindex:9});
 		$(".minibox-content").css('overflow','hidden');
 
 		//hide the popup if it's visible
