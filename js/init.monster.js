@@ -52,7 +52,6 @@ function addDataToMonster($parent, monster, uid) {
 			var val = root[attr] == '0' && $(this).hasClass('dashable') ? '--' : root[attr] + ($(this).hasClass('ftable') ? 'ft' : '');
 			if(attr == 'cr') {
 				if(root[attr] < 1) {
-					console.log(root[attr]);
 					switch(root[attr]) {
 						case '0.25': $(this).html($("<div/>").html("&frac14;").text()); break;
 						case '0.33': $(this).html($("<div/>").html("&frac13;").text()); break;
@@ -135,6 +134,10 @@ function appendToTable($table, monsterName, attr, arr) {
 	var uid = $table.attr('data-uid');
 
 	$.each(arr, function(i, obj) {
+		if((attr=='mskill' || attr=='mfeat' || attr=='mqualit') && obj.name.indexOf('No ')!=-1) {
+			$table.append('<tr class="no-data"><td>None</td></tr>');
+			return;
+		}
 		if(obj.hasOwnProperty("is_melee") && obj.hasOwnProperty("is_ranged") && obj.hasOwnProperty("wname") && obj.is_melee == "1" && obj.is_ranged != "0") {
 
 			var oldName = obj.wname;
