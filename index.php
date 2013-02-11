@@ -44,6 +44,16 @@ function build_autocomplete() {
 	return $acarr;
 
 }
+
+function is_dev() {
+	$parsedUrl = parse_url($_SERVER['HTTP_HOST']);
+
+	$host = explode('.', $parsedUrl['host']);
+
+	return $host[0];
+}
+
+echo is_dev();
 ?>
 
 <!DOCTYPE html>
@@ -64,6 +74,7 @@ function build_autocomplete() {
 		<script src="js/jquery.nicescroll.min.js"></script>
 		<script src="js/jquery.livequery.min.js"></script>
 		<script src="js/bootbox.min.js"></script>
+		<script src="js/jquery.cookie.js"></script>
 
 		<script src="js/serverfunctions.js"></script>
 		<script src="js/log.js"></script>
@@ -74,6 +85,7 @@ function build_autocomplete() {
 		<script src="js/init.js"></script>
 		<script src="js/roll.js"></script>
 		<script src="js/monster.js"></script>
+		<script src="js/storage.js"></script>
 
 		<script type="text/javascript">
 			var filterData = <?=json_encode($filterNames);?>;

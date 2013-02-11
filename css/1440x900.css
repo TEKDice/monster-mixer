@@ -1,6 +1,7 @@
 
 .draggable {
 	width: 165px;
+	max-width: 165px;
 }
 
 .shorten-damage:before {

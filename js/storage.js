@@ -2,7 +2,7 @@
 
 var Storage = {
 
-	mode: "123",
+	mode: "html5",
 
 	exists: function() {
 		return typeof(Storage)!=='undefined';
@@ -11,8 +11,12 @@ var Storage = {
 	hasVar: function(var) {
 		return Storage.exists() && typeof localStorage[var] !== 'undefined';
 	},
+
+	_cookieVar: function(var) {
+	},
 	
 	init: function() {
+		if()
 	}
 	
 };
