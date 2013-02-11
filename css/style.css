@@ -1,3 +1,23 @@
+
+/*
+--------------------------------
+
+Encounter Stats
+
+--------------------------------
+*/
+.shorten-damage:before {
+	content: "Dmg.";
+}
+
+.shorten-average:before {
+	content: "Avg.";
+}
+
+.shorten-total:before {
+	content: "Ttl.";
+}
+
 /*
 --------------------------------
 

@@ -2,3 +2,15 @@
 .draggable {
 	width: 165px;
 }
+
+.shorten-damage:before {
+	content: "Damage";
+}
+
+.shorten-average:before {
+	content: "Average";
+}
+
+.shorten-total:before {
+	content: "Total";
+}

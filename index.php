@@ -107,11 +107,11 @@ function build_autocomplete() {
 						</div>
 						<div id="encounterStats" class="row-fluid">
 								<button class="btn span2">Encounter CR</button>
-								<button class="btn span2">Average Level</button>
-								<button class="btn span2">Average Damage Dealt</button>
-								<button class="btn span2">Average Damage Taken</button>
-								<button class="btn span2">Total Damage Dealt</button>
-								<button class="btn span2">Total Damage Taken</button>
+								<button class="btn span2"><span class='shorten-average'></span> Level</button>
+								<button class="btn span2"><span class='shorten-average'></span> <span class='shorten-damage'></span> Dealt</button>
+								<button class="btn span2"><span class='shorten-average'></span> <span class='shorten-damage'></span> Taken</button>
+								<button class="btn span2"><span class='shorten-total'></span> <span class='shorten-damage'></span> Dealt</button>
+								<button class="btn span2"><span class='shorten-total'></span> <span class='shorten-damage'></span> Taken</button>
 						</div>
 					</div>
 
