@@ -72,10 +72,10 @@ function rollHp(uid, $rootNode, newHp) {
 		num = null;
 	}
 
-	var con = get_bonus(parseInt($("#"+uid+"_con").text()));
+	var con = get_bonus(parseInt($("#"+uid+"_con").text())) * parseInt($rootNode.attr('data-base-value').split('d')[0]);
 	newHp += con;
-	if(con > 0)
-		title += "CON Bonus: "+con;
+	if(con != 0)
+		title += "CON Modifier: "+con;
 
 	$("#"+uid+"_hp").children(".hp_val").text(newHp);
 	$rootNode.attr('data-initial-roll', newHp);

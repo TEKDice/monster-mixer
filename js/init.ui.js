@@ -58,11 +58,7 @@ function setupRollables($parent) {
 
 					if(attackRoll[i] <= 1 && i.indexOf('1d20') != -1 && (i.indexOf('Base') != -1)) {
 						critStatus='fail';
-
-					/*} else if(attackRoll[i] >= 20 && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
-						critStatus='success';
-						iters = parseInt($rollable.attr('data-crit-mult'));
-					*/
+						
 					} else if(attackRoll[i] >= threatRange && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
 						critStatus='threat';
 						if(attackRoll[i] >= 20) critStatus = 'success';
