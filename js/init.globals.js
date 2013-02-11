@@ -160,7 +160,7 @@ var rollable = {
 		ret["Bonus"] = obj.skill_level;
 		return JSON.stringify(ret);
 	},
-	mweapon: function(obj, uid, melee) {
+	mweapon: function(obj, uid, range, melee) {
 		var ret = {};
 		ret["Base"] = obj.hitdc;
 		if(obj.dmgname != null) 
@@ -180,10 +180,16 @@ var rollable = {
 			}
 
 		} else {
-			var strMod = parseFloat(obj.max_str_mod);
 
-			if(strBonus != 0)
-				ret["STR Mod"] = strBonus > strMod ? strMod : strBonus;
+			if(range!="0")
+				ret["STR Mod"] = strBonus;
+
+			else {
+				var strMod = parseFloat(obj.max_str_mod);
+
+				if(strBonus != 0)
+					ret["STR Mod"] = strBonus > strMod ? strMod : strBonus;
+			}
 		}
 		return JSON.stringify(ret);
 	}

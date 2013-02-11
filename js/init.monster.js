@@ -185,7 +185,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		$tr.attr('data-roll', '0');
 
 		$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
-			$tr.attr('data-roll', rollable[attr](obj, uid, melee));
+			$tr.attr('data-roll', rollable[attr](obj, uid, range, melee));
 		});
 
 		var rollFor = mainStat[attr](obj);
