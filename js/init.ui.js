@@ -56,7 +56,7 @@ function setupRollables($parent) {
 
 					var threatRange = parseInt($rollable.attr('data-min-crit'));
 
-					if(attackRoll[i] <= 1 && (i.indexOf('Base') != -1)) {
+					if(attackRoll[i] <= 1 && i.indexOf('1d20') != -1 && (i.indexOf('Base') != -1)) {
 						critStatus='fail';
 
 					} else if(attackRoll[i] >= 20 && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
@@ -76,7 +76,7 @@ function setupRollables($parent) {
 						iters = parseInt($rollable.attr('data-crit-mult'));
 					}
 				}
-				if(critStatus == 'threat') {
+				if(critStatus == 'threat' || critStatus == 'success') {
 					addToLog(logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus);
 					addToLog(logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result), critStatus);
 					addToLog(logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus);
@@ -106,7 +106,7 @@ function setupRollables($parent) {
 				}
 			}
 
-			if(critStatus == 'threat') {
+			if(critStatus == 'threat' || critStatus == 'success') {
 				addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result), critStatus);
 			} else {
 				addToLog(logMessages.hit(nameFor, exprFor, resultText, result), critStatus);

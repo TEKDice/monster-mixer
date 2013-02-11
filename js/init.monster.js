@@ -178,13 +178,14 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 	}
 
 	var range = '';
+	var melee = '';
 	
 	if(rollable.hasOwnProperty(attr))  {
 
 		$tr.attr('data-roll', '0');
 
 		$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
-			$tr.attr('data-roll', rollable[attr](obj, uid));
+			$tr.attr('data-roll', rollable[attr](obj, uid, melee));
 		});
 
 		var rollFor = mainStat[attr](obj);
@@ -192,6 +193,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		$tr.attr('data-roll-for', rollFor);
 		if(attr == 'mweapon' || attr == 'mattack') {
 			range = obj.is_ranged;
+			melee = obj.is_melee;
 			$tr.attr('data-range', range);
 
 			var minCrit = 0;
