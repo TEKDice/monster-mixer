@@ -77,6 +77,8 @@ function rollHp(uid, $rootNode, newHp) {
 	if(con != 0)
 		title += "CON Modifier: "+con;
 
+	if(newHp == 0) newHp = 1;
+
 	$("#"+uid+"_hp").children(".hp_val").text(newHp);
 	$rootNode.attr('data-initial-roll', newHp);
 
