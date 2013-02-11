@@ -35,6 +35,8 @@ function modifyHp(uid, mod) {
 	var curHp = parseInt($("#"+uid+"_hp").children(".hp_val").text());
 	$("#"+uid+"_hp").children(".hp_val").text(eval(curHp+mod));
 
+	
+
 	var maxHp = parseInt($("#"+uid+"_hp").attr('data-initial-roll'));
 
 	var text = $("#"+uid+"_hp").children(".hp_val").attr('data-original-title');

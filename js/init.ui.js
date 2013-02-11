@@ -29,6 +29,7 @@ function setupRoller() {
 
 function setupRollables($parent) {
 	$parent.find(".rollable").each(function() {
+
 		var isAttack = $(this).hasClass('attacks');
 		var $roller = $("<i/>").addClass('icon-share-alt');
 		$roller.click(function() {
@@ -74,11 +75,11 @@ function setupRollables($parent) {
 					}
 				}
 				if(critStatus == 'threat' || critStatus == 'success') {
-					addToLog(logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus);
-					addToLog(logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result), critStatus);
-					addToLog(logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus);
+					addToLog(logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus, idFor);
+					addToLog(logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result), critStatus, idFor);
+					addToLog(logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatu, idFor);
 				} else {
-					addToLog(logMessages.initiate(nameFor, exprFor, resultText, result), critStatus);
+					addToLog(logMessages.initiate(nameFor, exprFor, resultText, result), critStatus, idFor);
 				}
 			}
 
@@ -104,9 +105,9 @@ function setupRollables($parent) {
 			}
 
 			if(critStatus == 'threat' || critStatus == 'success') {
-				addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result), critStatus);
+				addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result), critStatus, idFor);
 			} else {
-				addToLog(logMessages.hit(nameFor, exprFor, resultText, result), critStatus);
+				addToLog(logMessages.hit(nameFor, exprFor, resultText, result), critStatus, idFor);
 			}
 		});
 		$(this).append($roller);
