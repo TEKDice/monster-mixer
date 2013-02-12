@@ -39,7 +39,6 @@ function modifyHp(uid, mod) {
 
 	var $monsterNode = $("[href=#"+uid+"]");
 	var monsterName = $monsterNode.html();
-	addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp.");
 
 	var maxHp = parseInt($("#"+uid+"_hp").attr('data-initial-roll'));
 
@@ -61,6 +60,8 @@ function modifyHp(uid, mod) {
 	} else {
 		$("#"+uid+"_hp").children(".hp_val").attr('data-original-title', text+"<br>Modification: "+(maxHp-curHp+mod));
 	}
+
+	addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp. ("+newHp+"/"+maxHp+") ["+Math.round((newHp/maxHp)*100)+"%]");
 
 	if(newHp <= 0) {		
 		bootbox.confirm("It looks like "+$monsterNode.text()+" has died. Would you like to mark it as 'killed'?", function(result) {
