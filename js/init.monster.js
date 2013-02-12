@@ -146,7 +146,7 @@ function appendToTable($table, monsterName, attr, arr) {
 		}
 		if(obj.hasOwnProperty("is_melee") && obj.hasOwnProperty("is_ranged") && obj.hasOwnProperty("wname") && obj.is_melee == "1" && obj.is_ranged != "0") {
 
-			var oldName = obj.wname;
+			var oldName = obj.wname.trim();
 			var range = obj.is_ranged;
 
 			obj.wname = oldName + " (Melee)";
@@ -164,7 +164,7 @@ function appendToTable($table, monsterName, attr, arr) {
 	});
 
 	$table.find("td.has-tooltip").each(function() {
-		var text = $(this).text();
+		var text = $(this).text().trim();
 		$(this).text('');
 		$(this).prepend('<i class="icon-bookmark"></i><a href="#" rel="tooltip" title="'+$(this).attr('data-desc')+'">'+text+"</a>");
 		$(this).find('a').tooltip({html: true, placement: 'bottom', trigger: 'manual'});
