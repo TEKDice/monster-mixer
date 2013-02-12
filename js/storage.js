@@ -1,11 +1,11 @@
 
 
-var Storage = {
+var Data = {
 
 	mode: "html5",
 	
 	init: function() {
-		if(!Storage.isHtml5()) mode="cookie"; 
+		if(!Data.isHtml5()) mode="cookie"; 
 	},
 
 	isHtml5: function() {
@@ -13,32 +13,42 @@ var Storage = {
 	},
 	
 	hasVar: function(check) {
-		return Storage.mode == "html5" ? typeof Storage._html5VarGet(check, val)!=='undefined' : Storage._cookieVarGet(check, val) !== null;
+		return Data.mode == "html5" ? (typeof Data._html5VarGetRaw(check)	!= 'undefined' &&
+											Data._html5VarGetRaw(check) 	!= null) : 
+									  Data._cookieVarGet(check) !== null;
 	},
 
 	getVar: function(check) {
-		return Storage.mode == "html5" ? Storage._html5VarGet(check) : Storage._cookieVarGet(check);
+		return Data.mode == "html5" ? Data._html5VarGet(check) : Data._cookieVarGet(check);
 	},
 
 	_cookieVarGet: function(check) {
-		return $.cookie(check);
+		return $.parseJSON($.cookie(check));
 	},
 
 	_html5VarGet: function(check) {
-		if(!isHtml5()) throw new Error("You don't have an HTML5 compliant browser, don't try to fool me!");
+		if(!Data.isHtml5()) throw new Error("You don't have an HTML5 compliant browser, don't try to fool me!");
+		return $.parseJSON(localStorage[check]);
+	},
+
+	_cookieVarGetRaw: function(check) {
+		return $.cookie(check);
+	},
+
+	_html5VarGetRaw: function(check) {
 		return localStorage[check];
 	},
 
 	clearVar: function(check) {
-		return Storage.mode == "html5" ? Storage._html5VarSet(check, null) : Storage._cookieVarSet(check, null);
+		return Data.mode == "html5" ? localStorage.removeItem(check) : Data._cookieVarSet(check, null);
 	},
 
 	setVar: function(check, val) {
-		return Storage.mode == "html5" ? Storage._html5VarSet(check, val) : Storage._cookieVarSet(check, val);
+		return Data.mode == "html5" ? Data._html5VarSet(check, val) : Data._cookieVarSet(check, val);
 	},
 
 	_html5VarSet: function(check, val) {
-		if(!isHtml5()) throw new Error("You don't have an HTML5 compliant browser, don't try to fool me!");
+		if(!Data.isHtml5()) throw new Error("You don't have an HTML5 compliant browser, don't try to fool me!");
 		localStorage[check] = val;
 	},
 
