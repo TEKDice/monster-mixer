@@ -33,7 +33,9 @@ function hasNeedle(id, table, needle, returnVal) {
 
 function modifyHp(uid, mod) {
 	var curHp = parseInt($("#"+uid+"_hp").children(".hp_val").text());
-	$("#"+uid+"_hp").children(".hp_val").text(eval(curHp+mod));
+
+	var newHp = eval(curHp+mod);
+	$("#"+uid+"_hp").children(".hp_val").text(newHp);
 
 	var monsterName = $("[href=#"+uid+"]").html();
 	addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp.");
@@ -57,6 +59,10 @@ function modifyHp(uid, mod) {
 		$("#"+uid+"_hp").children(".hp_val").attr('data-original-title', newText);
 	} else {
 		$("#"+uid+"_hp").children(".hp_val").attr('data-original-title', text+"<br>Modification: "+(maxHp-curHp+mod));
+	}
+
+	if(newHp <= 0) {
+		
 	}
 }
 
@@ -152,9 +158,21 @@ function remove(uid, killed) {
 		}
 	}
 
-	updateLogNumbers(uid);
+	updateLogNumbers(uid, killed);
 }
 
-function updateLogNumbers(uid) {
+function updateLogNumbers(uid, killed) {
+	$("#allInfo div p span.logCount").each(function(i,e){
+		var uid = $(this).closest('[data-uid]').attr('data-uid');
 
+		if($(this).text() == 'DEAD' || $(this).text() == 'GONE');
+
+		var $monNode = $("#monsterList a[href='#"+uid+"']");
+
+		if($monNode.length == 0) {
+			$(this).text(killed ? 'DEAD' : 'GONE');
+		} else {
+			$(this).text($monNode.find('.logCount').text());
+		}
+	});
 }
