@@ -64,8 +64,10 @@ function rollHp(uid, $rootNode, newHp) {
 
 	var title = '';
 
-	title += $rootNode.attr('data-base-value')+": "+newHp+"<br>";
 	newHp = parseInt(newHp);
+
+	if(newHp == 0) newHp = 1;
+	title += $rootNode.attr('data-base-value')+": "+newHp+"<br>";
 
 	var num;
 	if(num = hasFeat(uid, "Toughness")) {
@@ -79,8 +81,6 @@ function rollHp(uid, $rootNode, newHp) {
 	newHp += con;
 	if(con != 0)
 		title += "CON Modifier: "+con;
-
-	if(newHp == 0) newHp = 1;
 
 	$("#"+uid+"_hp").children(".hp_val").text(newHp);
 	$rootNode.attr('data-initial-roll', newHp);
