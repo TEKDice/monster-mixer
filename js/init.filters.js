@@ -1,4 +1,13 @@
 
+function loadFilters() {
+	if(!Data.hasVar("filters")) return;
+
+	var filters = Data.getVar("filters");
+
+	$.each(filters, function(i, e) {
+		_addNewFilter(e);
+	});
+}
 
 function addNewFilter() {
 	var filterName = $("#filters").val();
@@ -23,7 +32,7 @@ function addNewFilter() {
 	}
 
 	if(_addNewFilter(newFilter)) 
-		_trackFilter(newFilter);
+		_trackFilter(newFilter, true);
 
 }
 
@@ -100,8 +109,46 @@ function _addNewFilter(newFilter) {
 	return true;
 }
 
-function _trackFilter(filter) {
+function _trackFilter(filter, add) {
+	if(!Data.hasVar("filters")) {
+		Data.setVar("filters",[]);
+	}
 
+	var filters = Data.getVar("filters");
+	var filtFound = false;
+
+	$.each(filters, function(i, e) {
+		if( filter.name == e.name &&
+			filter.sign == e.sign &&
+			filter.value == e.value) {
+			if(!add) 
+				filters.splice(i,1);
+			else
+				filtFound = true;
+		}
+	});
+
+	if(!filtFound && add)
+		filters.push(filter);
+
+	Data.setVar("filters", filters);
+}
+
+function makeSpansRemovable() {
+	$(".filter-remover").click(function() {
+		$(this).parent().fadeOut(function() {
+			var siblingsLeft = $(this).siblings().size();
+			if(siblingsLeft == 0) {
+				$(this).closest("tr").remove();
+			}
+			_trackFilter({
+				name: $(this).closest("[data-attr]").attr('data-attr'), 
+				value: $(this).closest("[data-value]").attr('data-value'),
+				sign: $(this).closest("[data-sign]").attr('data-sign')
+			}, false);
+			$(this).remove();
+		});
+	});
 }
 
 function getFilterText(obj) {

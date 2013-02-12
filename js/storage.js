@@ -44,6 +44,7 @@ var Data = {
 	},
 
 	setVar: function(check, val) {
+		val = JSON.stringify(val);
 		return Data.mode == "html5" ? Data._html5VarSet(check, val) : Data._cookieVarSet(check, val);
 	},
 

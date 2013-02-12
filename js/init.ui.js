@@ -197,19 +197,7 @@ function tabChangeScrollbars() {
 
 function setupAddButton() {
 	$("#newFilter").click(addNewFilter);
-}
-
-function makeSpansRemovable() {
-	$(".filter-remover").click(function() {
-		$(this).parent().fadeOut(function() {
-			var siblingsLeft = $(this).siblings().size();
-			if(siblingsLeft == 0) {
-				$(this).closest("tr").remove();
-			}
-			$(this).remove();
-		});
-	});
-}
+}	
 
 function initializePopupToggler() {
 	//toggle the sizes between the two popup possibilities
