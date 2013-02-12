@@ -77,7 +77,7 @@ function setupRollables($parent) {
 				if(critStatus == 'threat' || critStatus == 'success') {
 					addToLog(logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus, idFor);
 					addToLog(logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result), critStatus, idFor);
-					addToLog(logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatu, idFor);
+					addToLog(logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus, idFor);
 				} else {
 					addToLog(logMessages.initiate(nameFor, exprFor, resultText, result), critStatus, idFor);
 				}
@@ -104,7 +104,7 @@ function setupRollables($parent) {
 				}
 			}
 
-			if(critStatus == 'threat' || critStatus == 'success') {
+			if((critStatus == 'threat' || critStatus == 'success') && isAttack) {
 				addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result), critStatus, idFor);
 			} else {
 				addToLog(logMessages.hit(nameFor, exprFor, resultText, result), critStatus, idFor);
@@ -114,32 +114,6 @@ function setupRollables($parent) {
 	});
 
 }
-
-var logMessages = {
-	hit: function(ent, att, text, num) {
-		return ent + " rolled \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
-	},
-
-	initiate: function(ent, att, text, num) {
-		return ent + " initiated \""+att+"\" with <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
-	},
-
-	critAttempt: function(ent, att, text, num) {
-		return ent + " attempted to crit using \""+att+"\" with <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
-	},
-
-	critSecond: function(ent, att, text, num) {
-		return ent + " attempted to finish crit using \""+att+"\" with <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
-	},
-
-	critMiss: function(ent, att, text, num) {
-		return ">> If "+ent+" fails critical hit, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
-	},
-
-	critSuccess: function(ent, att, text, num) {
-		return ">> If "+ent+" succeeds critical hit, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
-	}
-};
 
 function _rollArray(arr) {
 	var ret = {result: 0, text: ''};
