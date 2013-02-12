@@ -165,13 +165,17 @@ function is_dev() {
 								</div>
 								<div class="tab-pane" id="curTab">                 
 									<div id="curMon">
-										<p>I'm not implementing this yet.</p>
 									</div>    
 								</div>
 							</div>
 						</div>
 					</div>
 
+				</div>
+			</div>
+
+			<div id="dummyLog" style="display: none;">
+				<div class="log" data-for="none">
 				</div>
 			</div>
 

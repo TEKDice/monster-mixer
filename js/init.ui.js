@@ -182,11 +182,15 @@ function rollableRowHighlighting($parent) {
 
 function tabChangeScrollbars() {
 	$('a[data-toggle="tab"]').on('shown', function (e) {
-		$(".minibox-content").each(function() {
+		$(this).find(".minibox-content").each(function() {
 			var nice = $(this).niceScroll({horizrailenabled: false, zindex:9});
 			$("#"+nice.id).attr('data-nice-uid', $(this).closest('tab-pane').attr('data-for'));
 		});
-		$(".minibox-content").css('overflow','hidden');
+		$(this).find(".minibox-content").css('overflow','hidden');
+
+		var uid = $(this).attr('data-uid');
+
+		$("#curMon > div[data-for='"+uid+"']").show().siblings().hide();
 
 		//hide the popup if it's visible
 		if($("#popup").is(":visible")) {

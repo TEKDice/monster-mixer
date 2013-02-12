@@ -3,7 +3,6 @@
 function addNewMonster(monster) {
 	$(".alert").hide();
 	$("#monsterList").show();
-	//$("#encounterStats").css('margin-top','0');
 
 	var uid = new Date().getTime();
 
@@ -12,14 +11,14 @@ function addNewMonster(monster) {
 
 	var $a = $("<a/>",{
 		href: "#"+uid
-	}).html("[<span class='logCount'>"+$("#monsterList").children().size()+"</span>] "+monster.data[0].name).attr('data-toggle','tab');
+	}).html("[<span class='logCount'>"+$("#monsterList").children().size()+"</span>] "+monster.data[0].name).attr('data-toggle','tab').attr('data-uid', uid);
 
 	$a.appendTo($li);
 
 	var newHtml = $("#dummyData").html();
 	$("#monsterData").append(newHtml);
 
-	var $parent = $("[data-for='none']").not("#dummyData > [data-for='none']");
+	var $parent = $(".tab-pane[data-for='none']").not("#dummyData > [data-for='none']");
 
 	$parent.attr('id', uid);
 	$parent.attr('data-for', uid);
@@ -34,6 +33,12 @@ function addNewMonster(monster) {
 	rollableRowHighlighting($parent);
 
 	setupRollables($parent);
+
+	var newLog = $("#dummyLog").html();
+	$("#curMon").append(newLog);
+
+	var $pLog = $(".log[data-for='none']").not("#dummyLog > [data-for='none']");
+	$pLog.attr('id', uid+"_log").attr('data-for', uid);
 
 	$a.tab('show');
 

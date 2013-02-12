@@ -2,16 +2,20 @@
 var logTimer;
 
 function addToLog(string, selector, uid) {
-	var $div = $("<div/>").appendTo("#allInfo");
-	var $container = $("<p/>").addClass('pull-left').attr('data-uid',uid).html(string).appendTo($div);
-	$div.append("<div class='pull-right threat-status "+selector+"'></div><div class='clearfix'></div>");
-	$container.addClass(selector);
 
-	$container.find('a').tooltip({html: true});
+	var divString = "<div><p class='pull-left "+selector+"' data-uid='"+uid+"'>"+
+		string+"</p></div><div class='pull-right threat-status "+
+		selector+"'></div><div class='clearfix'></div>";
+
+	$("#allInfo").append(divString);
+	$("#"+uid+"_log").append(divString);
+
+	$("#log").find('a').tooltip({html: true});
 
 	clearTimeout(logTimer);
 	logTimer = setTimeout( function() {
 		$("#allInfo").animate( {scrollTop: $("#allInfo")[0].scrollHeight }, 50);
+		$("#curMon").animate( {scrollTop: $("#curMon")[0].scrollHeight }, 50);
 	}, 100);
 
 	$("#log .tab-pane > div").niceScroll({horizrailenabled: false});
