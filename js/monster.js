@@ -137,7 +137,7 @@ function remove(uid, killed) {
 	$node.parent().remove();
 	$(".tab-pane[data-for='"+uid+"']").remove();
 	$("[data-nice-uid='"+uid+"']").remove();
-	//remove the uid monsters log too
+	$("#"+uid+"_log").remove();
 
 	var count = 0;
 
@@ -151,7 +151,6 @@ function remove(uid, killed) {
 	} else {
 		if(count > 0) {
 			$("#monsterList li:nth-child("+(pos-1)+")").find("a").tab('show');
-			//show the uid monsters log too
 		} else {
 			if(killed) {
 				$("#winAlert").show();

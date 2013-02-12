@@ -3,6 +3,7 @@ var logTimer;
 
 function addToLog(string, selector, uid) {
 
+	//bleh, damned inability to append the same element in two places..
 	var divString = "<div><p class='pull-left "+selector+"' data-uid='"+uid+"'>"+
 		string+"</p></div><div class='pull-right threat-status "+
 		selector+"'></div><div class='clearfix'></div>";
