@@ -82,6 +82,17 @@ function bodyBinding() {
 			});
 		});
 	});
+
+	$(".delete").livequery(function() {
+		$(this).click(function() {
+			var uid = $(this).attr('data-uid');
+			var name = $("#"+uid+"_name").text();
+			bootbox.confirm("Are you sure you want to remove "+name+" from the encounter?", function(result) {
+				if(result)
+					remove(uid, false);
+			});
+		});
+	});
 }
 
 var defaultFunction = function() {

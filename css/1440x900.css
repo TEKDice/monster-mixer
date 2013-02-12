@@ -5,11 +5,11 @@
 }
 
 .shorten-damage:before {
-	content: "Damage";
+	content: "Dmg.";
 }
 
 .shorten-average:before {
-	content: "Average";
+	content: "Avg.";
 }
 
 .shorten-total:before {

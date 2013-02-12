@@ -8,15 +8,14 @@ var Storage = {
 		return typeof(Storage)!=='undefined';
 	},
 	
-	hasVar: function(var) {
-		return Storage.exists() && typeof localStorage[var] !== 'undefined';
+	hasVar: function(check) {
+		return Storage.exists() && typeof localStorage[check] !== 'undefined';
 	},
 
-	_cookieVar: function(var) {
+	_cookieVar: function(check) {
 	},
 	
 	init: function() {
-		if()
 	}
 	
 };

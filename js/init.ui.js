@@ -46,7 +46,7 @@ function setupRollables($parent) {
 
 			var exprFor = $rollable.attr('data-roll-for');
 			var idFor = $(this).closest('div[data-for]').attr('id');
-			var nameFor = $("a[href='#"+idFor+"']").text();
+			var nameFor = $("a[href='#"+idFor+"']").html();
 
 			if(isAttack) {
 				var attackRoll = rollDice($rollable.attr('data-attack-roll'));
@@ -151,16 +151,18 @@ function _rollArray(arr) {
 	return ret;
 }
 
-function setupGrids() {
+function setupGrids(uid) {
 	$(".sortable").sortable({
 		sort: function(e, u) {
-			setupGrids();
+			setupGrids(uid);
 		}
 	});
 	$(".sortable").disableSelection();
 
-	$(".minibox-content").niceScroll({horizrailenabled: false});
-
+	$(".minibox-content").each(function() {
+		var nice = $(this).niceScroll({horizrailenabled: false});
+		$("#"+nice.id).attr('data-nice-uid', uid);
+	});
 	resizeGrids();
 }
 
@@ -195,8 +197,8 @@ function setupGenButton() {
 				return;
 			}
 			monster = $.parseJSON(monster);
-			addNewMonster(monster);
-			setupGrids();
+			var uid = addNewMonster(monster);
+			setupGrids(uid);
 		});
 	});
 }
@@ -206,7 +208,10 @@ function rollableRowHighlighting($parent) {
 
 function tabChangeScrollbars() {
 	$('a[data-toggle="tab"]').on('shown', function (e) {
-		$(".minibox-content").niceScroll({zindex:9});
+		$(".minibox-content").each(function() {
+			var nice = $(this).niceScroll({horizrailenabled: false, zindex:9});
+			$("#"+nice.id).attr('data-nice-uid', $(this).closest('tab-pane').attr('data-for'));
+		});
 		$(".minibox-content").css('overflow','hidden');
 
 		//hide the popup if it's visible
@@ -296,5 +301,10 @@ function resizeElements() {
 
 	$("#log .tab-pane > div").css('height', $("#log").height()-38);
 
+	$("#monstersContainer > .row-fluid").first().css('height', $("#monsterListCont").height());
+
 	resizeGrids();
+
+	//1280x1024, 1680x1050 = 2 hidden boxes
+	//1280x800, 
 }

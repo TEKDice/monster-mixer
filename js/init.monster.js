@@ -1,9 +1,9 @@
 
 
 function addNewMonster(monster) {
-	$(".alert").alert('close');
+	$(".alert").hide();
 	$("#monsterList").show();
-	$("#encounterStats").css('margin-top','0');
+	//$("#encounterStats").css('margin-top','0');
 
 	var uid = new Date().getTime();
 
@@ -11,9 +11,8 @@ function addNewMonster(monster) {
 	$li.appendTo($("#monsterList"));
 
 	var $a = $("<a/>",{
-		href: "#"+uid,
-		text: "["+$("#monsterList").children().size()+"] "+monster.data[0].name
-	}).attr('data-toggle','tab');
+		href: "#"+uid
+	}).html("[<span class='logCount'>"+$("#monsterList").children().size()+"</span>] "+monster.data[0].name).attr('data-toggle','tab');
 
 	$a.appendTo($li);
 
@@ -37,6 +36,8 @@ function addNewMonster(monster) {
 	setupRollables($parent);
 
 	$a.tab('show');
+
+	return uid;
 }
 
 function addDataToMonster($parent, monster, uid) {

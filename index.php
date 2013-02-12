@@ -110,8 +110,11 @@ function is_dev() {
 							<div class="tabbable tabs-left" id="monsterListCont">
 								<ul class="nav nav-tabs" id="monsterList"></ul>
 								<div class="tab-content" id="monsterData">
-									<div class="alert">
+									<div class="alert" id="genAlert">
 										<strong>Hey!</strong> You should click the arrow above this to generate some monsters.
+									</div>
+									<div class="alert alert-success" style="display: none;" id="winAlert">
+										<strong>Congratulations!</strong> To your players, that is.
 									</div>
 								</div>
 							</div>
@@ -176,7 +179,7 @@ function is_dev() {
 				<div class="tab-pane" data-for="none">
 					<div class="header lead" style="margin-bottom: 7px">
 						<span class="pull-left">Initiative: <span data-attr="initiative" class="roll_add_me reg-has-tt" data-uid="1A" id="1A_init"></span></span>
-						<span class="pull-right">CR: <span data-attr="cr" id="1A_cr"></span></span>
+						<span class="pull-right">CR: <span data-attr="cr" id="1A_cr"></span>&nbsp;<i class='icon-trash delete' id="1A_remove"></i></span>
 						<center>
 							<span class="left"><i class="icon-backward"></i></span>
 

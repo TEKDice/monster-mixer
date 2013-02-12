@@ -35,7 +35,7 @@ function modifyHp(uid, mod) {
 	var curHp = parseInt($("#"+uid+"_hp").children(".hp_val").text());
 	$("#"+uid+"_hp").children(".hp_val").text(eval(curHp+mod));
 
-	var monsterName = $("[href=#"+uid+"]").text();
+	var monsterName = $("[href=#"+uid+"]").html();
 	addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp.");
 
 	var maxHp = parseInt($("#"+uid+"_hp").attr('data-initial-roll'));
@@ -118,4 +118,43 @@ function rollInit($node) {
 	$node.text(base+roll+num);
 	$node.attr('rel','tooltip').attr('title',title);
 	$node.tooltip({html: true, placement: 'bottom'});
+}
+
+function remove(uid, killed) {
+	var $node = $("#monsterList a[href=#"+uid+"]");
+	var pos = parseInt($node.find('.logCount').text());
+
+	$node.parent().remove();
+	$(".tab-pane[data-for='"+uid+"']").remove();
+	$("[data-nice-uid='"+uid+"']").remove();
+	//remove the uid monsters log too
+
+	var count = 0;
+
+	$("#monsterList li").each(function(i, e) {
+		$(this).find(".logCount").text(i+1);
+		count++;
+	});
+
+	if(pos == 1 && count != 0) {
+		$("#monsterList li a").first().tab('show');
+	} else {
+		if(count > 0) {
+			$("#monsterList li:nth-child("+(pos-1)+")").find("a").tab('show');
+			//show the uid monsters log too
+		} else {
+			if(killed) {
+				$("#winAlert").show();
+			} else {
+				$("#genAlert").show();
+			}
+			$("#monsterList").hide();
+		}
+	}
+
+	updateLogNumbers(uid);
+}
+
+function updateLogNumbers(uid) {
+
 }

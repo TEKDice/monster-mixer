@@ -3,7 +3,7 @@ var logTimer;
 
 function addToLog(string, selector, uid) {
 	var $div = $("<div/>").appendTo("#allInfo");
-	var $container = $("<p/>").addClass('pull-left').html(string).appendTo($div);
+	var $container = $("<p/>").addClass('pull-left').attr('data-uid',uid).html(string).appendTo($div);
 	$div.append("<div class='pull-right threat-status "+selector+"'></div><div class='clearfix'></div>");
 	$container.addClass(selector);
 
