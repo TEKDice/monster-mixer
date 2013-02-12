@@ -1,7 +1,6 @@
 
 
 function addNewFilter() {
-
 	var filterName = $("#filters").val();
 
 	var newFilter = {name: filterName};
@@ -22,6 +21,15 @@ function addNewFilter() {
 		newFilter.value=$("#autocompleteName").val();
 
 	}
+
+	if(_addNewFilter(newFilter)) 
+		_trackFilter(newFilter);
+
+}
+
+function _addNewFilter(newFilter) {
+
+	var filterName = newFilter.name;
 	
 	var cleanName=_cleanName(newFilter.name);
 
@@ -42,7 +50,7 @@ function addNewFilter() {
 			}
 		});
 
-		if(hasDuplicate) return;
+		if(hasDuplicate) return false;
 
 		var $filterSpan = $("<span/>", {
 			text: getFilterText(newFilter)+" "
@@ -88,6 +96,12 @@ function addNewFilter() {
 	}
 
 	makeSpansRemovable();
+
+	return true;
+}
+
+function _trackFilter(filter) {
+
 }
 
 function getFilterText(obj) {
