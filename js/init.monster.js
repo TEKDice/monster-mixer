@@ -116,7 +116,7 @@ function setUpHp($parent, uid) {
 	$hpNode = $parent.find("span[data-attr='hit_dice']");
 	var hp = $hpNode.attr('data-initial-roll');
 	$hpNode.text('');
-	$hpNode.append("<span class='hp_val'></span>");
+	$hpNode.append("<span class='hp_val' data-for='hp'></span>");
 	rollHp(uid, $hpNode, hp);
 	$hpNode.append('<i id="health_'+uid+'" class="icon-heart"></i>');
 	var popover = $("#dummyModifiable").html();

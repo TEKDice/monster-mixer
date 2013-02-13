@@ -17,8 +17,6 @@
 		<h3 id="sessionDialogHeader">Saved Sessions</h3>
 	</div>
 	<div class="modal-body">
-		<form class="form-horizontal">
-		</form>
 	</div>
 	<div class="modal-footer">
 		<span id="sessionDialogError" class="pull-left label label-important"></span>

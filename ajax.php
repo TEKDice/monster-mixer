@@ -16,21 +16,33 @@ if(isset($_POST["action"]) && !empty($_POST["action"])) {
 define('readonly', true);
 require_once('../include/database.php');
 
-$json = json_decode($_POST["data"], true);
+if(isset($_POST["data"])) {
+	$json = json_decode($_POST["data"], true);
 
-global $conn;
+	global $conn;
 
-$type_info = run_query_arr_name($conn, "select name,sql_name,join_table,join_table_col,link_table,is_calculated,is_numeric from GeneratorFilters");
+	$type_info = run_query_arr_name($conn, "select name,sql_name,join_table,join_table_col,link_table,is_calculated,is_numeric from GeneratorFilters");
 
-$query = build_query($json, $type_info);
+	$query = build_query($json, $type_info);
 
-$monsters = run_query_arr($conn, $query);
+	$monsters = run_query_arr($conn, $query);
 
-shuffle($monsters);
+	shuffle($monsters);
 
-foreach($monsters as $arr=>$id) {
-	echo json_encode(get_monster_data($id["monster_id"]));
-	return;
+	foreach($monsters as $arr=>$id) {
+		echo json_encode(get_monster_data($id["monster_id"]));
+		return;
+	}
+} else if(isset($_POST["ids"])) {
+	$ids = json_decode($_POST["ids"]);
+
+	$monsters = array();
+
+	foreach($ids as $id) {
+		array_push($monsters, get_monster_data($id));
+	}
+
+	echo json_encode($monsters);
 }
 
 function build_query($json, $type_info) {
