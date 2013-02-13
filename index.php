@@ -81,11 +81,11 @@ function is_dev() {
 		<script src="js/init.monster.js"></script>
 		<script src="js/init.globals.js"></script>
 		<script src="js/init.filters.js"></script>
-		<script src="js/init.js"></script>
 		<script src="js/roll.js"></script>
 		<script src="js/monster.js"></script>
 		<script src="js/storage.js"></script>
 		<script src="js/sync.js"></script>
+		<script src="js/init.js"></script>
 
 		<script type="text/javascript">
 			var filterData = <?=json_encode($filterNames);?>;
