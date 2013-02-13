@@ -63,6 +63,8 @@ function modifyHp(uid, mod) {
 
 	addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp. ("+newHp+"/"+maxHp+") ["+Math.round((newHp/maxHp)*100)+"%]");
 
+	saveMonsters();
+
 	if(newHp <= 0) {		
 		bootbox.confirm("It looks like "+$monsterNode.text()+" has died. Would you like to mark it as 'killed'?", function(result) {
 			if(result)
@@ -161,6 +163,8 @@ function remove(uid, killed) {
 			$("#monsterList").hide();
 		}
 	}
+
+	saveMonsters();
 
 	updateLogNumbers(uid, killed);
 }

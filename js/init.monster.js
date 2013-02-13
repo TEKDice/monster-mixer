@@ -42,6 +42,8 @@ function addNewMonster(monster) {
 
 	$a.tab('show');
 
+	saveMonsters();
+
 	return uid;
 }
 

@@ -85,6 +85,7 @@ function is_dev() {
 		<script src="js/roll.js"></script>
 		<script src="js/monster.js"></script>
 		<script src="js/storage.js"></script>
+		<script src="js/sync.js"></script>
 
 		<script type="text/javascript">
 			var filterData = <?=json_encode($filterNames);?>;
@@ -193,6 +194,7 @@ function is_dev() {
 							<span class="right"><i class="icon-forward"></i></span>
 						</center>
 						<span style="display: none;" id="1A_size" data-attr="size"></span>
+						<span style="display: none;" id="1A_id" data-attr="m_id"></span>
 					</div>
 					<hr class="clearfix" style="margin: 0" />
 					<div class="grid">
