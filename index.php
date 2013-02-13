@@ -90,6 +90,7 @@ function is_dev() {
 		<script type="text/javascript">
 			var filterData = <?=json_encode($filterNames);?>;
 			var autocompleteList = <?=json_encode(build_autocomplete());?>;
+			var loggedIn = <?=isLoggedIn();?>;
 		</script>
 	</head>
 	<body>
