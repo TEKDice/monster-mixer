@@ -28,4 +28,6 @@ $(function() {
 
 	loadFilters();
 
+	sessionManagement();
+
 });
