@@ -2,6 +2,7 @@
 
 //monster modify, monster create, monster remove
 function saveMonsters() {
+	if(!loggedIn) return;
 	if(!currentSessionId) return;
 	//TODO -- "loading icon"
 
@@ -24,6 +25,7 @@ function saveMonsters() {
 }
 
 function loadMonsters(monsterSet) {
+	if(!loggedIn) return;
 
 	//TODO -- "loading icon"
 
@@ -56,16 +58,19 @@ function loadMonsters(monsterSet) {
 var currentSessionId;
 
 function startSession() {
+	if(!loggedIn) return;
 	currentSessionId = new Date().getTime();
 	saveSession();
 }
 
 function loadSession(id) {
+	if(!loggedIn) return;
 	var monsters = Data.getVar('monsters_'+id);
 	loadMonsters(monsters);
 }
 
 function saveSession() {
+	if(!loggedIn) return;
 	if(!currentSessionId) return;
 
 	Data.setVar("lastSessionId", currentSessionId);
@@ -73,6 +78,7 @@ function saveSession() {
 }
 
 function hasPreviousSession() {
+	if(!loggedIn) return;
 	if(!Data.hasVar("lastSessionId")) return false;
 	var lastSessId = Data.getVar("lastSessionId");
 
@@ -84,11 +90,13 @@ function hasPreviousSession() {
 }
 
 function getPreviousSession() {
+	if(!loggedIn) return;
 	if(!Data.hasVar("lastSessionId")) return false;
 	return Data.getVar("lastSessionId");
 }
 
 function sessionManagement() {
+	if(!loggedIn) return;
 	if(hasPreviousSession()) {		
 		bootbox.confirm("It looks like you had a session open. Would you like to reload it?", function(result) {
 			if(!result) { startSession(); return;}

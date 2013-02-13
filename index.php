@@ -90,7 +90,6 @@ function is_dev() {
 		<script type="text/javascript">
 			var filterData = <?=json_encode($filterNames);?>;
 			var autocompleteList = <?=json_encode(build_autocomplete());?>;
-			var loggedIn = <?=isLoggedIn();?>;
 		</script>
 	</head>
 	<body>
@@ -100,6 +99,9 @@ function is_dev() {
 				It looks like your browser doesn't have javascript enabled or supported. This applications makes heavy usage of javascript, so at the present time, there isn't a version available without javascript.
 			</div>
 		</noscript>
+		<script type="text/javascript">
+			var loggedIn = <?=isLoggedIn() ? 1 : 0;?>;
+		</script>
 		<?php
 		if(isLoggedIn()) {
 		?>
