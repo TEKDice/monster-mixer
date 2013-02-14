@@ -6,11 +6,19 @@
 		<h3 id="sessionDialogHeader">Saved Sessions</h3>
 	</div>
 	<div class="modal-body">
+		<table class="table">
+			<caption>Local Sessions</caption>
+			<thead>
+				<tr><td>Session Name</td><td>Sync Status</td><td>Remove</td></tr>
+			</thead>
+			<tbody id="allSessions">
+			</tbody>
+		</table>
 	</div>
 	<div class="modal-footer">
 		<span id="sessionDialogError" class="pull-left label label-important"></span>
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		<button class="btn btn-primary">Load</button>
+		<button class="btn btn-primary" id="sessionLoad">Load</button>
 	</div>
 </div>
 
@@ -42,6 +50,29 @@
 
 <script type="text/javascript">
 	$(function() {
+		$("#sessionDialog").on('show', function() {
+			var sessions = Data.getVar(SESSIONS_VARIABLE);
+			$("#allSessions").empty();
+			$.each(sessions, function(i, e) {
+				if(!Data.hasVar("monsters_"+e.startTime))return;
+				var $tr = $("<tr/>").attr('data-session', e.startTime);
+				if(e.startTime == currentSessionId) $tr.addClass('success');
+				$tr.appendTo($("#allSessions"));
+				$("<td/>").html(e.name+"<br><span class='subdate'>"+new Date(e.startTime).format()+"</span>	").appendTo($tr);
+				$("<td/>").text('').appendTo($tr);
+				$("<td/>").text('').appendTo($tr);
+				$tr.click(function() {
+					if($(this).hasClass('success')) return;
+					$(this).siblings().removeClass('info');
+					$(this).addClass('info');
+				});
+			});
+		});
+		$("#sessionDialog").on('shown', function() {
+			var $body = $('#allSessions').closest(".modal-body");
+   			var nice = $body.niceScroll({horizrailenabled: false});
+   			$body.css('overflow','hidden');
+		});
 		$('#currentSessionDialog').on('show', function () {
 			var session = getCurrentSession();
 			if(session == undefined) {
@@ -56,6 +87,12 @@
 			session.name = $("#sessionName").val();
 			session.lastUpdate = now();
 			saveSession(false, session);
+		});
+		$("#sessionLoad").click(function() {
+			var sessId = $("#allSessions .info").attr('data-session');
+			if(!sessId) return;
+			$(this).closest('.modal').modal('hide');
+			loadSession(sessId);
 		});
 	});
 </script>

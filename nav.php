@@ -8,7 +8,7 @@
 		<ul class="dropdown-menu">
 			<li><a>New Session</a></li>
 			<li><a href="#" data-toggle="modal" data-target="#currentSessionDialog">Current Session</a></li>
-			<li><a>Sessions...</a></li>
+			<li><a href="#" data-toggle="modal" data-target="#sessionDialog">Sessions...</a></li>
 			<li class="divider"></li>
 			<li class="disabled"><a href="#"><i id="noChangeColor" class="icon-ok"></i> Status</a></li>
 		</ul>

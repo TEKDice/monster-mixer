@@ -21,6 +21,8 @@ function saveMonsters() {
 			init: $("#"+uid+"_init").attr('data-initial-value')
 		};
 
+		if(mon.id == '') return;
+
 		monsters.push(mon);
 	});
 
@@ -60,6 +62,12 @@ function loadMonsters(monsterSet) {
 	//TODO -- remove loading icon
 }
 
+function removeAllMonsters() {
+	$("#allInfo").empty();
+	$("#monsterList").empty();
+	$("#monsterData .tab-pane").remove();
+}
+
 var currentSessionId;
 
 function startSession() {
@@ -70,9 +78,10 @@ function startSession() {
 
 function loadSession(id) {
 	if(!loggedIn) return;
+	removeAllMonsters();
+	currentSessionId = id;
 	var monsters = Data.getVar('monsters_'+id);
 	loadMonsters(monsters);
-	currentSessionId = id;
 }
 
 function saveSession(ask, sessionData) {
@@ -96,6 +105,12 @@ function saveSession(ask, sessionData) {
 		if(sessionData)
 			sessions[_currentSessionId()] = sessionData;
 		sessions[_currentSessionId()].lastUpdate = now();
+	} else {
+		if(sessionData)
+			sessions[_currentSessionId()] = sessionData;
+		else
+			sessions[_currentSessionId()] = saveNewSession();
+		sessions[_currentSessionId()].lastUpdate = now();
 	}
 
 	Data.setVar(SESSIONS_VARIABLE, sessions);
@@ -105,7 +120,7 @@ function saveNewSession() {
 	var sessions = Data.getVar(SESSIONS_VARIABLE);
 	var ret = sessions[_currentSessionId()] = {
 		startTime: currentSessionId,
-		name: _currentSessionId(),
+		name: "Unnamed Campaign",
 		lastUpdate: now()
 	};
 	Data.setVar(SESSIONS_VARIABLE, sessions);

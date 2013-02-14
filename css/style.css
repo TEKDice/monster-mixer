@@ -12,6 +12,19 @@ Navbar Stuff
 	width: 140px!important;
 }
 
+#sessionDialog caption {
+	font-size: 110%;
+}
+
+#sessionDialog caption, #sessionDialog thead tr {
+	font-weight: bold;
+}
+
+.subdate {
+	font-style: italic;
+	font-size: 80%;
+}
+
 /*
 --------------------------------
 
