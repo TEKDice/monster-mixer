@@ -23,6 +23,8 @@ function saveMonsters() {
 
 	Data.setVar("monsters_"+currentSessionId, monsters);
 
+	saveSession(false);
+
 	//TODO -- remove loading icon
 }
 
@@ -59,8 +61,7 @@ var currentSessionId;
 
 function startSession() {
 	if(!loggedIn) return;
-	currentSessionId = new Date().getTime();
-	saveSession();
+	currentSessionId = now();
 }
 
 function loadSession(id) {
@@ -70,12 +71,34 @@ function loadSession(id) {
 	currentSessionId = id;
 }
 
-function saveSession() {
+function saveSession(ask) {
 	if(!loggedIn) return;
 	if(!currentSessionId) return;
 
 	Data.setVar("lastSessionId", currentSessionId);
-	//TODO -- save session data in lastSessionData
+
+	if(!Data.hasVar("sessions")) { Data.setVar("sessions", []); }
+
+	var sessions = Data.getVar("sessions");
+
+	if(ask && !currentSessionId in sessions) {
+		bootbox.confirm("Would you like to save this new session?", function(result) {
+			if(!result) {return;}
+			saveNewSession();
+		});
+	} 
+
+	sessions[currentSessionId].lastUpdate = now();
+
+	Data.setVar("session",sessions);
+}
+
+function saveNewSession() {
+	sessions[currentSessionId] = {
+		startTime: currentSessionId,
+		name: currentSessionId,
+		lastUpdate: now()
+	}
 }
 
 function hasPreviousSession() {
@@ -106,4 +129,8 @@ function sessionManagement() {
 	} else {
 		startSession();
 	}
+}
+
+function now() {
+	return new Date().getTime();
 }
