@@ -31,7 +31,8 @@ function hasNeedle(id, table, needle, returnVal) {
 	return hasNeedle;
 }
 
-function modifyHp(uid, mod) {
+function modifyHp(uid, mod, notLog) {
+	if(mod == 0) return;
 	var curHp = parseInt($("#"+uid+"_hp").children(".hp_val").text());
 
 	var newHp = eval(curHp+mod);
@@ -40,7 +41,7 @@ function modifyHp(uid, mod) {
 	var $monsterNode = $("[href=#"+uid+"]");
 	var monsterName = $monsterNode.html();
 
-	var maxHp = parseInt($("#"+uid+"_hp").attr('data-initial-roll'));
+	var maxHp = parseInt($("#"+uid+"_hp").attr('data-initial-roll')) + parseInt($("#"+uid+"_hp").attr('data-mod-value'));
 
 	var text = $("#"+uid+"_hp").children(".hp_val").attr('data-original-title');
 	if(text.indexOf("Modification")!=-1) {
@@ -61,7 +62,8 @@ function modifyHp(uid, mod) {
 		$("#"+uid+"_hp").children(".hp_val").attr('data-original-title', text+"<br>Modification: "+(maxHp-curHp+mod));
 	}
 
-	addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp. ("+newHp+"/"+maxHp+") ["+Math.round((newHp/maxHp)*100)+"%]");
+	if(!notLog)
+		addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp. ("+newHp+"/"+maxHp+") ["+Math.round((newHp/maxHp)*100)+"%]");
 
 	saveMonsters();
 
@@ -73,7 +75,9 @@ function modifyHp(uid, mod) {
 	}
 }
 
-function rollHp(uid, $rootNode, newHp) {
+function rollHp(uid, $rootNod, newHp, force) {
+
+	var $rootNode = $("#"+uid+"_hp");
 
 	var title = '';
 
@@ -85,21 +89,23 @@ function rollHp(uid, $rootNode, newHp) {
 	var num;
 	if(num = hasFeat(uid, "Toughness")) {
 		num = 3*parseInt(num);
-		newHp += num;
 		title += "Toughness: "+num+"<br>";
-		num = null;
 	}
 
 	var con = get_bonus(parseInt($("#"+uid+"_con").text())) * parseInt($rootNode.attr('data-base-value').split('d')[0]);
-	newHp += con;
 	if(con != 0)
-		title += "CON Modifier: "+con;
+		title += "CON Modifier: "+con+"<br>";
 
-	$("#"+uid+"_hp").children(".hp_val").text(newHp);
+	title = title.slice(0, -4);
+
 	$rootNode.attr('data-initial-roll', newHp);
+	newHp += con;
+	newHp += num;
+	$rootNode.attr('data-mod-value', con+num);
+	$("#"+uid+"_hp").children(".hp_val").text(newHp);
 
 	var attr = $("#"+uid+"_hp").children(".hp_val").attr('data-original-title');
-	if (typeof attr !== 'undefined' && attr !== false) {
+	if (force || (typeof attr !== 'undefined' && attr !== false)) {
 		$("#"+uid+"_hp").children(".hp_val").attr('data-original-title',title);
 	} else {
 		$("#"+uid+"_hp").children(".hp_val").attr('rel','tooltip').attr('title',title);
@@ -110,13 +116,18 @@ function rollHp(uid, $rootNode, newHp) {
 }
 
 function rollInit($node) {
+	var roll = parseInt(rollExpression('1d20'));
+	var uid = $node.attr('data-uid');
+	_rollInit(uid, roll);
+}
 
+function _rollInit(uid, roll) {
+
+	var $node = $("#"+uid+"_init");
 	var title = '';
 
-	var roll = parseInt(rollExpression('1d20'));
 	title += "1d20: "+roll+"<br>";
 
-	var uid = $node.attr('data-uid');
 	var base = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
 	title += "Modifier: "+base+"<br>";
 
@@ -127,9 +138,9 @@ function rollInit($node) {
 		title += "Improved Initiative: "+num+"<br>";
 	}
 
-	$node.attr('data-initial-roll', roll+base);
+	$node.attr('data-initial-value', roll);
 	$node.text(base+roll+num);
-	$node.attr('rel','tooltip').attr('title',title);
+	$node.attr('rel','tooltip').attr('title',title).attr('data-original-title', title);
 	$node.tooltip({html: true, placement: 'bottom'});
 }
 

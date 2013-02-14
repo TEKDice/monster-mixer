@@ -13,7 +13,9 @@ function saveMonsters() {
 
 		var mon = {
 			id: $("#"+uid+"_id").text(),
-			hp: $("#"+uid+"_hp .hp_val").text()
+			curHp: $("#"+uid+"_hp .hp_val").text(),
+			maxHp: $("#"+uid+"_hp").attr('data-initial-roll'),
+			init: $("#"+uid+"_init").attr('data-initial-value')
 		};
 
 		monsters.push(mon);
@@ -43,11 +45,9 @@ function loadMonsters(monsterSet) {
 			
 			var oldMonData = monsterSet[i];
 
-			/*
-			$.each(oldMonData, function(i, e) {
-				if(i == 'id') return;
-				$("#"+uid).find("[data-for='"+i+"']").text(e);
-			});*/
+			rollHp(uid, null, oldMonData.maxHp, true);
+			modifyHp(uid, parseInt(oldMonData.curHp) - parseInt($("#"+uid+"_hp .hp_val").text()) , true);
+			_rollInit(uid, parseInt(oldMonData.init));
 		});
 	});
 
@@ -67,6 +67,7 @@ function loadSession(id) {
 	if(!loggedIn) return;
 	var monsters = Data.getVar('monsters_'+id);
 	loadMonsters(monsters);
+	currentSessionId = id;
 }
 
 function saveSession() {
