@@ -84,6 +84,15 @@ function loadSession(id) {
 	loadMonsters(monsters);
 }
 
+function startNewSession() {
+	if(!loggedIn) return;
+	if(!currentSessionId) return;
+
+	saveSession(false);
+	removeAllMonsters();
+	startSession();
+}
+
 function saveSession(ask, sessionData) {
 	if(!loggedIn) return;
 	if(!currentSessionId) return;
@@ -120,7 +129,7 @@ function saveNewSession() {
 	var sessions = Data.getVar(SESSIONS_VARIABLE);
 	var ret = sessions[_currentSessionId()] = {
 		startTime: currentSessionId,
-		name: "Unnamed Campaign",
+		name: "Nameless Campaign",
 		lastUpdate: now()
 	};
 	Data.setVar(SESSIONS_VARIABLE, sessions);

@@ -73,6 +73,7 @@
    			var nice = $body.niceScroll({horizrailenabled: false});
    			$body.css('overflow','hidden');
 		});
+		//
 		$('#currentSessionDialog').on('show', function () {
 			var session = getCurrentSession();
 			if(session == undefined) {
@@ -94,5 +95,10 @@
 			$(this).closest('.modal').modal('hide');
 			loadSession(sessId);
 		});
+		//
+		$("#newSession").click(function() {
+			startNewSession();
+		});
+
 	});
 </script>

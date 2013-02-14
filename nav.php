@@ -6,7 +6,7 @@
 			<b class="caret"></b>
 		</a>
 		<ul class="dropdown-menu">
-			<li><a>New Session</a></li>
+			<li><a href="#" id="newSession">New Session</a></li>
 			<li><a href="#" data-toggle="modal" data-target="#currentSessionDialog">Current Session</a></li>
 			<li><a href="#" data-toggle="modal" data-target="#sessionDialog">Sessions...</a></li>
 			<li class="divider"></li>
