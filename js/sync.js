@@ -1,4 +1,7 @@
 
+var SESSIONS_VARIABLE = "sessions";
+var LAST_SESSION_VARIABLE = "lastSessionId";
+
 
 //monster modify, monster create, monster remove
 function saveMonsters() {
@@ -62,6 +65,7 @@ var currentSessionId;
 function startSession() {
 	if(!loggedIn) return;
 	currentSessionId = now();
+	saveSession(false);
 }
 
 function loadSession(id) {
@@ -71,40 +75,47 @@ function loadSession(id) {
 	currentSessionId = id;
 }
 
-function saveSession(ask) {
+function saveSession(ask, sessionData) {
 	if(!loggedIn) return;
 	if(!currentSessionId) return;
 
-	Data.setVar("lastSessionId", currentSessionId);
+	Data.setVar(LAST_SESSION_VARIABLE, currentSessionId);
 
-	if(!Data.hasVar("sessions")) { Data.setVar("sessions", []); }
+	if(!Data.hasVar(SESSIONS_VARIABLE)) { Data.setVar(SESSIONS_VARIABLE, {}); }
 
-	var sessions = Data.getVar("sessions");
+	var sessions = Data.getVar(SESSIONS_VARIABLE);
 
-	if(ask && !currentSessionId in sessions) {
+	if(ask && !sessions.hasOwnProperty(_currentSessionId())) {
 		bootbox.confirm("Would you like to save this new session?", function(result) {
 			if(!result) {return;}
 			saveNewSession();
 		});
 	} 
 
-	sessions[currentSessionId].lastUpdate = now();
+	if(sessions.hasOwnProperty(_currentSessionId())) {
+		if(sessionData)
+			sessions[_currentSessionId()] = sessionData;
+		sessions[_currentSessionId()].lastUpdate = now();
+	}
 
-	Data.setVar("session",sessions);
+	Data.setVar(SESSIONS_VARIABLE, sessions);
 }
 
 function saveNewSession() {
-	sessions[currentSessionId] = {
+	var sessions = Data.getVar(SESSIONS_VARIABLE);
+	var ret = sessions[_currentSessionId()] = {
 		startTime: currentSessionId,
-		name: currentSessionId,
+		name: _currentSessionId(),
 		lastUpdate: now()
-	}
+	};
+	Data.setVar(SESSIONS_VARIABLE, sessions);
+	return ret;
 }
 
 function hasPreviousSession() {
 	if(!loggedIn) return;
-	if(!Data.hasVar("lastSessionId")) return false;
-	var lastSessId = Data.getVar("lastSessionId");
+	if(!Data.hasVar(LAST_SESSION_VARIABLE)) return false;
+	var lastSessId = Data.getVar(LAST_SESSION_VARIABLE);
 
 	if(!Data.hasVar("monsters_"+lastSessId)) return false;
 
@@ -115,20 +126,34 @@ function hasPreviousSession() {
 
 function getPreviousSession() {
 	if(!loggedIn) return;
-	if(!Data.hasVar("lastSessionId")) return false;
-	return Data.getVar("lastSessionId");
+	if(!Data.hasVar(LAST_SESSION_VARIABLE)) return null;
+	return Data.getVar(LAST_SESSION_VARIABLE);
+}
+
+function getCurrentSession() {
+	var sessions = Data.getVar(SESSIONS_VARIABLE);
+	return sessions[_currentSessionId()];
+}
+
+function getSessionById(id) {
+	var sessions = Data.getVar(SESSIONS_VARIABLE);
+	return sessions[id];
 }
 
 function sessionManagement() {
 	if(!loggedIn) return;
 	if(hasPreviousSession()) {		
 		bootbox.confirm("It looks like you had a session open. Would you like to reload it?", function(result) {
-			if(!result) { startSession(); return;}
+			if(!result) { startSession(); return; }
 			loadSession(getPreviousSession());
 		});
 	} else {
 		startSession();
 	}
+}
+
+function _currentSessionId() {
+	return currentSessionId.toString();
 }
 
 function now() {

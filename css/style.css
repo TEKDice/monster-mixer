@@ -8,6 +8,10 @@ Navbar Stuff
 	background-image: url("../../img/glyphicons-halflings.png")!important;
 }
 
+#currentSessionDialog .input-prepend .span2 {
+	width: 140px!important;
+}
+
 /*
 --------------------------------
 
