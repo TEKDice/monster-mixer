@@ -2,4 +2,5 @@
 .draggable {
 	width: 145px;
 	max-width: 145px;
+	min-width: 145px;
 }
