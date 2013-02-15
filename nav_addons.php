@@ -63,10 +63,15 @@
 				var $button = $("<button/>").addClass('btn btn-danger').attr('data-session',e.startTime).html('<i class="icon-remove"></i> Delete');
 				$button.click(function() {
 					var $but = $(this);
+					$("#sessionDialog").modal('hide');
 					bootbox.confirm("Are you sure you want to delete this campaign? Not even a wish can bring this back once it's gone.", function(result) {
-						if(!result) {return;}
+						if(!result) {
+							$("#sessionDialog").modal('show');
+							return;
+						}
 						deleteSession($but.attr('data-session'));
 						$tr.remove();
+						$("#sessionDialog").modal('show');
 					});
 				});
 				$("<td/>").append($button).appendTo($tr);
