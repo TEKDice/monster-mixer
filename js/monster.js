@@ -62,8 +62,13 @@ function modifyHp(uid, mod, notLog) {
 		$("#"+uid+"_hp").children(".hp_val").attr('data-original-title', text+"<br>Modification: "+(maxHp-curHp+mod));
 	}
 
+	var hpPerc = Math.round((newHp/maxHp)*100);
+	if(hpPerc < 15)		 $monsterNode.attr('class','hp-critical');
+	else if(hpPerc < 50) $monsterNode.attr('class','hp-warning');
+	else 				 $monsterNode.attr('class','hp-good');
+
 	if(!notLog)
-		addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp. ("+newHp+"/"+maxHp+") ["+Math.round((newHp/maxHp)*100)+"%]");
+		addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp. ("+newHp+"/"+maxHp+") ["+hpPerc+"%]");
 
 	saveMonsters();
 
@@ -76,6 +81,8 @@ function modifyHp(uid, mod, notLog) {
 }
 
 function rollHp(uid, $rootNod, newHp, force) {
+
+	$("[href='#"+uid+"']").addClass('hp-good');
 
 	var $rootNode = $("#"+uid+"_hp");
 

@@ -101,6 +101,18 @@ Grid-related
 --------------------------------
 */
 
+.hp-good {
+	background-color: #dff0d8!important;
+}
+
+.hp-warning {
+	background-color: #fcf8e3!important;
+}
+
+.hp-critical {
+	background-color: #f2dede!important;
+}
+
 .tooltip {
 	width: 300px;
 	z-index: 9999;
