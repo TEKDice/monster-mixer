@@ -4,3 +4,7 @@
 	max-width: 175px;
 	min-width: 175px;
 }
+
+.invisible:nth-child(2n) {
+	display: inline;
+}

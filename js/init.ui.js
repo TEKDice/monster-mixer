@@ -133,7 +133,7 @@ function setupGrids(uid) {
 	});
 	$(".sortable").disableSelection();
 
-	$(".minibox-content").each(function() {
+	$(".draggable").not(".invisible").find(".minibox-content").each(function() {
 		var nice = $(this).niceScroll({horizrailenabled: false, zindex: 9});
 		$("#"+nice.id).attr('data-nice-uid', uid);
 	});
