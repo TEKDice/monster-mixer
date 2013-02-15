@@ -9,7 +9,7 @@
 		<table class="table">
 			<caption>Local Sessions</caption>
 			<thead>
-				<tr><td>Session Name</td><td>Sync Status</td><td>Remove</td></tr>
+				<tr><td>Session Name</td><td>Sync Status</td><td></td></tr>
 			</thead>
 			<tbody id="allSessions">
 			</tbody>
@@ -60,7 +60,16 @@
 				$tr.appendTo($("#allSessions"));
 				$("<td/>").html(e.name+"<br><span class='subdate'>"+new Date(e.startTime).format()+"</span>	").appendTo($tr);
 				$("<td/>").text('').appendTo($tr);
-				$("<td/>").text('').appendTo($tr);
+				var $button = $("<button/>").addClass('btn btn-danger').attr('data-session',e.startTime).html('<i class="icon-remove"></i> Delete');
+				$button.click(function() {
+					var $but = $(this);
+					bootbox.confirm("Are you sure you want to delete this campaign? Not even a wish can bring this back once it's gone.", function(result) {
+						if(!result) {return;}
+						deleteSession($but.attr('data-session'));
+						$tr.remove();
+					});
+				});
+				$("<td/>").append($button).appendTo($tr);
 				$tr.click(function() {
 					if($(this).hasClass('success')) return;
 					$(this).siblings().removeClass('info');
