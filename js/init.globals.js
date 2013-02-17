@@ -133,10 +133,11 @@ var formatting = {
 		return obj.name + (obj.sub_skill!="" && obj.sub_skill!=null? " ("+obj.sub_skill+")" : "") + "</td><td>" + (parseInt(obj.skill_level)<0 ? obj.skill_level : "+"+obj.skill_level);
 	},
 	mspatk: 	function(obj) {
-		return obj.name + "</td><td>" + (obj.range != "0" ? obj.range+"ft" : "") 
+		return obj.name + "</td><td>" 
+		+ (obj.range != "0" ? obj.range+"ft" : "") 
 		+ "</td><td class='rightalign'>" 
 		+ (obj.hit_dice != "0" ? obj.hit_dice : "")+" "
-		+ (obj.dmgred_hd != "0" ? "+"+obj.dmgred_hd+" "+obj.dmgred_nm : "");
+		+ (obj.dmgred_hd != "0" && obj.dmgred_hd != null? "+"+obj.dmgred_hd+" "+obj.dmgred_nm : "");
 	},
 	msubcat: 	defaultFunction,
 	mterr: 		defaultFunction,
