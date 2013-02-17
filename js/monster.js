@@ -163,7 +163,7 @@ function remove(uid, killed) {
 	var count = 0;
 
 	$("#monsterList li").each(function(i, e) {
-		$(this).find(".logCount").text(i+1);
+		//$(this).find(".logCount").text(i+1);
 		count++;
 	});
 
@@ -198,7 +198,7 @@ function updateLogNumbers(uid, killed) {
 		if($monNode.length == 0) {
 			$(this).text(killed ? 'DEAD' : 'GONE');
 		} else {
-			$(this).text($monNode.find('.logCount').text());
+			//$(this).text($monNode.find('.logCount').text());
 		}
 	});
 }
