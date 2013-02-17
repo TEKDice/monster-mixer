@@ -118,6 +118,7 @@ function _trackFilter(filter, add) {
 	var filtFound = false;
 
 	$.each(filters, function(i, e) {
+		if(!e) return;
 		if( filter.name == e.name &&
 			filter.sign == e.sign &&
 			filter.value == e.value) {
