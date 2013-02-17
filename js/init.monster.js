@@ -244,6 +244,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 				$tr.attr('data-crit-mult', obj.critical.substring(1));
 			} else {
 				console.warn("critical wasn't parseable: "+obj.critical);
+				console.warn(obj);
 			}
 
 			$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {

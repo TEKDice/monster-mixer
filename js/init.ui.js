@@ -20,7 +20,9 @@ function limitFeatNums(uid) {
 		$(this).closest("td").attr('id', uid+'_calc_'+($(this).closest("td").prev().text() == 'Power Attack' ? "pa" : "ce"));
 	});
 
-	$(".inline-checkbox").attr('id', uid+'_calc_ab');
+	$("#"+uid+"_mfeat_table .inline-checkbox").each(function() {
+		$(this).attr('id', uid+'_calc_'+($(this).closest("td").prev().text() == 'Awesome Blow' ? "ab" : "pbs"));
+	});
 }
 
 function setupRoller() {
@@ -86,6 +88,9 @@ function setupRollables($parent) {
 				if(hasFeat(uid, 'Awesome Blow') && $("#"+uid+"_calc_ab").is(":checked")) 
 					attackRoll["Awesome Blow"] = -4;
 
+				if(hasFeat(uid, 'Point Blank Shot') && $("#"+uid+"_calc_pbs").is(":checked")) 
+					attackRoll["Point Blank Shot"] = 1;
+
 				for(var i in attackRoll) {
 					if(attackRoll[i] == 0) continue;
 					result += attackRoll[i];
@@ -130,6 +135,10 @@ function setupRollables($parent) {
 				var roll = rollDice(expr);
 				if(powerAttackBonus)
 					roll["Power Attack"] = powerAttackBonus;
+
+				if(hasFeat(uid, 'Point Blank Shot') && $("#"+uid+"_calc_pbs").is(":checked")) 
+					roll["Point Blank Shot"] = 1;
+
 				for(var i in roll) {
 					if(roll[i] == 0) continue;
 					result += roll[i];

@@ -120,7 +120,7 @@ var formatting = {
 	mfeat: 		function(obj) {
 		return obj.name + (obj.feat_level > 1 ? " (x"+obj.feat_level+")" : "") +"</td><td>"+
 		(obj.name == 'Power Attack' || obj.name == 'Combat Expertise' ? '<input class="input-mini-inline applyNum" type="number" placeholder="#"></input>' : '') + 
-		(obj.name == 'Awesome Blow' ? '<input class="inline-checkbox" type="checkbox"></input>' : '') + 
+		(obj.name == 'Awesome Blow' || obj.name == 'Point Blank Shot' ? '<input class="inline-checkbox" type="checkbox"></input>' : '') + 
 		"</td>";
 	},
 	mfatk: 		defaultFunction,
