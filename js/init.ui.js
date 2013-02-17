@@ -44,7 +44,6 @@ function setupRollables($parent) {
 	var uid = $parent.find("[data-uid]").attr('data-uid');
 	$parent.find(".rollable").each(function() {
 
-		var isAttack = $(this).hasClass('attacks');
 		var $roller = $("<i/>").addClass('icon-share-alt');
 		$roller.click(function() {
 			var $rollable = $(this).parent().find('.info');
@@ -52,6 +51,8 @@ function setupRollables($parent) {
 				bootbox.alert("Please select a feature to roll.");
 				return;
 			}
+			
+			var isAttack = $rollable.attr('data-attack-roll');
 
 			var result = 0;
 			var resultText = '';
@@ -67,9 +68,9 @@ function setupRollables($parent) {
 				powerAttackBonus = parseInt($("#"+uid+"_calc_pa").children("input").val());
 			}
 
-			if(isAttack) {
+			if(typeof isAttack !== 'undefined' && isAttack !== false) {
 				var attackRoll = rollDice($rollable.attr('data-attack-roll'));
-				
+
 				if(powerAttackBonus!=0 && !isNaN(powerAttackBonus))
 					attackRoll["Power Attack"] = -powerAttackBonus;
 

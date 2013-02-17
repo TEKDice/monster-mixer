@@ -291,6 +291,11 @@ var attackRolls = {
 
 		return JSON.stringify(ret);
 	},
+	mspatk: function(obj, uid) {
+		var ret = {};
+		ret["Base"] = "1d20";
+		return JSON.stringify(ret);
+	},
 	mfatk: function(obj, uid, range) {
 		if(obj.class_mult == 0.5) {
 			if(hasFeat(uid, "Multiattack")) 

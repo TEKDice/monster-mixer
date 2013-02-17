@@ -87,7 +87,7 @@ function addDataToMonster($parent, monster, uid) {
 	$parent.find(".cstats tr").each(function() {
 		var num = parseInt($(this).children("td").eq(1).text());
 		$(this).attr('data-roll', JSON.stringify({Base: "1d20", Bonus:num}));
-		$(this).attr('data-roll-for', $(this).children("td").eq(0).text());
+		$(this).attr('data-roll-for', $(this).children("td").eq(0).text().trim());
 	});
 
 	for(var prop in monster) {
@@ -261,7 +261,8 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 			});
 		}
 	}
-	if(attackRolls.hasOwnProperty(attr)) {
+
+	if(attackRolls.hasOwnProperty(attr) && obj.class_mult != null) {
 		$tr.attr('data-attack-roll', '0');
 		$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
 			$tr.attr('data-attack-roll', attackRolls[attr](obj, uid, range));
