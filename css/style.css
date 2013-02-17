@@ -195,6 +195,10 @@ hr {
 	margin-bottom: 0!important;
 }
 
+.inline-checkbox {
+	float: right;
+}
+
 /* 
 --------------------------------
 

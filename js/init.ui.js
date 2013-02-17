@@ -19,6 +19,8 @@ function limitFeatNums(uid) {
 		});
 		$(this).closest("td").attr('id', uid+'_calc_'+($(this).closest("td").prev().text() == 'Power Attack' ? "pa" : "ce"));
 	});
+
+	$(".inline-checkbox").attr('id', uid+'_calc_ab');
 }
 
 function setupRoller() {
@@ -80,6 +82,9 @@ function setupRollables($parent) {
 					if(bonus!=0 && !isNaN(bonus))
 						attackRoll["Combat Expertise"] = -bonus;
 				}
+
+				if(hasFeat(uid, 'Awesome Blow') && $("#"+uid+"_calc_ab").is(":checked")) 
+					attackRoll["Awesome Blow"] = -4;
 
 				for(var i in attackRoll) {
 					if(attackRoll[i] == 0) continue;
