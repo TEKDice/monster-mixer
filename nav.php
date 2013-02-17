@@ -10,7 +10,7 @@
 			<li><a href="#" data-toggle="modal" data-target="#currentSessionDialog">Current Session</a></li>
 			<li><a href="#" data-toggle="modal" data-target="#sessionDialog">Sessions...</a></li>
 			<li class="divider"></li>
-			<li class="disabled"><a href="#"><i id="noChangeColor" class="icon-ok"></i></a>&nbsp;<span id="statusText">Ready</span></li>
+			<li class="disabled"><a href="#"><i id="noChangeColor" class="icon-ok"></i>&nbsp;<span id="statusText">Ready</span></a></li>
 		</ul>
 	</li>
 </ul>

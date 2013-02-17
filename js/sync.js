@@ -93,6 +93,14 @@ function startNewSession() {
 	startSession();
 }
 
+function deleteSession(uid) {
+	if(!loggedIn) return;
+	if(!currentSessionId) return;
+	console.log(uid);
+
+	Data.clearVar("monsters_"+uid);
+}
+
 function saveSession(ask, sessionData) {
 	if(!loggedIn) return;
 	if(!currentSessionId) return;
