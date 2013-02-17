@@ -59,6 +59,7 @@ function setupRollables($parent) {
 			var iters=1;
 			var critStatus='';
 
+			var spatkFor = $rollable.attr('data-spatk');
 			var exprFor = $rollable.attr('data-roll-for');
 			var idFor = $(this).closest('div[data-for]').attr('id');
 			var nameFor = $("a[href='#"+idFor+"']").html();
@@ -108,7 +109,7 @@ function setupRollables($parent) {
 				}
 				if(critStatus == 'threat' || critStatus == 'success') {
 					addToLog(logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus, idFor);
-					addToLog(logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result), critStatus, idFor);
+					addToLog(logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
 					addToLog(logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus, idFor);
 				} else {
 					addToLog(logMessages.initiate(nameFor, exprFor, resultText, result), critStatus, idFor);
@@ -139,9 +140,9 @@ function setupRollables($parent) {
 			}
 
 			if((critStatus == 'threat' || critStatus == 'success') && isAttack) {
-				addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result), critStatus, idFor);
+				addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
 			} else {
-				addToLog(logMessages.hit(nameFor, exprFor, resultText, result), critStatus, idFor);
+				addToLog(logMessages.hit(nameFor, exprFor, resultText, result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
 			}
 		});
 		$(this).append($roller);
@@ -304,7 +305,4 @@ function resizeElements() {
 	$("#monstersContainer > .row-fluid").first().css('height', $("#monsterListCont").height());
 
 	resizeGrids();
-
-	//1280x1024, 1680x1050 = 2 hidden boxes
-	//1280x800, 
 }

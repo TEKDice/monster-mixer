@@ -112,7 +112,7 @@ var formatting = {
 		return obj.aname + (obj.enchantment_bonus != "0" ? " +"+obj.enchantment_bonus : "");
 	},
 	mattack:  	function(obj) {
-		return obj.aname + "</td><td>"+obj.hitdc+"</td><td class='rightalign'>" + (obj.dmgname != null ? "+"+obj.dmgred_hd + " " + obj.dmgname : "");
+		return obj.aname + "</td><td>"+(obj.hitdc!='0' ? obj.hitdc : '')+"</td><td class='rightalign'>" + (obj.dmgname != null ? "+"+obj.dmgred_hd + " " + obj.dmgname : "");
 	},
 	mdmgred: 	function(obj) {
 		return obj.name + "</td><td>" + (obj.reduction_amount=="0" ? "Immune" : obj.reduction_amount);

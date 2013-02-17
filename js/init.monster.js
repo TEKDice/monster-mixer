@@ -224,6 +224,8 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		if(rollFor.indexOf(monsterName) != -1) rollFor = rollFor.substring(monsterName.length);
 		$tr.attr('data-roll-for', rollFor);
 		if(attr == 'mweapon' || attr == 'mattack') {
+			if(obj.spatk != null && obj.spatk.indexOf(monsterName) != -1) obj.spatk = obj.spatk.substring(monsterName.length+1);
+			$tr.attr('data-spatk', obj.spatk);
 			range = obj.is_ranged;
 			melee = obj.is_melee;
 			$tr.attr('data-range', range);
@@ -269,6 +271,6 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		});
 	}
 	var inner = formatting[attr](obj);
-	if(inner.indexOf(monsterName) != -1) inner = inner.substring(monsterName.length);
+	if(inner.indexOf(monsterName) != -1) inner = inner.substring(monsterName.length+1);
 	$tr.append("<td"+(obj.hasOwnProperty('descript') ? " class='has-tooltip' data-desc='"+obj.descript.split("\n").join("<br>")+"'" : "")+">"+inner+"</td>");
 }
