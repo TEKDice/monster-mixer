@@ -434,7 +434,8 @@ function is_dev() {
 				<div id="1A_popover">
 					<div class="input-append">
 						<input type="number" class="input-small" id="1A_hp_mod" placeholder="####" />
-						<button class="btn btn-primary modify-hp" data-uid='1A' id="1A_hp_button" type="button">Add</button>
+						<button class="btn btn-primary modify-hp" data-uid='1A' id="1A_hp_button" type="button"><i class="icon-plus icon-white"></i></button>
+						<button class="btn btn-primary modify-hp subtract" data-uid='1A' id="1A_hp_sub_button" type="button"><i class="icon-minus icon-white"></i></button>
 					</div>
 					<button class="btn btn-warning reroll-hp" data-uid='1A' id="1A_reroll_button" type="button">Reroll HP</button>
 				</div>

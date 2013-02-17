@@ -197,7 +197,7 @@ function updateLogNumbers(uid, killed) {
 
 		if($monNode.length == 0) {
 			$(this).text(killed ? 'DEAD' : 'GONE');
-		} else {
+		} else {0
 			//$(this).text($monNode.find('.logCount').text());
 		}
 	});

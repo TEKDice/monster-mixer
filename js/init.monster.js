@@ -130,7 +130,11 @@ function setUpHp($parent, uid) {
 		$(".modify-hp").click(function() {
 			var uid = $(this).attr('data-uid');
 			var modHp = parseInt($("#"+uid+"_hp_mod").val());
-			modifyHp(uid, modHp);
+			if($(this).hasClass('subtract')) {
+				modifyHp(uid, -modHp);
+			} else {
+				modifyHp(uid, modHp);
+			}
 		});
 	});
 }
