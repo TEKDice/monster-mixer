@@ -190,6 +190,10 @@ hr {
 	display: none!important;
 }
 
+.input-mini-inline {
+	width: 30px;
+	margin-bottom: 0!important;
+}
 
 /* 
 --------------------------------

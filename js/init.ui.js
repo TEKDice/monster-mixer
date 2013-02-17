@@ -8,6 +8,19 @@ var heightAdjust = 140;
 
 var resizeTimer;
 
+function limitFeatNums(uid) {
+	$("#"+uid+"_mfeat_table .applyNum").each(function() {
+		$(this).change(function() {
+			var val = parseInt($(this).val());
+			var max = clamp(0, 5, parseInt($("#"+uid+"_bab").attr('data-base-value')));
+			if(val < 0) val = 0;
+			if(val > max) val = max;
+			$(this).val(val);
+		});
+		$(this).closest("td").attr('id', uid+'_calc_'+($(this).closest("td").prev().text() == 'Power Attack' ? "pa" : "ce"));
+	});
+}
+
 function setupRoller() {
 	$("#roll").keyup(function(e) {
 		if(e.keyCode == 27) {
@@ -28,6 +41,7 @@ function setupRoller() {
 }
 
 function setupRollables($parent) {
+	var uid = $parent.find("[data-uid]").attr('data-uid');
 	$parent.find(".rollable").each(function() {
 
 		var isAttack = $(this).hasClass('attacks');
@@ -48,8 +62,23 @@ function setupRollables($parent) {
 			var idFor = $(this).closest('div[data-for]').attr('id');
 			var nameFor = $("a[href='#"+idFor+"']").html();
 
+			var powerAttackBonus;
+			if(hasFeat(uid, 'Power Attack')) {
+				powerAttackBonus = parseInt($("#"+uid+"_calc_pa").children("input").val());
+			}
+
 			if(isAttack) {
 				var attackRoll = rollDice($rollable.attr('data-attack-roll'));
+				
+				if(powerAttackBonus!=0 && !isNaN(powerAttackBonus))
+					attackRoll["Power Attack"] = -powerAttackBonus;
+
+				if(hasFeat(uid, 'Combat Expertise')) {
+					var bonus = parseInt($("#"+uid+"_calc_ce").children("input").val());
+					if(bonus!=0 && !isNaN(bonus))
+						attackRoll["Combat Expertise"] = -bonus;
+				}
+
 				for(var i in attackRoll) {
 					if(attackRoll[i] == 0) continue;
 					result += attackRoll[i];
@@ -69,6 +98,8 @@ function setupRollables($parent) {
 
 						var expr = $rollable.attr('data-roll');
 						var roll = rollDice(expr);
+						if(powerAttackBonus)
+							roll["Power Attack"] = powerAttackBonus;
 
 						var threatBasicAttack = _rollArray(roll);
 						iters = parseInt($rollable.attr('data-crit-mult'));
@@ -90,6 +121,8 @@ function setupRollables($parent) {
 
 			for(var x=0; x<iters; x++) {
 				var roll = rollDice(expr);
+				if(powerAttackBonus)
+					roll["Power Attack"] = powerAttackBonus;
 				for(var i in roll) {
 					if(roll[i] == 0) continue;
 					result += roll[i];

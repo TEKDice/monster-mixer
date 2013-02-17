@@ -34,6 +34,8 @@ function addNewMonster(monster) {
 
 	setupRollables($parent);
 
+	limitFeatNums(uid);
+
 	var newLog = $("#dummyLog").html();
 	$("#curMon").append(newLog);
 

@@ -95,6 +95,12 @@ function bodyBinding() {
 	});
 }
 
+function clamp(min, max, num) {
+	num = Math.max(min, num);
+	num = Math.min(max, num);
+	return num;
+}
+
 var defaultFunction = function() {
 	return "THIS IS AN ERROR";
 };
@@ -112,7 +118,7 @@ var formatting = {
 		return obj.name + "</td><td>" + (obj.reduction_amount=="0" ? "Immune" : obj.reduction_amount);
 	},
 	mfeat: 		function(obj) {
-		return obj.name + (obj.feat_level > 1 ? " (x"+obj.feat_level+")" : "");
+		return obj.name + (obj.feat_level > 1 ? " (x"+obj.feat_level+")" : "") +"</td><td>"+(obj.name == 'Power Attack' || obj.name == 'Combat Expertise' ? '<input class="input-mini-inline applyNum" type="number" placeholder="#"></input>' : '') + "</td>";
 	},
 	mfatk: 		defaultFunction,
 	mlang: 		defaultFunction,
@@ -124,7 +130,7 @@ var formatting = {
 		return obj.name + "</td><td>" + (obj.value != "0" ? obj.value+ (obj.name!="Spell Resistance" && obj.name!="Regeneration" && obj.name!="Turn Resistance" ? "ft" : "") : "");
 	},
 	mskill: 	function(obj) {
-		return obj.name + (obj.sub_skill!="" ? " ("+obj.sub_skill+")" : "") + "</td><td>" + (parseInt(obj.skill_level)<0 ? obj.skill_level : "+"+obj.skill_level);
+		return obj.name + (obj.sub_skill!="" && obj.sub_skill!=null? " ("+obj.sub_skill+")" : "") + "</td><td>" + (parseInt(obj.skill_level)<0 ? obj.skill_level : "+"+obj.skill_level);
 	},
 	mspatk: 	function(obj) {
 		return obj.name + "</td><td>" + (obj.range != "0" ? obj.range+"ft" : "") + "</td><td>" + (obj.hit_dice != "0" ? obj.hit_dice : "");
