@@ -16,7 +16,26 @@ if(isset($_POST["action"]) && !empty($_POST["action"])) {
 define('readonly', true);
 require_once('../include/database.php');
 
-if(isset($_POST["data"])) {
+if(isset($_POST["adv"]) && $_POST["adv"] == "true") {
+	$json = json_decode($_POST["data"], true);
+
+	global $conn;
+
+	$type_info = run_query_arr_name($conn, "select name,sql_name,join_table,join_table_col,link_table,is_calculated,is_numeric from GeneratorFilters");
+
+	$query = build_query($json, $type_info);
+
+	$monsters = run_query_arr($conn, $query);
+
+	$newMonsters = array();
+
+	foreach($monsters as $mon) {
+		$newMonsters[get_monster_name($mon["monster_id"])] = get_monster_orgs($mon["monster_id"]);
+	}
+
+	echo json_encode(array_filter($newMonsters, "remove_empty_entries"));
+
+} else if(isset($_POST["data"])) {
 	$json = json_decode($_POST["data"], true);
 
 	global $conn;
@@ -43,6 +62,10 @@ if(isset($_POST["data"])) {
 	}
 
 	echo json_encode($monsters);
+}
+
+function remove_empty_entries($var) {
+	return count($var) != 0;
 }
 
 function build_query($json, $type_info) {
@@ -164,10 +187,11 @@ function build_query($json, $type_info) {
 	}
 
 	$query .= "INNER JOIN (\n";
-	$query .= "\tSELECT DISTINCT id as monster_id FROM Monster\n";
+	$query .= "\tSELECT DISTINCT id as monster_id,name FROM Monster\n";
 	$query .= "\tWHERE ((Monster.hidden is null OR Monster.hidden=0) AND Monster.id != 135)\n";
 	$query .= ") Monster_table\n";
-	$query .= "ON Monster_table.monster_id = $header"."_table.monster_id";
+	$query .= "ON Monster_table.monster_id = $header"."_table.monster_id\n";
+	$query .= "ORDER BY Monster_table.name";
 
 	return $query;
 }

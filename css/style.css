@@ -199,6 +199,33 @@ hr {
 	float: right;
 }
 
+/*
+--------------------------------
+
+Extras in Popup 
+
+--------------------------------
+
+*/
+
+#advGenContainer {
+	padding: 3px;
+	margin: 3px;
+	height: 220px;
+}
+
+#advGenMonsters {
+	max-width: 350px;
+}
+
+#advGenMonsters select {
+	width: 100px;
+}
+
+#advGenMonsters label.monsterName {
+	width: 120px;
+}
+
 /* 
 --------------------------------
 
@@ -318,6 +345,10 @@ Base Popup
 	display: table-cell;
 	vertical-align: middle;
 	text-align: center;
+}
+
+#extra h4, #extra h5 {
+	margin: 0 0;
 }
 
 /* 

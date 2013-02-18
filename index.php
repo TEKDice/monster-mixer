@@ -127,7 +127,7 @@ function is_dev() {
 						<div id="encounterStats" class="row-fluid">
 								<button class="btn span2">Encounter CR</button>
 								<button class="btn span2"><span class='shorten-average'></span> Level</button>
-								<button class="btn span2"><span class='shorten-average'></span> <span class='shorten-damage'></span> Dealt</button>
+								<button class="btn span2" data-toggle='modal' data-target="#damageStatisticsModal"><span class='shorten-damage'></span> Stats</button>
 								<button class="btn span2"><span class='shorten-average'></span> <span class='shorten-damage'></span> Taken</button>
 								<button class="btn span2"><span class='shorten-total'></span> <span class='shorten-damage'></span> Dealt</button>
 								<button class="btn span2"><span class='shorten-total'></span> <span class='shorten-damage'></span> Taken</button>
@@ -491,7 +491,57 @@ function is_dev() {
 					</div>
 				</div>
 				<div id="extra">
-					extra stuff
+					<h4 style="text-align: center;">Advanced Mode</h4>
+					<div style="float: left; width: 50%">
+						<h5 style="text-align: center;">Suggestions</h4>
+						<div id="advGenContainer">
+							<table id="advGenMonsters">
+							</table>
+						</div>
+					</div>
+					<div style="float: right; width: 50%;">
+						<h5 style="text-align: center;">Generated</h4>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id='damageStatisticsModal' class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="session" aria-hidden="true" >
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+				<h3 id="totalDamageHeader">Damage Statistics</h3>
+			</div>
+			<div class="modal-body">
+				<table class='table'>
+					<thead><tr><td></td><td>Total</td><td>Average</td></tr></thead>
+					<tbody>
+						<tr>
+							<td>Taken</td>
+							<td id="totalDamageTaken">0</td>
+							<td id="averageDamageTaken">0</td>
+						</tr>
+						<tr>
+							<td>Dealt</td>
+							<td id="totalDamageDealt">0</td>
+							<td id="averageDamageDealt">0</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			</div>
+		</div>
+		<div style="display: none; visibility: hidden">
+			<div id="advGenTemplate">
+				<div class='control-group'>
+					<div class='controls'>
+						<div class='input-prepend input-append'>
+							<span class='add-on'><input type='checkbox' /></span>
+							<label class='control-label add-on monsterName'></label>
+							<select></select>
+							<input class='input-mini-inline' type='number' placeholder='#'/>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

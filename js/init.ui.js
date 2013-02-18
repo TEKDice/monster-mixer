@@ -212,17 +212,43 @@ function setupGenButton() {
 			});
 		});
 
+		var advMode = $("#extra").is(":visible");
+
 		//POST filters
-		$.post('ajax.php', {action: "gen", data: JSON.stringify(filterObj)}, function(monster) {
+		$.post('ajax.php', {action: "gen", data: JSON.stringify(filterObj), adv: advMode}, function(monster) {
 			$button.button('reset');	
 			if(monster==='') {
 				bootbox.alert("No results were found with your filters. Try broadening your search.");
 				return;
 			}
-			monster = $.parseJSON(monster);
-			var uid = addNewMonster(monster);
-			setupGrids(uid);
+			if(!advMode) {
+				monster = $.parseJSON(monster);
+				var uid = addNewMonster(monster);
+				setupGrids(uid);
+				return;
+			}
+			$("#advGenMonsters").empty();
+			$.each($.parseJSON(monster), function(i, e) {
+				addNewSuggestedRow(i, e);
+			});
 		});
+	});
+}
+
+function addNewSuggestedRow(monster, data) {
+	var template = $("#advGenTemplate").html();
+	$("#advGenMonsters").append("<tr data-monster-name='"+monster+"'><td>"+template+"</td></tr>");
+	_makeSelect(monster, data);
+	$("[data-monster-name='"+monster+"'] .monsterName").attr('title',monster).text(monster).tooltip({delay: 500});
+	$("#advGenContainer").niceScroll({zindex: 14, horizrailenabled: false});
+	$('#advGenContainer').css('overflow','hidden');
+}
+
+function _makeSelect(monster, data) {
+	var $select = $("[data-monster-name='"+monster+"'] select");
+	$.each(data, function(i, e) {
+		if(e.organization.indexOf(monster) != -1) e.organization = e.organization.substring(monster.length+1);
+		$select.append("<option value='"+e.id+"'>"+e.organization+"</option>");
 	});
 }
 

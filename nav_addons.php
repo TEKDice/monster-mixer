@@ -30,15 +30,15 @@
 	<div class="modal-body">
 		<div class="input-prepend">
 			<span class="add-on span2">Session Name</span>
-			<input class="span2" id="sessionName" type="text" placeholder="Name your campaign!">
+			<input class="input-xlarge" id="sessionName" type="text" placeholder="Name your campaign!">
 		</div>
 		<div class="input-prepend">
 			<span class="add-on span2">Updated</span>
-			<input class="span2" id="sessionUpdated" type="text" disabled>
+			<input class="input-xlarge" id="sessionUpdated" type="text" disabled>
 		</div>
 		<div class="input-prepend">
 			<span class="add-on span2">Started</span>
-			<input class="span2" id="sessionStarted" type="text" disabled>
+			<input class="input-xlarge" id="sessionStarted" type="text" disabled>
 		</div>
 	</div>
 	<div class="modal-footer">
