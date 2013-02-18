@@ -88,7 +88,7 @@ function setupRollables($parent) {
 				if(hasFeat(uid, 'Awesome Blow') && $("#"+uid+"_calc_ab").is(":checked")) 
 					attackRoll["Awesome Blow"] = -4;
 
-				if(hasFeat(uid, 'Point Blank Shot') && $("#"+uid+"_calc_pbs").is(":checked")) 
+				if(hasFeat(uid, 'Point Blank Shot') && $("#"+uid+"_calc_pbs").is(":checked") && $rollable.attr('data-range') != '0') 
 					attackRoll["Point Blank Shot"] = 1;
 
 				for(var i in attackRoll) {
@@ -136,7 +136,7 @@ function setupRollables($parent) {
 				if(powerAttackBonus)
 					roll["Power Attack"] = powerAttackBonus;
 
-				if(hasFeat(uid, 'Point Blank Shot') && $("#"+uid+"_calc_pbs").is(":checked")) 
+				if(hasFeat(uid, 'Point Blank Shot') && $("#"+uid+"_calc_pbs").is(":checked") && $rollable.attr('data-range') != '0') 
 					roll["Point Blank Shot"] = 1;
 
 				for(var i in roll) {
