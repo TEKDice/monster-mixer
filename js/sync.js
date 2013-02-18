@@ -45,7 +45,8 @@ function loadMonsters(monsterSet) {
 	});
 
 	$.post('ajax.php', {action: "gen", ids: JSON.stringify(monsters)}, function(monsterArr) {
-		$.each($.parseJSON(monsterArr), function(i, e){
+		var arr = $.parseJSON(monsterArr);
+		$.each(arr, function(i, e){
 			var mon = e;
 			var uid = addNewMonster(mon);
 			setupGrids(uid);

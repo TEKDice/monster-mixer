@@ -1,5 +1,5 @@
 
-
+var monsterCount=0;
 function addNewMonster(monster) {
 	$(".alert").hide();
 	$("#monsterList").show();
@@ -11,7 +11,7 @@ function addNewMonster(monster) {
 
 	var $a = $("<a/>",{
 		href: "#"+uid
-	}).html("[<span class='logCount'>"+$("#monsterList").children().size()+"</span>] "+monster.data[0].name).attr('data-toggle','tab').attr('data-uid', uid);
+	}).html("[<span class='logCount'>"+(++monsterCount)+"</span>] "+monster.data[0].name).attr('data-toggle','tab').attr('data-uid', uid);
 
 	$a.appendTo($li);
 
