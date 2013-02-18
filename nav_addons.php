@@ -30,7 +30,7 @@
 	<div class="modal-body">
 		<div class="input-prepend">
 			<span class="add-on span2">Session Name</span>
-			<input class="input-xlarge" id="sessionName" type="text" placeholder="Name your campaign!">
+			<input class="input-xlarge" id="sessionName" type="text" placeholder="Name your campaign!" required>
 		</div>
 		<div class="input-prepend">
 			<span class="add-on span2">Updated</span>
@@ -44,7 +44,7 @@
 	<div class="modal-footer">
 		<span id="currentSessionDialogError" class="pull-left label label-important"></span>
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		<button class="btn btn-primary" id="saveCurrentSessionInfo" data-dismiss="modal">Save</button>
+		<button class="btn btn-primary" id="saveCurrentSessionInfo">Save</button>
 	</div>
 </div>
 
@@ -98,10 +98,13 @@
 			$("#sessionStarted").val(new Date(session.startTime).format());
 		});
 		$("#saveCurrentSessionInfo").click(function() {
+			var newName = $("#sessionName").val();
+			if(newName == '') return false;
 			var session = getCurrentSession();
-			session.name = $("#sessionName").val();
+			session.name = newName;
 			session.lastUpdate = now();
 			saveSession(false, session);
+			$(this).closest(".modal").modal('hide');
 		});
 		$("#sessionLoad").click(function() {
 			var sessId = $("#allSessions .info").attr('data-session');
