@@ -134,7 +134,7 @@ function setupRollables($parent) {
 			for(var x=0; x<iters; x++) {
 				var roll = rollDice(expr);
 				if(powerAttackBonus)
-					roll["Power Attack"] = powerAttackBonus;
+					roll["Power Attack"] = (expr.indexOf("(2h)" != -1) ? powerAttackBonus*2 : powerAttackBonus);
 
 				if(hasFeat(uid, 'Point Blank Shot') && $("#"+uid+"_calc_pbs").is(":checked") && $rollable.attr('data-range') != '0') 
 					roll["Point Blank Shot"] = 1;
