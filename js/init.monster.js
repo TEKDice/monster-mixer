@@ -1,5 +1,6 @@
 
 var monsterCount=0;
+
 function addNewMonster(monster) {
 	$(".alert").hide();
 	$("#monsterList").show();

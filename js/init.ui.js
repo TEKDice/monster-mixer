@@ -207,6 +207,7 @@ function setupGenButton() {
 		$(".inner-filter-container").each(function() {
 			var attr = $(this).attr('data-attr');
 			filterObj[attr] = [];
+			_gaq.push(['_trackEvent', 'Filter', attr]);
 			$(this).children(".badge").each(function() {
 				filterObj[attr].push({sign: $(this).attr('data-sign'), value: $(this).attr('data-value')});
 			});
