@@ -74,8 +74,6 @@ function setupRollables($parent) {
 				var iters=1;
 				var critStatus='';
 
-				console.log("test" + atkCount + " " + howManyAttacks);
-
 				var powerAttackBonus;
 				if(hasFeat(uid, 'Power Attack')) {
 					powerAttackBonus = parseInt($("#"+uid+"_calc_pa").children("input").val());

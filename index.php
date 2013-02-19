@@ -484,7 +484,7 @@ function is_dev() {
 								</tr>
 							</table>
 						</div>
-						<div id="leftPopupFooter">
+						<div class='popup-footer'>
 							<center><button class="btn btn-primary" id="genButton" data-loading-text="Generating...">Generate</button></center>
 						</div>
 					</div>
@@ -504,9 +504,19 @@ function is_dev() {
 							<table id="advGenMonsters">
 							</table>
 						</div>
+						<div class='popup-footer'>
+							<center><button class="btn btn-primary" id="seeMoreButton" data-loading-text="">Create These</button></center>
+						</div>
 					</div>
 					<div style="float: right; width: 50%;">
 						<h5 style="text-align: center;">Generated</h4>
+						<div id="advGenFinalContainer">
+							<table id="advGenFinal">
+							</table>
+						</div>
+						<div class='popup-footer'>
+							<center><button class="btn btn-primary" id="finalAddButton" data-loading-text="">Add These</button></center>
+						</div>
 					</div>
 				</div>
 			</div>
