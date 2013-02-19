@@ -33,26 +33,26 @@ function changeLogEntrySize() {
 
 var logMessages = {
 	hit: function(ent, att, text, num) {
-		return ent + " rolled \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+		return ent + " hit with \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a> damage."
 	},
 
 	initiate: function(ent, att, text, num) {
-		return ent + " initiated \""+att+"\" with <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+		return ent + " attacked with \""+att+"\" rolling <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
 	},
 
 	critAttempt: function(ent, att, text, num) {
-		return ent + " attempted to crit using \""+att+"\" with <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+		return ent + " attempted to crit using \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
 	},
 
 	critSecond: function(ent, att, text, num) {
-		return ent + " attempted to finish crit using \""+att+"\" with <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+		return ent + " rolls critical confirm using \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
 	},
 
 	critMiss: function(ent, att, text, num) {
-		return ">> If "+ent+" fails critical hit, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+		return ">> If "+ent+" fails the critical, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
 	},
 
 	critSuccess: function(ent, att, text, num) {
-		return ">> If "+ent+" succeeds critical hit, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+		return ">> If "+ent+" confirms critical, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
 	}
 };
