@@ -1,5 +1,10 @@
 $(function() {
 
+	if($("#ie").length != 0) {
+		//hide stuff
+		return;
+	}
+
 	handleResizing();
 
 	initializeArrowToggler();

@@ -96,6 +96,11 @@ function is_dev() {
 	</head>
 	<body>
 		<?php include('../include/body.php'); ?>
+		<!--[if IE]>
+		<div class="hero-unit pagination-centered" id="ie">
+			It looks like you're using Internet Explorer. I apologise, but this application does not support Internet Explorer. It works best in Mozilla Firefox or Google Chrome- please consider getting one of those two browsers.
+		</div>
+		<![endif]-->
 		<noscript>
 			<div class="hero-unit pagination-centered">
 				It looks like your browser doesn't have javascript enabled or supported. This applications makes heavy usage of javascript, so at the present time, there isn't a version available without javascript.
@@ -550,9 +555,11 @@ function is_dev() {
 			<img src="../images/loading.gif" id="img-load" />
 		</div>
 		<?php } else { ?>
-		<div class="pagination-centered hero-unit">
+		<!--[if !IE]>
+		<div class="pagination-centered hero-unit" id="logInHero">
 			You need to be logged in to use this tool.
 		</div>
+		<![endif]-->
 		<?php } ?>
 		<?php include('../include/foot.php'); ?>
 	</body>
