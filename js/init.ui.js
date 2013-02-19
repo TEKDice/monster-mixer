@@ -68,95 +68,103 @@ function setupRollables($parent) {
 			var idFor = $(this).closest('div[data-for]').attr('id');
 			var nameFor = $("a[href='#"+idFor+"']").html();
 
-			var powerAttackBonus;
-			if(hasFeat(uid, 'Power Attack')) {
-				powerAttackBonus = parseInt($("#"+uid+"_calc_pa").children("input").val());
-			}
+			var howManyAttacks = parseInt($rollable.attr('data-how-many'));
 
-			if(typeof isAttack !== 'undefined' && isAttack !== false) {
-				var attackRoll = rollDice($rollable.attr('data-attack-roll'));
+			for(var atkCount=0; atkCount<howManyAttacks; atkCount++) {
 
-				if(powerAttackBonus!=0 && !isNaN(powerAttackBonus))
-					attackRoll["Power Attack"] = -powerAttackBonus;
+				console.log("test" + atkCount + " " + howManyAttacks);
 
-				if(hasFeat(uid, 'Combat Expertise')) {
-					var bonus = parseInt($("#"+uid+"_calc_ce").children("input").val());
-					if(bonus!=0 && !isNaN(bonus))
-						attackRoll["Combat Expertise"] = -bonus;
+				var powerAttackBonus;
+				if(hasFeat(uid, 'Power Attack')) {
+					powerAttackBonus = parseInt($("#"+uid+"_calc_pa").children("input").val());
 				}
 
-				if(hasFeat(uid, 'Awesome Blow') && $("#"+uid+"_calc_ab").is(":checked")) 
-					attackRoll["Awesome Blow"] = -4;
+				if(typeof isAttack !== 'undefined' && isAttack !== false) {
+					var attackRoll = rollDice($rollable.attr('data-attack-roll'));
 
-				if(hasFeat(uid, 'Point Blank Shot') && $("#"+uid+"_calc_pbs").is(":checked") && $rollable.attr('data-range') != '0') 
-					attackRoll["Point Blank Shot"] = 1;
+					if(powerAttackBonus!=0 && !isNaN(powerAttackBonus))
+						attackRoll["Power Attack"] = -powerAttackBonus;
 
-				for(var i in attackRoll) {
-					if(attackRoll[i] == 0) continue;
-					result += attackRoll[i];
-					resultText += i + ": "+attackRoll[i]+"<br>";
+					if(hasFeat(uid, 'Combat Expertise')) {
+						var bonus = parseInt($("#"+uid+"_calc_ce").children("input").val());
+						if(bonus!=0 && !isNaN(bonus))
+							attackRoll["Combat Expertise"] = -bonus;
+					}
 
-					var threatRange = parseInt($rollable.attr('data-min-crit'));
+					if(hasFeat(uid, 'Awesome Blow') && $("#"+uid+"_calc_ab").is(":checked")) 
+						attackRoll["Awesome Blow"] = -4;
 
-					if(attackRoll[i] <= 1 && i.indexOf('1d20') != -1 && (i.indexOf('Base') != -1)) {
-						critStatus='fail';
-						
-					} else if(attackRoll[i] >= threatRange && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
-						critStatus='threat';
-						if(attackRoll[i] >= 20) critStatus = 'success';
-						var threatRoll = rollDice($rollable.attr('data-attack-roll'));
+					if(hasFeat(uid, 'Point Blank Shot') && $("#"+uid+"_calc_pbs").is(":checked") && $rollable.attr('data-range') != '0') 
+						attackRoll["Point Blank Shot"] = 1;
 
-						var threatData = _rollArray(threatRoll);
+					for(var i in attackRoll) {
+						if(attackRoll[i] == 0) continue;
+						result += attackRoll[i];
+						resultText += i + ": "+attackRoll[i]+"<br>";
 
-						var expr = $rollable.attr('data-roll');
-						var roll = rollDice(expr);
-						if(powerAttackBonus)
-							roll["Power Attack"] = powerAttackBonus;
+						var threatRange = parseInt($rollable.attr('data-min-crit'));
 
-						var threatBasicAttack = _rollArray(roll);
-						iters = parseInt($rollable.attr('data-crit-mult'));
+						if(attackRoll[i] <= 1 && i.indexOf('1d20') != -1 && (i.indexOf('Base') != -1)) {
+							critStatus='fail';
+							
+						} else if(attackRoll[i] >= threatRange && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
+							critStatus='threat';
+							if(attackRoll[i] >= 20) critStatus = 'success';
+							var threatRoll = rollDice($rollable.attr('data-attack-roll'));
+
+							var threatData = _rollArray(threatRoll);
+
+							var expr = $rollable.attr('data-roll');
+							var roll = rollDice(expr);
+							if(powerAttackBonus)
+								roll["Power Attack"] = powerAttackBonus;
+
+							var threatBasicAttack = _rollArray(roll);
+							iters = parseInt($rollable.attr('data-crit-mult'));
+						}
+					}
+					if(critStatus == 'threat' || critStatus == 'success') {
+						addToLog(logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus, idFor);
+						addToLog(logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
+						addToLog(logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus, idFor);
+					} else {
+						addToLog(logMessages.initiate(nameFor, exprFor, resultText, result), critStatus, idFor);
 					}
 				}
-				if(critStatus == 'threat' || critStatus == 'success') {
-					addToLog(logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus, idFor);
-					addToLog(logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
-					addToLog(logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus, idFor);
+
+				var expr = $rollable.attr('data-roll');
+
+				result = 0;
+				resultText = '';
+
+				for(var x=0; x<iters; x++) {
+					var roll = rollDice(expr);
+					if(powerAttackBonus)
+						roll["Power Attack"] = (expr.indexOf("(2h)") != -1 ? powerAttackBonus*2 : powerAttackBonus);
+
+					if(hasFeat(uid, 'Point Blank Shot') && $("#"+uid+"_calc_pbs").is(":checked") && $rollable.attr('data-range') != '0') 
+						roll["Point Blank Shot"] = 1;
+
+					for(var i in roll) {
+						if(roll[i] == 0) continue;
+						result += roll[i];
+						resultText += i + ": "+roll[i]+"<br>";
+
+						if(roll[i] <= 1 && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
+							critStatus='fail';
+
+						} else if(roll[i] >= 20 && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
+							critStatus='success';
+						}
+					}
+				}
+
+				if((critStatus == 'threat' || critStatus == 'success') && isAttack) {
+					addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
 				} else {
-					addToLog(logMessages.initiate(nameFor, exprFor, resultText, result), critStatus, idFor);
+					addToLog(logMessages.hit(nameFor, exprFor, resultText, result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
 				}
-			}
-
-			var expr = $rollable.attr('data-roll');
-
-			result = 0;
-			resultText = '';
-
-			for(var x=0; x<iters; x++) {
-				var roll = rollDice(expr);
-				if(powerAttackBonus)
-					roll["Power Attack"] = (expr.indexOf("(2h)") != -1 ? powerAttackBonus*2 : powerAttackBonus);
-
-				if(hasFeat(uid, 'Point Blank Shot') && $("#"+uid+"_calc_pbs").is(":checked") && $rollable.attr('data-range') != '0') 
-					roll["Point Blank Shot"] = 1;
-
-				for(var i in roll) {
-					if(roll[i] == 0) continue;
-					result += roll[i];
-					resultText += i + ": "+roll[i]+"<br>";
-
-					if(roll[i] <= 1 && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
-						critStatus='fail';
-
-					} else if(roll[i] >= 20 && i.indexOf('1d20') != -1 && i.indexOf('Base') != -1) {
-						critStatus='success';
-					}
-				}
-			}
-
-			if((critStatus == 'threat' || critStatus == 'success') && isAttack) {
-				addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
-			} else {
-				addToLog(logMessages.hit(nameFor, exprFor, resultText, result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
+					
 			}
 		});
 		$(this).append($roller);

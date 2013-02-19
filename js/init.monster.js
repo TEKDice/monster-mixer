@@ -272,6 +272,11 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 			$tr.attr('data-attack-roll', attackRolls[attr](obj, uid, range));
 		});
 	}
+
+	$tr.attr('data-how-many','1');
+	if(attackRolls.hasOwnProperty(attr) && obj.how_many != null) {
+		$tr.attr('data-how-many', obj.how_many);
+	}
 	var inner = formatting[attr](obj);
 	if(inner.indexOf(monsterName) != -1) inner = inner.substring(monsterName.length+1);
 	$tr.append("<td"+(obj.hasOwnProperty('descript') ? " class='has-tooltip' data-desc='"+obj.descript.split("\n").join("<br>")+"'" : "")+">"+inner+"</td>");

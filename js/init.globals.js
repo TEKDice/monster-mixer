@@ -218,10 +218,10 @@ var rollable = {
 		var ret = {};
 		if(obj.hit_dice!='0')
 			ret["Base"] = obj.hit_dice;
+		
 		if(obj.dmgred_hd!='0') 
 			ret[obj.dmgred_nm] = obj.dmgred_hd;
 
-		console.log(obj);
 		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value'))) * parseFloat(obj.max_str_mod);
 		if(strBonus!=0)	ret["STR Mod"] = strBonus;
 		return JSON.stringify(ret);
