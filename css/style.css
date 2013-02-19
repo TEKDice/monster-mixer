@@ -446,3 +446,17 @@ i, #showFilters, #medianArrowContainer {
 #hasScript {
 	display: none;
 }
+
+/*
+
+Loading Stuff
+
+*/
+#overlay { 
+  display:none; 
+  position:absolute; 
+  background:#fff; 
+}
+#img-load { 
+  position:absolute; 
+}

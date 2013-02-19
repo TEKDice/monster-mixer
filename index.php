@@ -75,6 +75,7 @@ function is_dev() {
 		<script src="js/bootbox.min.js"></script>
 		<script src="js/jquery.cookie.js"></script>
 		<script src="js/dateformat.js"></script>
+		<script src="js/jquery.async.loops.js"></script>
 
 		<script src="js/serverfunctions.js"></script>
 		<script src="js/log.js"></script>
@@ -544,6 +545,9 @@ function is_dev() {
 					</div>
 				</div>
 			</div>
+		</div>
+		<div id="overlay">
+			<img src="http://www.sanbaldo.com/wordpress/wp-content/bigrotation2.gif" id="img-load" />
 		</div>
 		<?php } else { ?>
 		<div class="pagination-centered hero-unit">

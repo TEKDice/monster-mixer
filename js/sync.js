@@ -36,7 +36,8 @@ function saveMonsters() {
 function loadMonsters(monsterSet) {
 	if(!loggedIn) return;
 
-	//TODO -- "loading icon"
+	overlayLoadingGif();
+	$("#overlay").fadeIn();
 
 	var monsters = [];
 
@@ -46,21 +47,42 @@ function loadMonsters(monsterSet) {
 
 	$.post('ajax.php', {action: "gen", ids: JSON.stringify(monsters)}, function(monsterArr) {
 		var arr = $.parseJSON(monsterArr);
-		$.each(arr, function(i, e){
-			var mon = e;
-			var uid = addNewMonster(mon);
-			setupGrids(uid);
-			
-			var oldMonData = monsterSet[i];
+		$.eachAsync(arr, {
+			loop: function(i, e){
+				setTimeout(function() {
+					var mon = e;
+					var uid = addNewMonster(mon);
+					setupGrids(uid);
+					
+					var oldMonData = monsterSet[i];
 
-			rollHp(uid, null, oldMonData.maxHp, true);
-			modifyHp(uid, parseInt(oldMonData.curHp) - parseInt($("#"+uid+"_hp .hp_val").text()) , true);
-			_rollInit(uid, parseInt(oldMonData.init));
+					rollHp(uid, null, oldMonData.maxHp, true);
+					modifyHp(uid, parseInt(oldMonData.curHp) - parseInt($("#"+uid+"_hp .hp_val").text()) , true);
+					_rollInit(uid, parseInt(oldMonData.init));
+				}, 1);
+			},
+			end: function() {
+				$("#overlay").fadeOut();
+			}
 		});
 	});
+}
 
+function overlayLoadingGif() {
+	$t = $("#monsterListCont");
 
-	//TODO -- remove loading icon
+	$("#overlay").css({
+	  opacity : 0.8,
+	  top     : $t.offset().top,
+	  left	  : $t.offset().left,
+	  width   : $t.outerWidth(),
+	  height  : $t.outerHeight()
+	});
+
+	$("#img-load").css({
+	  top  : ($t.height() / 2),
+	  left : ($t.width() / 2)
+	});
 }
 
 function removeAllMonsters() {

@@ -25,7 +25,7 @@ function addNewMonster(monster) {
 
 	addDataToMonster($parent, monster, uid);
 
-	$('#monsterList').niceScroll({horizrailenabled: false, zindex:9});
+	var nice = $('#monsterList').niceScroll({horizrailenabled: false, zindex:9, railoffset: {left: -118}});
 	$('#monsterList').css('overflow','hidden');
 
 	tabChangeScrollbars();
