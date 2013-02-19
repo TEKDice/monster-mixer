@@ -1,10 +1,11 @@
 
 var logTimer;
+var newLogEntryWidth;
 
 function addToLog(string, selector, uid) {
 
 	//bleh, damned inability to append the same element in two places..
-	var divString = "<div><p class='pull-left "+selector+"' data-uid='"+uid+"'>"+
+	var divString = "<div class='attackSide'><p class='pull-left "+selector+"' data-uid='"+uid+"'>"+
 		string+"</p></div><div class='pull-right threat-status "+
 		selector+"'></div><div class='clearfix'></div>";
 
@@ -22,6 +23,12 @@ function addToLog(string, selector, uid) {
 	$("#log .tab-pane > div").niceScroll({horizrailenabled: false});
 	$("#log .tab-pane > div").css('overflow','hidden');
 
+	$(".attackSide").width(newLogEntryWidth);
+
+}
+
+function changeLogEntrySize() {
+	newLogEntryWidth = $("#allInfo").width()-70;
 }
 
 var logMessages = {

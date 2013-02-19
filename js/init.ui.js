@@ -345,4 +345,6 @@ function resizeElements() {
 	$("#monstersContainer > .row-fluid").first().css('height', $("#monsterListCont").height());
 
 	resizeGrids();
+
+	changeLogEntrySize();
 }
