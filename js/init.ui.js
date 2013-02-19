@@ -58,19 +58,21 @@ function setupRollables($parent) {
 			
 			var isAttack = $rollable.attr('data-attack-roll');
 
-			var result = 0;
-			var resultText = '';
-			var iters=1;
-			var critStatus='';
-
 			var spatkFor = $rollable.attr('data-spatk');
+			if(spatkFor) spatkFor = spatkFor.trim();
 			var exprFor = $rollable.attr('data-roll-for');
+			if(exprFor) exprFor = exprFor.trim();
 			var idFor = $(this).closest('div[data-for]').attr('id');
 			var nameFor = $("a[href='#"+idFor+"']").html();
 
 			var howManyAttacks = parseInt($rollable.attr('data-how-many'));
 
 			for(var atkCount=0; atkCount<howManyAttacks; atkCount++) {
+
+				var result = 0;
+				var resultText = '';
+				var iters=1;
+				var critStatus='';
 
 				console.log("test" + atkCount + " " + howManyAttacks);
 
