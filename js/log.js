@@ -33,7 +33,7 @@ function changeLogEntrySize() {
 
 var logMessages = {
 	hit: function(ent, att, text, num) {
-		return ent + " hit with \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a> damage."
+		return ent + " hits with \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a> damage."
 	},
 
 	initiate: function(ent, att, text, num) {
