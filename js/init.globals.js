@@ -219,7 +219,11 @@ var rollable = {
 		if(obj.hit_dice!='0')
 			ret["Base"] = obj.hit_dice;
 		if(obj.dmgred_hd!='0') 
-			ret[obj.dmgred_nm] = obj.dmgred_hd
+			ret[obj.dmgred_nm] = obj.dmgred_hd;
+
+		console.log(obj);
+		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value'))) * parseFloat(obj.max_str_mod);
+		if(strBonus!=0)	ret["STR Mod"] = strBonus;
 		return JSON.stringify(ret);
 	}
 
@@ -294,9 +298,18 @@ var attackRolls = {
 
 		return JSON.stringify(ret);
 	},
-	mspatk: function(obj, uid) {
+	mspatk: function(obj, uid, range) {
 		var ret = {};
 		ret["Base"] = "1d20";
+		if(range == "0") {
+			var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
+			if(strBonus!=0)	ret["STR Mod"] = strBonus;
+
+		} else {
+			var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
+			if(dexBonus!=0)	ret["DEX Mod"] = dexBonus;
+		}
+
 		return JSON.stringify(ret);
 	},
 	mfatk: function(obj, uid, range) {

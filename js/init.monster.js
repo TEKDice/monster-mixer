@@ -224,7 +224,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		var rollFor = mainStat[attr](obj);
 		if(rollFor.indexOf(monsterName) != -1) rollFor = rollFor.substring(monsterName.length);
 		$tr.attr('data-roll-for', rollFor);
-		if(attr == 'mweapon' || attr == 'mattack') {
+		if(attr == 'mweapon' || attr == 'mattack' || attr == 'mspatk') {
 			if(obj.spatk != null && obj.spatk.indexOf(monsterName) != -1) obj.spatk = obj.spatk.substring(monsterName.length+1);
 			$tr.attr('data-spatk', obj.spatk);
 			range = obj.is_ranged;

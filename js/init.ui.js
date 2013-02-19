@@ -133,7 +133,6 @@ function setupRollables($parent) {
 
 			for(var x=0; x<iters; x++) {
 				var roll = rollDice(expr);
-				console.log(expr);
 				if(powerAttackBonus)
 					roll["Power Attack"] = (expr.indexOf("(2h)") != -1 ? powerAttackBonus*2 : powerAttackBonus);
 
