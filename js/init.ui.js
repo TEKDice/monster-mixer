@@ -240,6 +240,11 @@ function setupGenButton() {
 			$.each($.parseJSON(monster), function(i, e) {
 				addNewSuggestedRow(i, e);
 			});
+			$(".only-positive").change(function() {
+				var val = parseInt($(this).val());
+				if(val < 0) val = 0;
+				$(this).val(val);
+			});
 		});
 	});
 }
@@ -259,6 +264,7 @@ function _makeSelect(monster, data) {
 		if(e.organization.indexOf(monster) != -1) e.organization = e.organization.substring(monster.length+1);
 		$select.append("<option value='"+e.id+"'>"+e.organization+"</option>");
 	});
+	$select.append("<option value='null' selected>No Org.</option>");
 }
 
 function rollableRowHighlighting($parent) {

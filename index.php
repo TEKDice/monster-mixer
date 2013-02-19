@@ -552,10 +552,10 @@ function is_dev() {
 				<div class='control-group'>
 					<div class='controls'>
 						<div class='input-prepend input-append'>
-							<span class='add-on'><input type='checkbox' /></span>
+							<span class='add-on'><input type='checkbox' title="Check this if you want to include this monster in the generation process."/></span>
 							<label class='control-label add-on monsterName'></label>
-							<select></select>
-							<input class='input-mini-inline' type='number' placeholder='#'/>
+							<select title="The organization you want to generate through, if any."></select>
+							<input class='input-mini-inline only-positive' type='number' placeholder='#' title="The number of base monsters you want to generate."/>
 						</div>
 					</div>
 				</div>

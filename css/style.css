@@ -223,7 +223,8 @@ Extras in Popup
 }
 
 #advGenMonsters label.monsterName {
-	width: 120px;
+	width: 160px;
+	text-align: left;
 }
 
 /* 
