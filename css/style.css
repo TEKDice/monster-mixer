@@ -235,6 +235,10 @@ Extras in Popup
 	width: 280px;
 }
 
+#advGenFinalContainer caption {
+	font-weight: bold;
+}
+
 /* 
 --------------------------------
 

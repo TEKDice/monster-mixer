@@ -207,12 +207,32 @@ function setupGenButton() {
 	$("#seeMoreButton").button('loading');
 	$("#finalAddButton").button('loading');
 
+	$("#finalAddButton").click(function() {
+		_addAllSuggestedMonsters($(this));
+	});
+
 	$("#seeMoreButton").click(function() {
 		_seeMoreButtonFunctionality($(this))
 	});
 	$("#genButton").click(function() {
 		_genButtonFunctionality($(this))
 	});
+}
+
+function _addAllSuggestedMonsters($button) {
+	$button.button('generating');
+	setTimeout(function() {$button.attr('disabled', 'disabled').addClass('disabled')}, 10);
+
+	$("#advGenFinalContainer tr").each(function() {
+		var monster = $(this).data('monster');
+		var count = parseInt($(this).children(":nth-child(2)").text());
+		for(var i=0; i<count; i++) {
+			addNewMonster(monster);
+		}
+	});
+
+	setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
+	$button.button('reset');
 }
 
 function _seeMoreButtonFunctionality($button) {
@@ -253,6 +273,7 @@ function _seeMoreButtonFunctionality($button) {
 
 	$.post('ajax.php', {action: "gen", orgs: JSON.stringify(advObj)}, function(monsters) {
 		_parseSuggestedMonsters($.parseJSON(monsters), singlesCt);
+		$("#finalAddButton").button('reset');
 
 	}).always(function() {
 		setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
@@ -261,15 +282,17 @@ function _seeMoreButtonFunctionality($button) {
 }
 
 function _parseSuggestedMonsters(monsters, singlesCt) {
-	console.log(monsters);
 
 	var $container = $("#advGenFinalContainer");
 	var $monsters = $("#advGenFinal");
 	$container.children().not("#advGenFinal").remove();
 	$monsters.empty();
 
-	if(singlesCt.length)
+	if(Object.keys(singlesCt).length) {
+		$monsters.show();
 		$monsters.append("<caption>Monsters</caption>");
+	} else
+		$monsters.hide();
 
 	$.each(monsters, function(i, e) {
 		if(e.hasOwnProperty("name")) {
@@ -278,7 +301,8 @@ function _parseSuggestedMonsters(monsters, singlesCt) {
 			$.each(e.monsters, function(i, e){
 				var $tr = $("<tr/>").appendTo($table);
 				$tr.attr('data-gen-min', e.minimum).attr('data-gen-max', e.maximum);
-				$tr.append("<td>"+e.monster.data[0].name+"</td><td class='rightalign'></td>")
+				$tr.append("<td>"+e.monster.data[0].name+"</td><td class='rightalign'></td>");
+				$tr.data('monster', e.monster);
 			});
 
 			var $roller = $("<i/>").addClass('icon-share-alt').appendTo($table);
@@ -293,6 +317,7 @@ function _parseSuggestedMonsters(monsters, singlesCt) {
 			var monCt = singlesCt[monName];
 			$tr.append("<td>"+monName+"</td><td class='rightalign'>"+monCt+"</td>").appendTo($monsters);
 			$tr.attr('data-gen-min', monCt).attr('data-gen-max', monCt);
+			$tr.data('monster',e);
 		}
 	});
 	$("#advGenFinalContainer").niceScroll({zindex: 14, horizrailenabled: false});
@@ -389,7 +414,7 @@ function tabChangeScrollbars() {
 
 		//hide the popup if it's visible
 		if($("#popup").is(":visible")) {
-			_togglePopup(true);
+			_hidePopup();
 		}
 	});
 }
@@ -428,7 +453,7 @@ function initializeArrowToggler() {
 	$("#showFilters").click(_togglePopup);
 }
 
-function _togglePopup(ext) {
+function _togglePopup() {
 	$("#popup").slideToggle(400, function() {
 		if($(this).is(":visible")) {
 			$("#filterIcon").attr('class', 'icon-arrow-up');	
@@ -439,6 +464,12 @@ function _togglePopup(ext) {
 			$("#filterIcon").attr('class', 'icon-arrow-down');
 		}
 	});
+}
+
+function _hidePopup() {
+	$("#popup").slideUp(400, function() {
+		$("#filterIcon").attr('class', 'icon-arrow-down');
+	})
 }
 
 function timedResizeElements() {

@@ -515,7 +515,7 @@ function is_dev() {
 							</table>
 						</div>
 						<div class='popup-footer'>
-							<center><button class="btn btn-primary" id="finalAddButton" data-loading-text="Create First!">Add These</button></center>
+							<center><button class="btn btn-primary" id="finalAddButton" data-loading-text="Create First!" data-generating-text="Generating...">Add These</button></center>
 						</div>
 					</div>
 				</div>

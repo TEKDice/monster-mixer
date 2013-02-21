@@ -36,5 +36,7 @@ $(function() {
 	sessionManagement();
 
 	changeLogEntrySize();
+	
+	overlayLoadingGif();
 
 });

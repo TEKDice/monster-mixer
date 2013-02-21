@@ -1,4 +1,20 @@
 
+function overlayLoadingGif() {
+	$t = $("#monsterListCont");
+
+	$("#overlay").css({
+	  opacity : 0.8,
+	  top     : $t.offset().top,
+	  left	  : $t.offset().left,
+	  width   : $t.outerWidth(),
+	  height  : $t.outerHeight()
+	});
+
+	$("#img-load").css({
+	  top  : ($t.height() / 2),
+	  left : ($t.width() / 2)
+	});
+}
 
 function rollDice(str) {
 	var result;
