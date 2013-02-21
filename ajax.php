@@ -25,16 +25,16 @@ if(isset($_POST["orgs"])) {
 
 	foreach($json["orgs"] as $org) {
 		$org = $conn->real_escape_string($org);
-		//get data for each org
+		$org_data = get_org_data($org);
+		$monsters[$org_data["name"]] = $org_data;
 	}
 
 	foreach($json["singles"] as $mon) {
 		$monster_data = get_monster_data($conn->real_escape_string($mon));
-		$monsters[$monster_data[0]["name"]] = $monster_data;
+		$monsters[$monster_data["data"][0]["name"]] = $monster_data;
 	}
 
 	echo json_encode($monsters);
-
 
 } else if(isset($_POST["adv"]) && $_POST["adv"] == "true") {
 	$json = json_decode($_POST["data"], true);

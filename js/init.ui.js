@@ -231,11 +231,11 @@ function _seeMoreButtonFunctionality($button) {
 			var baseCt = $tr.find(".only-positive").val() || null;
 			var orgGen = $tr.find("select").val();
 			
-			if(baseCt!=null || orgGen!="null")
+			if((baseCt!=null && baseCt!='0') || orgGen!="null")
 				ct++;
 
-			if(baseCt != null) {
-				singlesCt[$tr.attr('data-monster-id')] = baseCt;
+			if(baseCt != null && baseCt!='0') {
+				singlesCt[$tr.attr('data-monster-name')] = baseCt;
 				advObj.singles.push($tr.attr('data-monster-id'));
 			}
 			if(orgGen!="null") {
@@ -250,16 +250,61 @@ function _seeMoreButtonFunctionality($button) {
 		bootbox.alert("Please select some monsters to create.");
 		return;
 	}
-	setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
-	$button.button('reset');
 
 	$.post('ajax.php', {action: "gen", orgs: JSON.stringify(advObj)}, function(monsters) {
-		monsters = $.parseJSON(monsters);
-		console.log(monsters);
+		_parseSuggestedMonsters($.parseJSON(monsters), singlesCt);
 
 	}).always(function() {
 		setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
 		$button.button('reset');
+	});
+}
+
+function _parseSuggestedMonsters(monsters, singlesCt) {
+	console.log(monsters);
+
+	var $container = $("#advGenFinalContainer");
+	var $monsters = $("#advGenFinal");
+	$container.children().not("#advGenFinal").remove();
+	$monsters.empty();
+
+	if(singlesCt.length)
+		$monsters.append("<caption>Monsters</caption>");
+
+	$.each(monsters, function(i, e) {
+		if(e.hasOwnProperty("name")) {
+			var $table = $("<table/>").addClass('table table-condensed table-striped').css('position','relative').appendTo($container);
+			$table.append("<caption>"+e.name+"</caption>");
+			$.each(e.monsters, function(i, e){
+				var $tr = $("<tr/>").appendTo($table);
+				$tr.attr('data-gen-min', e.minimum).attr('data-gen-max', e.maximum);
+				$tr.append("<td>"+e.monster.data[0].name+"</td><td class='rightalign'></td>")
+			});
+
+			var $roller = $("<i/>").addClass('icon-share-alt').appendTo($table);
+			$roller.click(function() {
+				_rerollTable($table);
+			});
+			_rerollTable($table);
+
+		} else {
+			var $tr = $("<tr/>");
+			var monName = e.data[0].name;
+			var monCt = singlesCt[monName];
+			$tr.append("<td>"+monName+"</td><td class='rightalign'>"+monCt+"</td>").appendTo($monsters);
+			$tr.attr('data-gen-min', monCt).attr('data-gen-max', monCt);
+		}
+	});
+	$("#advGenFinalContainer").niceScroll({zindex: 14, horizrailenabled: false});
+	$('#advGenFinalContainer').css('overflow','hidden');
+}
+
+function _rerollTable($table) {
+	$table.find("tr").each(function() {
+		var max = parseInt($(this).attr('data-gen-max'));
+		var min = parseInt($(this).attr('data-gen-min'));
+		var num = Math.floor(Math.random() * (max-min+1)) + min;
+		$(this).children(":nth-child(2)").text(num);
 	});
 }
 

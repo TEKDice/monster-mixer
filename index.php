@@ -511,7 +511,7 @@ function is_dev() {
 					<div style="float: right; width: 50%;">
 						<h5 style="text-align: center;">Generated</h4>
 						<div id="advGenFinalContainer">
-							<table id="advGenFinal">
+							<table id="advGenFinal" class="table table-condensed">
 							</table>
 						</div>
 						<div class='popup-footer'>

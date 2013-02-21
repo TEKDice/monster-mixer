@@ -159,7 +159,7 @@ Grid-related
 	font-weight: bold;
 }
 
-.sortable li i.icon-share-alt {
+i.icon-share-alt {
 	top: 0;
 	right: 0;
 	position: absolute;
@@ -208,7 +208,7 @@ Extras in Popup
 
 */
 
-#advGenContainer {
+#advGenContainer, #advGenFinalContainer {
 	padding: 3px;
 	margin: 3px;
 	height: 220px;
@@ -218,6 +218,10 @@ Extras in Popup
 	max-width: 350px;
 }
 
+#advGenFinalContainer {
+	max-width: 340px;
+}
+
 #advGenMonsters select {
 	width: 100px;
 }
@@ -225,6 +229,10 @@ Extras in Popup
 #advGenMonsters label.monsterName {
 	width: 160px;
 	text-align: left;
+}
+
+#advGenFinalContainer tr td:nth-child(1) {
+	width: 280px;
 }
 
 /* 
