@@ -222,6 +222,9 @@ function _seeMoreButtonFunctionality($button) {
 
 	var ct = 0;
 
+	var advObj = {orgs: [], singles: []};
+	var singlesCt = [];
+
 	$("#advGenMonsters input[type='checkbox']").each(function() {
 		if($(this).is(":checked")) {
 			var $tr = $(this).closest("tr");
@@ -231,17 +234,31 @@ function _seeMoreButtonFunctionality($button) {
 			if(baseCt!=null || orgGen!="null")
 				ct++;
 
-			console.log(baseCt + " " + orgGen);
+			if(baseCt != null) {
+				singlesCt[$tr.attr('data-monster-id')] = baseCt;
+				advObj.singles.push($tr.attr('data-monster-id'));
+			}
+			if(orgGen!="null") {
+				advObj.orgs.push(orgGen);
+			}
 		}
 	});
 
-	setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
-	$button.button('reset');
-
 	if(ct == 0) {
+		setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
+		$button.button('reset');
 		bootbox.alert("Please select some monsters to create.");
 		return;
 	}
+
+	$.post('ajax.php', {action: "gen", orgs: JSON.stringify(advObj)}, function(monsters) {
+		monsters = $.parseJSON(monsters);
+		console.log(monsters);
+
+	}).always(function() {
+		setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
+		$button.button('reset');
+	});
 }
 
 function _genButtonFunctionality($button) {
@@ -283,14 +300,17 @@ function _genButtonFunctionality($button) {
 			if(val < 0) val = 0;
 			$(this).val(val);
 		});
+		$("tr[data-monster-name] select, tr[data-monster-name] .only-positive").change(function() {
+			$(this).closest("tr").find("input[type='checkbox']").prop('checked',true);
+		});
 		$("#seeMoreButton").button('reset');
 	});
 }
 
 function addNewSuggestedRow(monster, data) {
 	var template = $("#advGenTemplate").html();
-	$("#advGenMonsters").append("<tr data-monster-name='"+monster+"'><td>"+template+"</td></tr>");
-	_makeSelect(monster, data);
+	$("#advGenMonsters").append("<tr data-monster-name='"+monster+"' data-monster-id='"+data.id+"'><td>"+template+"</td></tr>");
+	_makeSelect(monster, data.orgs);
 	$("[data-monster-name='"+monster+"'] .monsterName").attr('title',monster).text(monster).tooltip({delay: 500});
 	$("#advGenContainer").niceScroll({zindex: 14, horizrailenabled: false});
 	$('#advGenContainer').css('overflow','hidden');

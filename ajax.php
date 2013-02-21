@@ -16,7 +16,11 @@ if(isset($_POST["action"]) && !empty($_POST["action"])) {
 define('readonly', true);
 require_once('../include/database.php');
 
-if(isset($_POST["adv"]) && $_POST["adv"] == "true") {
+if(isset($_POST["orgs"])) {
+	echo json_encode("test");
+
+
+} else if(isset($_POST["adv"]) && $_POST["adv"] == "true") {
 	$json = json_decode($_POST["data"], true);
 
 	global $conn;
@@ -30,7 +34,10 @@ if(isset($_POST["adv"]) && $_POST["adv"] == "true") {
 	$newMonsters = array();
 
 	foreach($monsters as $mon) {
-		$newMonsters[get_monster_name($mon["monster_id"])] = get_monster_orgs($mon["monster_id"]);
+		$newMonsters[get_monster_name($mon["monster_id"])] = array(
+			"id" => $mon["monster_id"],
+			"orgs" => get_monster_orgs($mon["monster_id"])
+		);
 	}
 
 	echo json_encode(array_filter($newMonsters, "remove_empty_entries"));
