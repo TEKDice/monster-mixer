@@ -250,6 +250,8 @@ function _seeMoreButtonFunctionality($button) {
 		bootbox.alert("Please select some monsters to create.");
 		return;
 	}
+	setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
+	$button.button('reset');
 
 	$.post('ajax.php', {action: "gen", orgs: JSON.stringify(advObj)}, function(monsters) {
 		monsters = $.parseJSON(monsters);

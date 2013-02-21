@@ -17,7 +17,23 @@ define('readonly', true);
 require_once('../include/database.php');
 
 if(isset($_POST["orgs"])) {
-	echo json_encode("test");
+	$json = json_decode($_POST["orgs"], true);
+
+	global $conn;
+
+	$monsters = array();
+
+	foreach($json["orgs"] as $org) {
+		$org = $conn->real_escape_string($org);
+		//get data for each org
+	}
+
+	foreach($json["singles"] as $mon) {
+		$monster_data = get_monster_data($conn->real_escape_string($mon));
+		$monsters[$monster_data[0]["name"]] = $monster_data;
+	}
+
+	echo json_encode($monsters);
 
 
 } else if(isset($_POST["adv"]) && $_POST["adv"] == "true") {
@@ -34,9 +50,10 @@ if(isset($_POST["orgs"])) {
 	$newMonsters = array();
 
 	foreach($monsters as $mon) {
-		$newMonsters[get_monster_name($mon["monster_id"])] = array(
-			"id" => $mon["monster_id"],
-			"orgs" => get_monster_orgs($mon["monster_id"])
+		$mon_id = $conn->real_escape_string($mon["monster_id"]);
+		$newMonsters[get_monster_name($mon_id)] = array(
+			"id" => $mon_id,
+			"orgs" => get_monster_orgs($mon_id)
 		);
 	}
 
@@ -56,7 +73,7 @@ if(isset($_POST["orgs"])) {
 	shuffle($monsters);
 
 	foreach($monsters as $arr=>$id) {
-		echo json_encode(get_monster_data($id["monster_id"]));
+		echo json_encode(get_monster_data($conn->real_escape_string($id["monster_id"])));
 		return;
 	}
 } else if(isset($_POST["ids"])) {
@@ -65,7 +82,7 @@ if(isset($_POST["orgs"])) {
 	$monsters = array();
 
 	foreach($ids as $id) {
-		array_push($monsters, get_monster_data($id));
+		array_push($monsters, get_monster_data($conn->real_escape_string($id)));
 	}
 
 	echo json_encode($monsters);
