@@ -204,48 +204,86 @@ function resizeGrids() {
 }
 
 function setupGenButton() {
+	$("#seeMoreButton").button('loading');
+	$("#finalAddButton").button('loading');
+
+	$("#seeMoreButton").click(function() {
+		_seeMoreButtonFunctionality($(this))
+	});
 	$("#genButton").click(function() {
+		_genButtonFunctionality($(this))
+	});
+}
 
-		$(this).button('loading');
+function _seeMoreButtonFunctionality($button) {
 
-		var $button = $(this);
+	$button.button('generating');
+	setTimeout(function() {$button.attr('disabled', 'disabled').addClass('disabled')}, 10);
 
-		//build filters
-		var filterObj = {};
-		$(".inner-filter-container").each(function() {
-			var attr = $(this).attr('data-attr');
-			filterObj[attr] = [];
-			_gaq.push(['_trackEvent', 'Filter', attr]);
-			$(this).children(".badge").each(function() {
-				filterObj[attr].push({sign: $(this).attr('data-sign'), value: $(this).attr('data-value')});
-			});
+	var ct = 0;
+
+	$("#advGenMonsters input[type='checkbox']").each(function() {
+		if($(this).is(":checked")) {
+			var $tr = $(this).closest("tr");
+			var baseCt = $tr.find(".only-positive").val() || null;
+			var orgGen = $tr.find("select").val();
+			
+			if(baseCt!=null || orgGen!="null")
+				ct++;
+
+			console.log(baseCt + " " + orgGen);
+		}
+	});
+
+	setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
+	$button.button('reset');
+
+	if(ct == 0) {
+		bootbox.alert("Please select some monsters to create.");
+		return;
+	}
+}
+
+function _genButtonFunctionality($button) {
+
+	$button.button('loading');
+
+	//build filters
+	var filterObj = {};
+	$(".inner-filter-container").each(function() {
+		var attr = $(this).attr('data-attr');
+		filterObj[attr] = [];
+		_gaq.push(['_trackEvent', 'Filter', attr]);
+		$(this).children(".badge").each(function() {
+			filterObj[attr].push({sign: $(this).attr('data-sign'), value: $(this).attr('data-value')});
 		});
+	});
 
-		var advMode = $("#extra").is(":visible");
+	var advMode = $("#extra").is(":visible");
 
-		//POST filters
-		$.post('ajax.php', {action: "gen", data: JSON.stringify(filterObj), adv: advMode}, function(monster) {
-			$button.button('reset');	
-			if(monster==='') {
-				bootbox.alert("No results were found with your filters. Try broadening your search.");
-				return;
-			}
-			if(!advMode) {
-				monster = $.parseJSON(monster);
-				var uid = addNewMonster(monster);
-				setupGrids(uid);
-				return;
-			}
-			$("#advGenMonsters").empty();
-			$.each($.parseJSON(monster), function(i, e) {
-				addNewSuggestedRow(i, e);
-			});
-			$(".only-positive").change(function() {
-				var val = parseInt($(this).val());
-				if(val < 0) val = 0;
-				$(this).val(val);
-			});
+	//POST filters
+	$.post('ajax.php', {action: "gen", data: JSON.stringify(filterObj), adv: advMode}, function(monster) {
+		$button.button('reset');	
+		if(monster==='') {
+			bootbox.alert("No results were found with your filters. Try broadening your search.");
+			return;
+		}
+		if(!advMode) {
+			monster = $.parseJSON(monster);
+			var uid = addNewMonster(monster);
+			setupGrids(uid);
+			return;
+		}
+		$("#advGenMonsters").empty();
+		$.each($.parseJSON(monster), function(i, e) {
+			addNewSuggestedRow(i, e);
 		});
+		$(".only-positive").change(function() {
+			var val = parseInt($(this).val());
+			if(val < 0) val = 0;
+			$(this).val(val);
+		});
+		$("#seeMoreButton").button('reset');
 	});
 }
 

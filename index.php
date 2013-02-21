@@ -505,7 +505,7 @@ function is_dev() {
 							</table>
 						</div>
 						<div class='popup-footer'>
-							<center><button class="btn btn-primary" id="seeMoreButton" data-loading-text="">Create These</button></center>
+							<center><button class="btn btn-primary" id="seeMoreButton" data-loading-text="Generate First!" data-generating-text="Creating...">Create These</button></center>
 						</div>
 					</div>
 					<div style="float: right; width: 50%;">
@@ -515,7 +515,7 @@ function is_dev() {
 							</table>
 						</div>
 						<div class='popup-footer'>
-							<center><button class="btn btn-primary" id="finalAddButton" data-loading-text="">Add These</button></center>
+							<center><button class="btn btn-primary" id="finalAddButton" data-loading-text="Create First!">Add These</button></center>
 						</div>
 					</div>
 				</div>
