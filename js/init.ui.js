@@ -223,19 +223,19 @@ function _addAllSuggestedMonsters($button) {
 	$button.button('generating');
 	setTimeout(function() {$button.attr('disabled', 'disabled').addClass('disabled')}, 10);
 
+	$("#overlay").fadeIn();
 	$("#advGenFinalContainer tr").each(function() {
 		var monster = $(this).data('monster');
 		var count = parseInt($(this).children(":nth-child(2)").text());
 		_hidePopup();
 
 		setTimeout(function() {
-			$("#overlay").fadeIn();
 			for(var i=0; i<count; i++) {
 				setTimeout(function() {addNewMonster(monster);}, 100);
 			}
-			$("#overlay").fadeOut();
 		}, 500);
 	});
+	$("#overlay").fadeOut();
 
 	setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
 	$button.button('reset');
