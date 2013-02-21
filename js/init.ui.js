@@ -226,9 +226,15 @@ function _addAllSuggestedMonsters($button) {
 	$("#advGenFinalContainer tr").each(function() {
 		var monster = $(this).data('monster');
 		var count = parseInt($(this).children(":nth-child(2)").text());
-		for(var i=0; i<count; i++) {
-			addNewMonster(monster);
-		}
+		_hidePopup();
+
+		setTimeout(function() {
+			$("#overlay").fadeIn();
+			for(var i=0; i<count; i++) {
+				setTimeout(function() {addNewMonster(monster);}, 100);
+			}
+			$("#overlay").fadeOut();
+		}, 500);
 	});
 
 	setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
