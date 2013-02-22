@@ -77,8 +77,10 @@ function attack($rollable, $roller, uid) {
 
 		if((critStatus == 'threat' || critStatus == 'success') && isAttack) {
 			addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
-		} else {
+		} else if(isAttack) {
 			addToLog(logMessages.hit(nameFor, exprFor, resultText, result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
+		} else {
+			addToLog(logMessages.skill(nameFor, exprFor, resultText, result), critStatus, idFor);
 		}
 			
 	}
