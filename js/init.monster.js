@@ -266,7 +266,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		}
 	}
 
-	if(attackRolls.hasOwnProperty(attr) && obj.class_mult != null) {
+	if(attackRolls.hasOwnProperty(attr) && (obj.class_mult != null || attr == 'mspatk')) {
 		$tr.attr('data-attack-roll', '0');
 		$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
 			$tr.attr('data-attack-roll', attackRolls[attr](obj, uid, range));
