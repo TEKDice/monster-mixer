@@ -126,6 +126,8 @@ function rollInit($node) {
 	var roll = parseInt(rollExpression('1d20'));
 	var uid = $node.attr('data-uid');
 	_rollInit(uid, roll);
+	
+	sortMonsters();
 }
 
 function _rollInit(uid, roll) {

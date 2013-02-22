@@ -8,7 +8,6 @@ function addNewMonster(monster) {
 	var uid = new Date().getTime();
 
 	var $li = $("<li/>");
-	$li.appendTo($("#monsterList"));
 
 	var $a = $("<a/>",{
 		href: "#"+uid
@@ -43,11 +42,24 @@ function addNewMonster(monster) {
 	var $pLog = $(".log[data-for='none']").not("#dummyLog > [data-for='none']");
 	$pLog.attr('id', uid+"_log").attr('data-for', uid);
 
+	$li.appendTo($("#monsterList"));
+
 	$a.tab('show');
 
 	saveMonsters();
 
 	return uid;
+}
+
+function sortMonsters() {
+	var mylist = $('#monsterList');
+	var listitems = mylist.children('li').get();
+	listitems.sort(function(a, b) {
+		var left = parseInt($("#"+$(a).children("a").attr('data-uid')+"_init").text());
+		var right = parseInt($("#"+$(b).children("a").attr('data-uid')+"_init").text());
+		return right - left;
+	});
+	$.each(listitems, function(idx, itm) { mylist.append(itm); });
 }
 
 function addDataToMonster($parent, monster, uid) {
