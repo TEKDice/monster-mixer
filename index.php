@@ -83,6 +83,7 @@ function is_dev() {
 		<script src="js/init.monster.js"></script>
 		<script src="js/init.globals.js"></script>
 		<script src="js/init.filters.js"></script>
+		<script src="js/attack.js"></script>
 		<script src="js/roll.js"></script>
 		<script src="js/monster.js"></script>
 		<script src="js/storage.js"></script>
