@@ -1,6 +1,7 @@
 
 function overlayLoadingGif() {
 	$t = $("#monsterListCont");
+	if($t.length) return;
 
 	$("#overlay").css({
 	  opacity : 0.8,
