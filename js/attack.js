@@ -133,7 +133,7 @@ function _buildRoll(uid, roll, isAttack, isRanged, isDamage) {
 				retRoll["Power Attack"] = bonus;
 		}
 
-		if(hasFeat(uid, 'Point Blank Shot') && $("#"+uid+"_calc_pbs").is(":checked") && $rollable.attr('data-range') != '0') 
+		if(hasFeat(uid, 'Point Blank Shot') && $("#"+uid+"_calc_pbs").is(":checked") && isRanged) 
 			roll["Point Blank Shot"] = 1;
 	}
 
