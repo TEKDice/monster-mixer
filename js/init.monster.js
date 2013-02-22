@@ -45,6 +45,7 @@ function addNewMonster(monster) {
 	$li.appendTo($("#monsterList"));
 
 	$a.tab('show');
+	_hidePopup();
 
 	saveMonsters();
 

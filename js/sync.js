@@ -58,6 +58,7 @@ function loadMonsters(monsterSet) {
 					rollHp(uid, null, oldMonData.maxHp, true);
 					modifyHp(uid, parseInt(oldMonData.curHp) - parseInt($("#"+uid+"_hp .hp_val").text()) , true);
 					_rollInit(uid, parseInt(oldMonData.init));
+					saveMonsters();
 				}, 1);
 			},
 			end: function() {

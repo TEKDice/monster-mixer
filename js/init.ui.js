@@ -300,9 +300,7 @@ function tabChangeScrollbars() {
 		$("#curMon > div[data-for='"+uid+"']").show().siblings().hide();
 
 		//hide the popup if it's visible
-		if($("#popup").is(":visible")) {
-			_hidePopup();
-		}
+		_hidePopup();
 	});
 }
 
