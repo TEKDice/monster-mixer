@@ -140,7 +140,14 @@ var formatting = {
 		(obj.name == 'Awesome Blow' || obj.name == 'Point Blank Shot' ? '<input class="inline-checkbox" type="checkbox"></input>' : '') + 
 		"</td>";
 	},
-	mfatk: 		defaultFunction,
+	mfatk: 		function(obj) {
+		var name = [];
+		$.each(obj, function(i, e) {
+			if(e.wname) name.push(e.wname);
+			if(e.atkname) name.push(e.atkname);
+		});
+		return name.join(", ");
+	},
 	mlang: 		defaultFunction,
 	mmove:    	function(obj) {
 		return obj.movement_type + "</td><td>" + obj.movement_speed+"ft";
@@ -184,6 +191,10 @@ function hasWeaponFocus(obj, uid) {
 }
 
 var rollable = {
+	mfatk: function(obj, uid) {
+		var ret = {};
+		return JSON.stringify(ret);
+	},
 	mattack: function(obj, uid) {
 		var ret = {};
 		ret["Base"] = obj.hitdc;
@@ -247,6 +258,21 @@ var rollable = {
 };
 
 var attackRolls = {
+	mfatk: function(obj, uid, range) {
+		var ret = {};
+		$.each(obj, function(i, e) {
+			if(obj.atkhd) ret[obj.atkname] = obj.atkhd;
+			if(obj.wname) ret[obj.wname] = obj.whd;
+		});
+		return JSON.stringify(ret);
+		/*
+		if(obj.class_mult == 0.5) {
+			if(hasFeat(uid, "Multiattack")) 
+				ret["Secondary Penalty"] = -2;
+			else
+				ret["Secondary Penalty"] = -5;
+		}*/
+	},
 	mattack: function(obj, uid) {
 		var ret = {};
 		ret["Base"] = "1d20";
@@ -328,14 +354,6 @@ var attackRolls = {
 		}
 
 		return JSON.stringify(ret);
-	},
-	mfatk: function(obj, uid, range) {
-		if(obj.class_mult == 0.5) {
-			if(hasFeat(uid, "Multiattack")) 
-				ret["Secondary Penalty"] = -2;
-			else
-				ret["Secondary Penalty"] = -5;
-		}
 	}
 };
 
@@ -351,5 +369,8 @@ var mainStat = {
 	},
 	mspatk: function(obj) {
 		return obj.name;
+	},
+	mfatk: function(obj) {
+		return formatting["mfatk"](obj);
 	}
 };

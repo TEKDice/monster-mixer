@@ -24,6 +24,7 @@ function addNewMonster(monster) {
 	$parent.attr('data-for', uid);
 
 	addDataToMonster($parent, monster, uid);
+	addFullAttacksToMonster(monster, uid);
 
 	var nice = $('#monsterList').niceScroll({horizrailenabled: false, zindex:9, railoffset: {left: -118}});
 	$('#monsterList').css('overflow','hidden');
@@ -50,6 +51,10 @@ function addNewMonster(monster) {
 	saveMonsters();
 
 	return uid;
+}
+
+function addFullAttacksToMonster(monster, uid) {
+	console.log(monster.mfatk);
 }
 
 function sortMonsters() {
@@ -162,7 +167,7 @@ function appendToTable($table, monsterName, attr, arr) {
 	var uid = $table.attr('data-uid');
 
 	$.each(arr, function(i, obj) {
-		if( ((attr=='mskill' || attr=='mfeat' || attr=='mqualit') && obj.name.indexOf('No ')!=-1) || (attr=='mattack' && obj.aname.indexOf('No ')!=-1) ) {
+		if( ((attr=='mskill' || attr=='mfeat' || attr=='mqualit') && obj.name.indexOf('No ')!=-1) || (attr=='mattack' && obj.aname.indexOf('No ')!=-1)) {
 			$table.append('<tr class="no-data"><td>None</td></tr>');
 			return;
 		}
@@ -237,7 +242,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		var rollFor = mainStat[attr](obj);
 		if(rollFor.indexOf(monsterName) != -1) rollFor = rollFor.substring(monsterName.length).trim();
 		$tr.attr('data-roll-for', rollFor);
-		if(attr == 'mweapon' || attr == 'mattack' || attr == 'mspatk') {
+		if(attr == 'mweapon' || attr == 'mattack' || attr == 'mspatk' || attr == 'mfatk') {
 			if(obj.spatk != null && obj.spatk.indexOf(monsterName) != -1) obj.spatk = obj.spatk.substring(monsterName.length+1);
 			$tr.attr('data-spatk', obj.spatk);
 			range = obj.is_ranged;
@@ -246,19 +251,21 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 
 			var minCrit = 0;
 
-			if(obj.critical.indexOf('-') != -1) {
-				var critArr = obj.critical.split("-");
-				$tr.attr('data-crit-mult', critArr[1].split("x")[1]);
-				minCrit = parseInt(critArr[0]);
-			} else if(obj.critical == '0'){
-				minCrit = 20;
-				$tr.attr('data-crit-mult', 1);
-			} else if(obj.critical.indexOf("x") != -1) {
-				minCrit = 20;
-				$tr.attr('data-crit-mult', obj.critical.substring(1));
-			} else {
-				console.warn("critical wasn't parseable: "+obj.critical);
-				console.warn(obj);
+			if(obj.hasOwnProperty('critical')) {
+				if(obj.critical.indexOf('-') != -1) {
+					var critArr = obj.critical.split("-");
+					$tr.attr('data-crit-mult', critArr[1].split("x")[1]);
+					minCrit = parseInt(critArr[0]);
+				} else if(obj.critical == '0'){
+					minCrit = 20;
+					$tr.attr('data-crit-mult', 1);
+				} else if(obj.critical.indexOf("x") != -1) {
+					minCrit = 20;
+					$tr.attr('data-crit-mult', obj.critical.substring(1));
+				} else {
+					console.warn("critical wasn't parseable: "+obj.critical);
+					console.warn(obj);
+				}
 			}
 
 			$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
@@ -279,7 +286,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		}
 	}
 
-	if(attackRolls.hasOwnProperty(attr) && (obj.class_mult != null || attr == 'mspatk')) {
+	if(attackRolls.hasOwnProperty(attr) && (obj.class_mult != null || attr == 'mspatk' || attr == 'mfatk')) {
 		$tr.attr('data-attack-roll', '0');
 		$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
 			$tr.attr('data-attack-roll', attackRolls[attr](obj, uid, range));

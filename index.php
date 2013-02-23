@@ -298,6 +298,12 @@ function is_dev() {
 											<tr class="no-data"><td>None</td></tr>
 										</tbody>
 									</table>
+									<table class="table table-striped table-condensed">
+										<caption>Full Attacks</caption>
+										<tbody class="mfatk" id="1A_mfatk_table">
+											<tr class="no-data"><td>None</td></tr>
+										</tbody>
+									</table>
 								</div> 
 							</li>
 							<li class="draggable misc">
