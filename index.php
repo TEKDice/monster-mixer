@@ -572,11 +572,9 @@ function is_dev() {
 			<img src="../images/loading.gif" id="img-load" />
 		</div>
 		<?php } else { ?>
-		<!--[if !IE]>
 		<div class="pagination-centered hero-unit" id="logInHero">
 			You need to be logged in to use this tool.
 		</div>
-		<![endif]-->
 		<?php } ?>
 		<?php include('../include/foot.php'); ?>
 	</body>
