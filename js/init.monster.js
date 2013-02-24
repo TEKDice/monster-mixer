@@ -258,7 +258,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 					minCrit = parseInt(critArr[0]);
 				} else if(obj.critical == '0'){
 					minCrit = 20;
-					$tr.attr('data-crit-mult', 1);
+					$tr.attr('data-crit-mult', 2);
 				} else if(obj.critical.indexOf("x") != -1) {
 					minCrit = 20;
 					$tr.attr('data-crit-mult', obj.critical.substring(1));
@@ -326,7 +326,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 					minCrit = parseInt(critArr[0]);
 				} else if(e.critical == '0'){
 					minCrit = 20;
-					critMultA.push(1);
+					critMultA.push(2);
 				} else if(e.critical.indexOf("x") != -1) {
 					minCrit = 20;
 					critMultA.push(e.critical.substring(1));
