@@ -307,7 +307,10 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 
 			spatkA.push(e.spatkname);
 
-			rangeA.push(e.mfa_range);
+			if(e.wir) 
+				rangeA.push(e.wir);
+			else
+				rangeA.push(e.mfa_range);
 
 			var minCrit = 0;
 
