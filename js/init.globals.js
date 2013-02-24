@@ -112,6 +112,19 @@ function bodyBinding() {
 	});
 }
 
+function collect() {
+	var ret = {};
+	var len = arguments.length;
+	for (var i=0; i<len; i++) {
+		for (p in arguments[i]) {
+			if (arguments[i].hasOwnProperty(p)) {
+				ret[p] = arguments[i][p];
+			}
+		}
+	}
+	return ret;
+}
+
 function clamp(min, max, num) {
 	num = Math.max(min, num);
 	num = Math.min(max, num);
@@ -192,7 +205,25 @@ function hasWeaponFocus(obj, uid) {
 
 var rollable = {
 	mfatk: function(obj, uid) {
-		var ret = {};
+		var ret = [];
+
+		$.each(obj, function(i, e) {
+			var retO = {};
+
+			//attack
+			if(e.atkhd) {
+				var json = rollable.mattack(e, uid);
+				retO = collect(retO,$.parseJSON(json));
+			}
+
+			//weapon
+			if(e.wname) {
+				var json = rollable.mweapon(e, uid, e.mfa_range, e.mfa_strict);
+				retO = collect(retO,$.parseJSON(json));
+			}
+
+			ret.push(retO);
+		});
 		return JSON.stringify(ret);
 	},
 	mattack: function(obj, uid) {
@@ -259,11 +290,27 @@ var rollable = {
 
 var attackRolls = {
 	mfatk: function(obj, uid, range) {
-		var ret = {};
+
+		var ret = [];
+
 		$.each(obj, function(i, e) {
-			if(obj.atkhd) ret[obj.atkname] = obj.atkhd;
-			if(obj.wname) ret[obj.wname] = obj.whd;
+
+			var retO = {};
+			//attack
+			if(e.atkhd) {
+				var json = attackRolls.mattack(e, uid);
+				retO = collect(retO,$.parseJSON(json));
+			}
+
+			//weapon
+			if(e.wname) {
+				var json = attackRolls.mweapon(e, uid, e.mfa_range);
+				retO = collect(retO,$.parseJSON(json));
+			}
+
+			ret.push(retO);
 		});
+
 		return JSON.stringify(ret);
 		/*
 		if(obj.class_mult == 0.5) {

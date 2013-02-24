@@ -242,7 +242,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		var rollFor = mainStat[attr](obj);
 		if(rollFor.indexOf(monsterName) != -1) rollFor = rollFor.substring(monsterName.length).trim();
 		$tr.attr('data-roll-for', rollFor);
-		if(attr == 'mweapon' || attr == 'mattack' || attr == 'mspatk' || attr == 'mfatk') {
+		if(attr == 'mweapon' || attr == 'mattack' || attr == 'mspatk') {
 			if(obj.spatk != null && obj.spatk.indexOf(monsterName) != -1) obj.spatk = obj.spatk.substring(monsterName.length+1);
 			$tr.attr('data-spatk', obj.spatk);
 			range = obj.is_ranged;
@@ -297,6 +297,71 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 	if(attackRolls.hasOwnProperty(attr) && obj.how_many != null) {
 		$tr.attr('data-how-many', obj.how_many);
 	}
+
+	if(attr == 'mfatk') {
+		
+		var spatkA = [], rangeA = [], critMultA = [], minCritA = [], howManyA = [];
+		$.each(obj, function(i, e) {
+
+			if(e.spatkname != null && e.spatkname.indexOf(monsterName) != -1) e.spatkname = e.spatkname.substring(monsterName.length+1);
+
+			spatkA.push(e.spatkname);
+
+			rangeA.push(e.mfa_range);
+
+			var minCrit = 0;
+
+			e.critical = e.atkct | e.wct;
+			if(!e.critical) e.critical = '0';
+
+			e.how_many = e.atkhm | e.whm;
+			if(!e.how_many) e.how_many = '1';
+
+			howManyA.push(e.how_many);
+
+			if(e.hasOwnProperty('critical')) {
+				if(e.critical.indexOf('-') != -1) {
+					var critArr = e.critical.split("-");
+					critMultA.push(critArr[1].split("x")[1]);
+					minCrit = parseInt(critArr[0]);
+				} else if(e.critical == '0'){
+					minCrit = 20;
+					critMultA.push(1);
+				} else if(e.critical.indexOf("x") != -1) {
+					minCrit = 20;
+					critMultA.push(e.critical.substring(1));
+				} else {
+					console.warn("critical wasn't parseable: "+e.critical);
+					console.warn(obj);
+				}
+			}
+
+			$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
+				if(hasFeat(uid, "Improved Critical")) {
+					var name = fullFeatName(uid, "Improved Critical");
+					var atk = name.substring(name.indexOf("(")+1, name.indexOf(")"));
+					if(e.aname != undefined) {
+						if(atk.toLowerCase() == e.aname.toLowerCase())
+							minCrit = 21 - ((20 - minCrit + 1) * 2);
+					}
+					if(e.wname != undefined) {
+						if(atk.toLowerCase() == e.wname.toLowerCase())
+							minCrit = 21 - ((20 - minCrit + 1) * 2);
+					}
+				}
+				minCritA.push(minCrit);
+				$tr.attr('data-min-crit', JSON.stringify(minCritA));
+			});
+		});
+
+		$tr.attr('data-spatk', JSON.stringify(spatkA));
+		$tr.attr('data-range', JSON.stringify(rangeA));
+		$tr.attr('data-crit-mult', JSON.stringify(critMultA));
+		$tr.attr('data-how-many', JSON.stringify(howManyA));
+
+		obj["descript"] = "This is a full attack.";		
+	}
+
 	var inner = formatting[attr](obj);
 	if(inner.indexOf(monsterName) != -1) inner = inner.substring(monsterName.length+1);
 	$tr.append("<td"+(obj.hasOwnProperty('descript') ? " class='has-tooltip' data-desc='"+obj.descript.split("\n").join("<br>")+"'" : "")+">"+inner+"</td>");
