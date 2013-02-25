@@ -113,7 +113,7 @@ function attack($rollable, $roller, uid) {
 				var attackRoll = _buildRoll(uid, attackRollString, true, isRanged, false);
 				if(bonusAttacks > 1) 
 					attackRoll["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
-
+  
 				for(var i in attackRoll) {
 					if(attackRoll[i] == 0) continue;
 					result += attackRoll[i];

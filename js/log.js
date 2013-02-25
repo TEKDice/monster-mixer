@@ -33,8 +33,9 @@ function changeLogEntrySize() {
 
 var logMessages = {
 	skill: function(ent, att, text, num) {
-		return ent + " rolled <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a> on its \""+att+"\" check\."
+		return ent + " rolled <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a> on its \""+att+"\" check."
 	},
+
 	hit: function(ent, att, text, num) {
 		return ent + " hits with \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a> damage."
 	},
@@ -56,6 +57,6 @@ var logMessages = {
 	},
 
 	critSuccess: function(ent, att, text, num) {
-		return ">> If "+ent+" confirms critical, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+		return ">> If "+ent+" confirms the critical, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
 	}
 };

@@ -325,9 +325,6 @@ var attackRolls = {
 			ret.push(retO);
 		});
 
-		/*
-		}*/
-
 		return JSON.stringify(ret);
 	},
 	mattack: function(obj, uid) {
