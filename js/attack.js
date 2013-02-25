@@ -14,22 +14,71 @@ function attack($rollable, $roller, uid) {
 
 		var expr = $rollable.attr('data-roll');
 
+		if(expr.indexOf('[') != -1) {
+			expr = $.parseJSON(expr)[fullAtkCount];
+			expr = JSON.stringify(expr);
+		}
+
 		var spatkFor = $rollable.attr('data-spatk');
-		if(spatkFor) spatkFor = spatkFor.trim();
+
+		if(spatkFor) {
+			if(spatkFor.indexOf('[') != -1) {
+				spatkFor = spatkFor.substring(1, spatkFor.length-1);
+				spatkFor = spatkFor.split(',');
+				spatkFor = spatkFor[fullAtkCount];
+			}
+			spatkFor = spatkFor.trim();
+		}
 
 		var exprFor = $rollable.attr('data-roll-for');
-		if(exprFor) exprFor = exprFor.trim();
-
+		if(exprFor) {
+			if(exprFor.indexOf(',') != -1) {
+				exprFor = exprFor.split(',');
+				exprFor = exprFor[fullAtkCount];
+			}
+			exprFor = exprFor.trim();
+		}
 		var idFor = $roller.closest('div[data-for]').attr('id');
 		var nameFor = $("a[href='#"+idFor+"']").html();
 
-		var howManyAttacks = parseInt($rollable.attr('data-how-many')) || 1;
+		var howManyAttacks = $rollable.attr('data-how-many');
 
-		var isRanged = $rollable.attr('data-range') != '0';
+		if(howManyAttacks.indexOf('[') != -1) {
+			howManyAttacks = howManyAttacks.substring(1, howManyAttacks.length-1);
+			howManyAttacks = howManyAttacks.split(',');
+			howManyAttacks = howManyAttacks[fullAtkCount];
+		}
 
-		var threatRange = parseInt($rollable.attr('data-min-crit'));
+		howManyAttacks = parseInt(howManyAttacks) || 1;		
+
+		var isRanged = $rollable.attr('data-range');
+
+		if(isRanged.indexOf('[') != -1) {
+			isRanged = isRanged.substring(1, isRanged.length-1);
+			isRanged = isRanged.split(',');
+			isRanged = isRanged[fullAtkCount];
+		}
+
+		isRanged = isRanged != '0';
+
+		var threatRange = $rollable.attr('data-min-crit');
+
+		if(threatRange.indexOf('[') != -1) {
+			threatRange = threatRange.substring(1, threatRange.length-1);
+			threatRange = threatRange.split(',');
+			threatRange = threatRange[fullAtkCount];
+		}
+
+		threatRange = parseInt(threatRange);
 
 		var is2h = expr.indexOf("(2h)") != -1;
+
+		var attackRollString = $rollable.attr('data-attack-roll');
+
+		if(attackRollString.indexOf('[') != -1) {
+			attackRollString = $.parseJSON(attackRollString)[fullAtkCount];
+			attackRollString = JSON.stringify(attackRollString);
+		}
 
 		for(var atkCount=0; atkCount<howManyAttacks; atkCount++) {
 
@@ -39,7 +88,7 @@ function attack($rollable, $roller, uid) {
 			var critStatus='';
 
 			if(isAttack) {
-				var attackRoll = _buildRoll(uid, $rollable.attr('data-attack-roll'), true, isRanged, false);
+				var attackRoll = _buildRoll(uid, attackRollString, true, isRanged, false);
 
 				for(var i in attackRoll) {
 					if(attackRoll[i] == 0) continue;
@@ -49,7 +98,7 @@ function attack($rollable, $roller, uid) {
 					critStatus = _critStatus(attackRoll[i], i, threatRange, true) || critStatus;
 
 					if(critStatus == 'threat' || critStatus == 'success') {
-						var threatRoll = _buildRoll(uid, $rollable.attr('data-attack-roll'), true, isRanged, false);
+						var threatRoll = _buildRoll(uid, attackRollString, true, isRanged, false);
 						var threatData = _rollArray(threatRoll);
 						var threatBasicAttack = _rollArray(threatRoll);
 						iters = parseInt($rollable.attr('data-crit-mult'));
@@ -57,7 +106,7 @@ function attack($rollable, $roller, uid) {
 				}
 				if(critStatus == 'threat' || critStatus == 'success') {
 					addToLog(logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus, idFor);
-					addToLog(logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
+					addToLog(logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result)+(spatkFor!=null&&spatkFor!='null' ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
 					addToLog(logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus, idFor);
 				} else {
 					addToLog(logMessages.initiate(nameFor, exprFor, resultText, result), critStatus, idFor);
@@ -84,9 +133,9 @@ function attack($rollable, $roller, uid) {
 			}
 
 			if((critStatus == 'threat' || critStatus == 'success') && isAttack) {
-				addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
+				addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result)+(spatkFor!=null&&spatkFor!='null' ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
 			} else if(isAttack) {
-				addToLog(logMessages.hit(nameFor, exprFor, resultText, result)+(spatkFor!=null ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
+				addToLog(logMessages.hit(nameFor, exprFor, resultText, result)+(spatkFor!=null&&spatkFor!='null' ? " (apply "+spatkFor+")" : ''), critStatus, idFor);
 			} else {
 				addToLog(logMessages.skill(nameFor, exprFor, resultText, result), critStatus, idFor);
 			}

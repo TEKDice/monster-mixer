@@ -203,12 +203,15 @@ function hasWeaponFocus(obj, uid) {
 	return false;
 }
 
+//DAMAGE
 var rollable = {
 	mfatk: function(obj, uid) {
 		var ret = [];
 
 		$.each(obj, function(i, e) {
 			var retO = {};
+
+			console.log(e);
 
 			//attack
 			if(e.atkhd) {
@@ -288,6 +291,7 @@ var rollable = {
 
 };
 
+//TO HIT ROLLS
 var attackRolls = {
 	mfatk: function(obj, uid, range) {
 
@@ -310,8 +314,7 @@ var attackRolls = {
 
 			ret.push(retO);
 		});
-
-		return JSON.stringify(ret);
+		
 		/*
 		if(obj.class_mult == 0.5) {
 			if(hasFeat(uid, "Multiattack")) 
@@ -319,6 +322,8 @@ var attackRolls = {
 			else
 				ret["Secondary Penalty"] = -5;
 		}*/
+
+		return JSON.stringify(ret);
 	},
 	mattack: function(obj, uid) {
 		var ret = {};
