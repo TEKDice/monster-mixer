@@ -76,9 +76,8 @@ function _addNewFilter(newFilter) {
 		var $newTr = $("<tr/>", {}).attr('data-attr', newFilter.name);
 		var $labelTd = $("<td/>", {});
 		var $label = $("<span/>", {
-			class: "label filter-label",
 			text: newFilter.name
-		});
+		}).addClass('label filter-label');
 
 		$newTr.appendTo("#filterTable");
 		$labelTd.appendTo($newTr);
@@ -86,17 +85,14 @@ function _addNewFilter(newFilter) {
 
 		var $filterTd = $("<td/>", {});
 		var $filterDiv = $("<div/>", {
-			id: cleanName+"_filters",
-			class: "inner-filter-container"
-		}).attr('data-attr', newFilter.name);
+			id: cleanName+"_filters"
+		}).attr('data-attr', newFilter.name).addClass('inner-filter-container');
 		var $filterSpan = $("<span/>", {
-			class: "badge badge-info "+cleanName+"-filter",
 			text: getFilterText(newFilter)+" "
-		}).attr('data-value',newFilter.value).attr('data-sign',newFilter.sign);
+		}).attr('data-value',newFilter.value).attr('data-sign',newFilter.sign).addClass('badge badge-info '+cleanName+"-filter");
 		var $removal = $("<sup/>", {
-			class: "filter-remover",
 			text: "[x]"
-		});
+		}).addClass('filter-remover');
 
 		$filterTd.appendTo($newTr);
 		$filterDiv.appendTo($filterTd);

@@ -61,34 +61,34 @@ function is_dev() {
 		<title>TEKDice Monster Mixer</title>
 		<?php $pos='../'; include('../include/head.php'); ?>
 		<link href="../css/jquery-ui-1.10.0.custom.css" rel="stylesheet" />
-		<link href="css/style.css" 		rel="stylesheet" />
-		<link href="css/1280x1024.css" 	rel="stylesheet" media="screen and (min-width: 1019px) and (min-height: 1024px)" />
-		<link href="css/1280x800.css" 	rel="stylesheet" media="screen and (min-width: 1270px) and (min-height: 800px)" />
-		<link href="css/1366x768.css" 	rel="stylesheet" media="screen and (min-width: 1356px)" />
-		<link href="css/1440x900.css" 	rel="stylesheet" media="screen and (min-width: 1430px)" />
-		<link href="css/1680x1050.css" 	rel="stylesheet" media="screen and (min-width: 1645px)" />
+		<link href="min/style.min.css" 		rel="stylesheet" />
+		<link href="min/1280x1024.min.css" 	rel="stylesheet" media="screen and (min-width: 1019px) and (min-height: 1024px)" />
+		<link href="min/1280x800.min.css" 	rel="stylesheet" media="screen and (min-width: 1270px) and (min-height: 800px)" />
+		<link href="min/1366x768.min.css" 	rel="stylesheet" media="screen and (min-width: 1356px)" />
+		<link href="min/1440x900.min.css" 	rel="stylesheet" media="screen and (min-width: 1430px)" />
+		<link href="min/1680x1050.min.css" 	rel="stylesheet" media="screen and (min-width: 1645px)" />
 
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
-		<script src="js/jquery.boxshadow.min.js"></script>
-		<script src="js/jquery.nicescroll.min.js"></script>
-		<script src="js/jquery.livequery.min.js"></script>
-		<script src="js/bootbox.min.js"></script>
-		<script src="js/jquery.cookie.js"></script>
-		<script src="js/dateformat.js"></script>
-		<script src="js/jquery.async.loops.js"></script>
+		<script src="min/jquery.boxshadow.min.min.js"></script>
+		<script src="min/jquery.nicescroll.min.min.js"></script>
+		<script src="min/jquery.livequery.min.min.js"></script>
+		<script src="min/bootbox.min.min.js"></script>
+		<script src="min/jquery.cookie.min.js"></script>
+		<script src="min/dateformat.min.js"></script>
+		<script src="min/jquery.async.loops.min.js"></script>
 
-		<script src="js/serverfunctions.js"></script>
-		<script src="js/log.js"></script>
-		<script src="js/init.ui.js"></script>
-		<script src="js/init.monster.js"></script>
-		<script src="js/init.globals.js"></script>
-		<script src="js/init.filters.js"></script>
-		<script src="js/attack.js"></script>
-		<script src="js/roll.js"></script>
-		<script src="js/monster.js"></script>
-		<script src="js/storage.js"></script>
-		<script src="js/sync.js"></script>
-		<script src="js/init.js"></script>
+		<script src="min/serverfunctions.min.js"></script>
+		<script src="min/log.min.js"></script>
+		<script src="min/init.ui.min.js"></script>
+		<script src="min/init.monster.min.js"></script>
+		<script src="min/init.globals.min.js"></script>
+		<script src="min/init.filters.min.js"></script>
+		<script src="min/attack.min.js"></script>
+		<script src="min/roll.min.js"></script>
+		<script src="min/monster.min.js"></script>
+		<script src="min/storage.min.js"></script>
+		<script src="min/sync.min.js"></script>
+		<script src="min/init.min.js"></script>
 
 		<script type="text/javascript">
 			var filterData = <?=json_encode($filterNames);?>;
