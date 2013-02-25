@@ -211,16 +211,21 @@ var rollable = {
 		$.each(obj, function(i, e) {
 			var retO = {};
 
+			console.log(e);
+
 			//attack
 			if(e.atkhd) {
 				var json = rollable.mattack(e, uid);
-				retO = collect(retO,$.parseJSON(json));
+				var parsed = $.parseJSON(json);
+				retO = collect(retO, parsed);
 			}
 
 			//weapon
 			if(e.wname) {
+				e.mfa_strict = e.mfa_strict == "0" ? "1" : "0";
 				var json = rollable.mweapon(e, uid, e.mfa_range, e.mfa_strict);
-				retO = collect(retO,$.parseJSON(json));
+				var parsed = $.parseJSON(json);
+				retO = collect(retO, parsed);
 			}
 
 			ret.push(retO);
@@ -303,6 +308,12 @@ var attackRolls = {
 				var json = attackRolls.mattack(e, uid);
 				var parsed = $.parseJSON(json);
 				retO = collect(retO, parsed);
+				if(parseFloat(e.mfa_class_mult) == 0.5) {
+					if(hasFeat(uid, "Multiattack")) 
+						retO["Secondary Penalty"] = -2;
+					else
+						retO["Secondary Penalty"] = -5;
+				}
 			}
 
 			//weapon
@@ -316,11 +327,6 @@ var attackRolls = {
 		});
 
 		/*
-		if(obj.class_mult == 0.5) {
-			if(hasFeat(uid, "Multiattack")) 
-				ret["Secondary Penalty"] = -2;
-			else
-				ret["Secondary Penalty"] = -5;
 		}*/
 
 		return JSON.stringify(ret);
