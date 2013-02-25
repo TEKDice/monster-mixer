@@ -375,7 +375,6 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 function getFullAttackInfo(obj) {
 	var ret = '';
 	$.each(obj, function(i, e) {
-		console.log(e);
 		ret += (e.wname || e.aname)+": "+(e.whd || e.atkhd)+"<br>";
 	});
 	return ret;

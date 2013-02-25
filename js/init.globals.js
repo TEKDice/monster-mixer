@@ -259,23 +259,26 @@ var rollable = {
 
 		if(melee == "1") {
 
-			if(obj.is_one_handed == "0") {
-				ret["STR Mod (2h)"] = strBonus*1.5;
+			if(range!="0") {
+				if(strBonus != 0)
+					ret["STR Mod"] = strBonus > strMod && strMod != 0 ? strMod : strBonus;
 			} else {
-				ret["STR Mod"] = strBonus;
+				if(obj.is_one_handed == "0") {
+					ret["STR Mod (2h)"] = strBonus*1.5;
+				} else {
+					ret["STR Mod"] = strBonus;
+				}
 			}
 
 		} else {
 
 			if(range!="0")
-				ret["STR Mod"] = strBonus;
-			else
 				if(strBonus != 0)
 					ret["STR Mod"] = strBonus > strMod && strMod != 0 ? strMod : strBonus;
+			else
+				ret["STR Mod"] = strBonus;
 
 		}
-
-		console.log(obj.wname + " " + strBonus + " " + strMod);
 
 		return JSON.stringify(ret);
 	},
