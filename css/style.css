@@ -373,6 +373,10 @@ Site Base
 --------------------------------
 */
 
+html, body {
+	overflow: hidden;
+}
+
 .ui-autocomplete {
 	z-index: 20!important;
 }
