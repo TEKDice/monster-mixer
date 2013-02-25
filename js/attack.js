@@ -91,8 +91,6 @@ function attack($rollable, $roller, uid) {
 			babUseStr = babUseStr[fullAtkCount];
 		}
 
-		console.log(babUseStr);
-
 		var creatureBab = parseInt($("#"+uid+"_bab").text());
 		var bonusAttacks = 0;
 
