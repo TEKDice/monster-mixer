@@ -89,9 +89,10 @@ function bodyBinding() {
 	});
 
 	$(".loaded").livequery(function() {
-		$(this).parent().find("tr[data-roll]:not(.unrollable)").each(function() {
+		var $set = $(this).closest('.minibox-content').find("tr[data-roll]:not(.unrollable)");
+		$set.each(function() {
 			$(this).click(function() {
-				$(this).siblings(".info").removeClass('info');
+				$set.removeClass('info');
 				if($(this).hasClass('info'))
 					$(this).removeClass('info');
 				else
