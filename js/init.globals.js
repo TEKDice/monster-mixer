@@ -221,7 +221,7 @@ var rollable = {
 			//weapon
 			if(e.wname) {
 				e.mfa_strict = e.mfa_strict == "0" ? "1" : "0";
-				var json = rollable.mweapon(e, uid, e.mfa_range, e.mfa_strict);
+				var json = rollable.mweapon(e, uid, e.wir || e.mfa_range, e.mfa_strict);
 				var parsed = $.parseJSON(json);
 				retO = collect(retO, parsed);
 			}
@@ -254,6 +254,7 @@ var rollable = {
 			ret[obj.dmgname] = obj.dmgred_hd;
 			
 		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
+		var strMod = parseFloat(obj.max_str_mod) || 0;
 
 		if(melee == "1") {
 
@@ -267,14 +268,14 @@ var rollable = {
 
 			if(range!="0")
 				ret["STR Mod"] = strBonus;
-
-			else {
-				var strMod = parseFloat(obj.max_str_mod);
-
+			else
 				if(strBonus != 0)
-					ret["STR Mod"] = strBonus > strMod ? strMod : strBonus;
-			}
+					ret["STR Mod"] = strBonus > strMod && strMod != 0 ? strMod : strBonus;
+
 		}
+
+		console.log(obj.wname + " " + strBonus + " " + strMod);
+
 		return JSON.stringify(ret);
 	},
 	mspatk: function(obj, uid) {
