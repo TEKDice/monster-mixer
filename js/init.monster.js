@@ -364,10 +364,19 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		$tr.attr('data-how-many', JSON.stringify(howManyA));
 		$tr.attr('data-bab-use', JSON.stringify(babUseA));
 
-		obj["descript"] = "This is a full attack.";		
+		obj["descript"] = getFullAttackInfo(obj);		
 	}
 
 	var inner = formatting[attr](obj);
 	if(inner.indexOf(monsterName) != -1) inner = inner.substring(monsterName.length+1);
 	$tr.append("<td"+(obj.hasOwnProperty('descript') ? " class='has-tooltip' data-desc='"+obj.descript.split("\n").join("<br>")+"'" : "")+">"+inner+"</td>");
+}
+
+function getFullAttackInfo(obj) {
+	var ret = '';
+	$.each(obj, function(i, e) {
+		console.log(e);
+		ret += (e.wname || e.aname)+": "+(e.whd || e.atkhd)+"<br>";
+	});
+	return ret;
 }
