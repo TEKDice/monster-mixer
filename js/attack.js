@@ -122,11 +122,16 @@ function attack($rollable, $roller, uid) {
 					critStatus = _critStatus(attackRoll[i], i, threatRange, true) || critStatus;
 
 					if(critStatus == 'threat' || critStatus == 'success') {
-						var threatRoll = _buildRoll(uid, attackRollString, true, isRanged, false);
+						var threatData = _buildRoll(uid, attackRollString, true, isRanged, false);
 						if(bonusAttacks > 1) 
-							threatRoll["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
-						var threatData = _rollArray(threatRoll);
-						var threatBasicAttack = _rollArray(threatRoll);
+							threatData["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
+
+						var threatBasicAttack = _buildRoll(uid, attackRollString, true, isRanged, false);
+						if(bonusAttacks > 1) 
+							threatBasicAttack["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
+
+						threatData = _rollArray(threatData);
+						threatBasicAttack = _rollArray(threatBasicAttack);
 						iters = parseInt($rollable.attr('data-crit-mult'));
 					}
 				}
