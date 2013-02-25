@@ -54,7 +54,6 @@ function addNewMonster(monster) {
 }
 
 function addFullAttacksToMonster(monster, uid) {
-	//console.log(monster.mfatk);
 }
 
 function sortMonsters() {

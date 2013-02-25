@@ -132,7 +132,15 @@ function attack($rollable, $roller, uid) {
 
 						threatData = _rollArray(threatData);
 						threatBasicAttack = _rollArray(threatBasicAttack);
-						iters = parseInt($rollable.attr('data-crit-mult'));
+						iters = $rollable.attr('data-crit-mult');
+
+						if(typeof iters !== 'undefined' && iters.indexOf('[') != -1) {
+							iters = iters.substring(1, iters.length-1);
+							iters = iters.split(',');
+							iters = iters[fullAtkCount];
+						}
+
+						iters = parseInt(iters);
 					}
 				}
 				if(critStatus == 'threat' || critStatus == 'success') {
@@ -146,6 +154,7 @@ function attack($rollable, $roller, uid) {
 
 			result = 0;
 			resultText = '';
+
 
 			for(var x=0; x<iters; x++) {
 				var roll = _buildRoll(uid, expr, false, isRanged, isAttack);
@@ -163,8 +172,10 @@ function attack($rollable, $roller, uid) {
 				}
 			}
 
+			console.log("test: "+ iters + " " + expr);
+
 			if((critStatus == 'threat' || critStatus == 'success') && isAttack) {
-				addToLog(logMessages.critSuccess(nameFor,exprFor,resultText,result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
+				addToLog(logMessages.critSuccess(nameFor, exprFor, resultText, result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
 			} else if(isAttack) {
 				addToLog(logMessages.hit(nameFor, exprFor, resultText, result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
 			} else {
