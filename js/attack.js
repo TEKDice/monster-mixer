@@ -91,9 +91,10 @@ function attack($rollable, $roller, uid) {
 			babUseStr = babUseStr[fullAtkCount];
 		}
 
+		console.log(babUseStr);
+
 		var creatureBab = parseInt($("#"+uid+"_bab").text());
 		var bonusAttacks = 0;
-		var apply
 
 		for(var atkCount=0; atkCount<howManyAttacks; atkCount++) {
 
@@ -102,7 +103,7 @@ function attack($rollable, $roller, uid) {
 			var iters = 1;
 			var critStatus = '';
 
-			if(isFullAttack) {
+			if(isFullAttack && babUseStr) {
 				bonusAttacks++;
 				if(creatureBab > 5) {
 					creatureBab-=5;

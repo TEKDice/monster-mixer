@@ -305,7 +305,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 
 			if(e.spatkname != null && e.spatkname.indexOf(monsterName) != -1) e.spatkname = e.spatkname.substring(monsterName.length+1);
 
-			babUseA.push(e.is_uses_bab);
+			babUseA.push(parseInt(e.is_uses_bab));
 
 			spatkA.push(e.spatkname);
 
