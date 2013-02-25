@@ -303,18 +303,20 @@ var attackRolls = {
 			//attack
 			if(e.atkhd) {
 				var json = attackRolls.mattack(e, uid);
-				retO = collect(retO,$.parseJSON(json));
+				var parsed = $.parseJSON(json);
+				retO = collect(retO, parsed);
 			}
 
 			//weapon
 			if(e.wname) {
 				var json = attackRolls.mweapon(e, uid, e.mfa_range);
-				retO = collect(retO,$.parseJSON(json));
+				var parsed = $.parseJSON(json);
+				retO = collect(retO, parsed);
 			}
 
 			ret.push(retO);
 		});
-		
+
 		/*
 		if(obj.class_mult == 0.5) {
 			if(hasFeat(uid, "Multiattack")) 
