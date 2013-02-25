@@ -103,7 +103,7 @@ function attack($rollable, $roller, uid) {
 			var iters = 1;
 			var critStatus = '';
 
-			if(isFullAttack && babUseStr) {
+			if(isFullAttack && babUseStr == '1') {
 				bonusAttacks++;
 				if(creatureBab > 5) {
 					creatureBab-=5;
