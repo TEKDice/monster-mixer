@@ -211,8 +211,6 @@ var rollable = {
 		$.each(obj, function(i, e) {
 			var retO = {};
 
-			console.log(e);
-
 			//attack
 			if(e.atkhd) {
 				var json = rollable.mattack(e, uid);

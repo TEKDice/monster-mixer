@@ -5,7 +5,7 @@ function attack($rollable, $roller, uid) {
 
 	var fullAttackAttacks = 1;
 
-	if(isAttack.indexOf("[") != -1) 
+	if(typeof isAttack !== 'undefined' && isAttack.indexOf("[") != -1) 
 		fullAttackAttacks = (""+$.parseJSON(isAttack)).split(",").length;
 
 	isAttack = typeof isAttack !== 'undefined' && isAttack !== false;
@@ -21,7 +21,7 @@ function attack($rollable, $roller, uid) {
 
 		var spatkFor = $rollable.attr('data-spatk');
 
-		if(spatkFor) {
+		if(spatkFor && typeof spatkFor !== 'undefined' ) {
 			if(spatkFor.indexOf('[') != -1) {
 				spatkFor = spatkFor.substring(1, spatkFor.length-1);
 				spatkFor = spatkFor.split(',');
@@ -31,7 +31,7 @@ function attack($rollable, $roller, uid) {
 		}
 
 		var exprFor = $rollable.attr('data-roll-for');
-		if(exprFor) {
+		if(exprFor && typeof exprFor !== 'undefined' ) {
 			if(exprFor.indexOf(',') != -1) {
 				exprFor = exprFor.split(',');
 				exprFor = exprFor[fullAtkCount];
@@ -43,7 +43,7 @@ function attack($rollable, $roller, uid) {
 
 		var howManyAttacks = $rollable.attr('data-how-many');
 
-		if(howManyAttacks.indexOf('[') != -1) {
+		if(typeof howManyAttacks !== 'undefined' && howManyAttacks.indexOf('[') != -1) {
 			howManyAttacks = howManyAttacks.substring(1, howManyAttacks.length-1);
 			howManyAttacks = howManyAttacks.split(',');
 			howManyAttacks = howManyAttacks[fullAtkCount];
@@ -53,7 +53,7 @@ function attack($rollable, $roller, uid) {
 
 		var isRanged = $rollable.attr('data-range');
 
-		if(isRanged.indexOf('[') != -1) {
+		if(typeof isRanged !== 'undefined' && isRanged.indexOf('[') != -1) {
 			isRanged = isRanged.substring(1, isRanged.length-1);
 			isRanged = isRanged.split(',');
 			isRanged = isRanged[fullAtkCount];
@@ -63,7 +63,7 @@ function attack($rollable, $roller, uid) {
 
 		var threatRange = $rollable.attr('data-min-crit');
 
-		if(threatRange.indexOf('[') != -1) {
+		if(typeof threatRange !== 'undefined' && threatRange.indexOf('[') != -1) {
 			threatRange = threatRange.substring(1, threatRange.length-1);
 			threatRange = threatRange.split(',');
 			threatRange = threatRange[fullAtkCount];
@@ -75,7 +75,7 @@ function attack($rollable, $roller, uid) {
 
 		var attackRollString = $rollable.attr('data-attack-roll');
 
-		if(attackRollString.indexOf('[') != -1) {
+		if(typeof attackRollString !== 'undefined' && attackRollString.indexOf('[') != -1) {
 			attackRollString = $.parseJSON(attackRollString)[fullAtkCount];
 			attackRollString = JSON.stringify(attackRollString);
 		}
