@@ -4,9 +4,12 @@ function attack($rollable, $roller, uid) {
 	var isAttack = $rollable.attr('data-attack-roll');
 
 	var fullAttackAttacks = 1;
+	var isFullAttack = false;
 
-	if(typeof isAttack !== 'undefined' && isAttack.indexOf("[") != -1) 
+	if(typeof isAttack !== 'undefined' && isAttack.indexOf("[") != -1) {
 		fullAttackAttacks = (""+$.parseJSON(isAttack)).split(",").length;
+		isFullAttack = 1;
+	}
 
 	isAttack = typeof isAttack !== 'undefined' && isAttack !== false;
 
@@ -80,15 +83,37 @@ function attack($rollable, $roller, uid) {
 			attackRollString = JSON.stringify(attackRollString);
 		}
 
+		var babUseStr = $rollable.attr('data-bab-use');
+
+		if(typeof babUseStr !== 'undefined' && babUseStr.indexOf('[') != -1) {
+			babUseStr = babUseStr.substring(1, babUseStr.length-1);
+			babUseStr = babUseStr.split(',');
+			babUseStr = babUseStr[fullAtkCount];
+		}
+
+		var creatureBab = parseInt($("#"+uid+"_bab").text());
+		var bonusAttacks = 0;
+		var apply
+
 		for(var atkCount=0; atkCount<howManyAttacks; atkCount++) {
 
 			var result = 0;
 			var resultText = '';
-			var iters=1;
-			var critStatus='';
+			var iters = 1;
+			var critStatus = '';
+
+			if(isFullAttack) {
+				bonusAttacks++;
+				if(creatureBab > 5) {
+					creatureBab-=5;
+					howManyAttacks++;
+				}
+			} 
 
 			if(isAttack) {
 				var attackRoll = _buildRoll(uid, attackRollString, true, isRanged, false);
+				if(bonusAttacks > 1) 
+					attackRoll["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
 
 				for(var i in attackRoll) {
 					if(attackRoll[i] == 0) continue;
@@ -99,6 +124,8 @@ function attack($rollable, $roller, uid) {
 
 					if(critStatus == 'threat' || critStatus == 'success') {
 						var threatRoll = _buildRoll(uid, attackRollString, true, isRanged, false);
+						if(bonusAttacks > 1) 
+							threatRoll["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
 						var threatData = _rollArray(threatRoll);
 						var threatBasicAttack = _rollArray(threatRoll);
 						iters = parseInt($rollable.attr('data-crit-mult'));

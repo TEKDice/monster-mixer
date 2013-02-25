@@ -300,10 +300,12 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 
 	if(attr == 'mfatk') {
 		
-		var spatkA = [], rangeA = [], critMultA = [], minCritA = [], howManyA = [];
+		var spatkA = [], rangeA = [], critMultA = [], minCritA = [], howManyA = [], babUseA = [];
 		$.each(obj, function(i, e) {
 
 			if(e.spatkname != null && e.spatkname.indexOf(monsterName) != -1) e.spatkname = e.spatkname.substring(monsterName.length+1);
+
+			babUseA.push(e.is_uses_bab);
 
 			spatkA.push(e.spatkname);
 
@@ -361,6 +363,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		$tr.attr('data-range', JSON.stringify(rangeA));
 		$tr.attr('data-crit-mult', JSON.stringify(critMultA));
 		$tr.attr('data-how-many', JSON.stringify(howManyA));
+		$tr.attr('data-bab-use', JSON.stringify(babUseA));
 
 		obj["descript"] = "This is a full attack.";		
 	}
