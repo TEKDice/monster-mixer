@@ -67,6 +67,11 @@ function sortMonsters() {
 	$.each(listitems, function(idx, itm) { mylist.append(itm); });
 }
 
+function buildACInfo(acInfo) {
+	console.log(acInfo);
+	return "test";
+}
+
 function addDataToMonster($parent, monster, uid) {
 
 	var root = monster.data[0];
@@ -87,6 +92,11 @@ function addDataToMonster($parent, monster, uid) {
 					}
 				} else 
 					$(this).text(parseInt(root[attr]));
+			} else if(attr == 'ac' || attr.indexOf('_ac') != -1) {
+				var $a = $("<a/>").text(val).attr('href','#').attr('rel','tooltip')
+					.addClass('has-tooltip reg-has-tt').attr('title', buildACInfo(root[attr]));
+				$(this).append($a);
+				manualTooltip($a);
 			} else 
 				$(this).text(val);
 			$(this).attr('data-base-value',$(this).text());
@@ -193,25 +203,29 @@ function appendToTable($table, monsterName, attr, arr) {
 		var text = $(this).text().trim();
 		$(this).text('');
 		$(this).prepend('<i class="icon-bookmark"></i><a href="#" rel="tooltip" title="'+$(this).attr('data-desc')+'">'+text+"</a>");
-		$(this).find('a').tooltip({html: true, placement: 'bottom', trigger: 'manual'});
-
-		$(this).find('a').click(function() {
-
-			var $me = $(this);
-			var doShow = true;
-
-			$(".in").each(function() {
-				if($(this).siblings("a").is($me)) {
-					doShow = false;
-				}
-				$(this).siblings("a").tooltip('hide');
-
-			});
-			if(doShow)
-				$(this).tooltip('show');
-		});
+		manualTooltip($(this).find('a'));
 	});
 
+}
+
+function manualTooltip($tt) {
+	$tt.tooltip({html: true, placement: 'bottom', trigger: 'manual'});
+
+	$tt.click(function() {
+
+		var $me = $(this);
+		var doShow = true;
+
+		$(".in").each(function() {
+			if($(this).siblings("a").is($me)) {
+				doShow = false;
+			}
+			$(this).siblings("a").tooltip('hide');
+
+		});
+		if(doShow)
+			$(this).tooltip('show');
+	});
 }
 
 function _createRow($table, monsterName, attr, arr, i, obj, uid) {
