@@ -273,7 +273,7 @@ var rollable = {
 			if(obj.wname.toLowerCase().indexOf('composite') != -1) {
 				ret["STR Mod"] = clamp(0, strMod, strBonus);
 			}
-			
+
 			if(strBonus < 0 && obj.wname.toLowerCase().indexOf('crossbow') == -1)
 				ret["STR Mod"] = strBonus;
 		}
@@ -392,6 +392,7 @@ var attackRolls = {
 
 		} else {
 			if(obj.wname.toLowerCase().indexOf('composite') != -1) {
+				var strMod = parseFloat(obj.max_str_mod) || 0;
 				if(strBonus < strMod) {
 					ret["Composite Proficiency"] = -2;
 				}

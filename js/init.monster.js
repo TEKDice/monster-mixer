@@ -193,7 +193,20 @@ function appendToTable($table, monsterName, attr, arr) {
 			obj.is_melee = "0";
 			obj.wname =  oldName + " (Ranged)";
 			_createRow($table, monsterName, attr, arr, i, obj, uid);
+		} else if(obj.hasOwnProperty("is_multi_handed") && obj.is_multi_handed == "1") {
+			var oldName = obj.wname.trim();
 
+			obj.is_one_handed = "1";
+			obj.wname = oldName + " (1H)";
+			console.log(obj);
+			_createRow($table, monsterName, attr, arr, i, obj, uid);
+			
+			var newObject = jQuery.extend(true, {}, obj);
+
+			newObject.is_one_handed = "0";
+			newObject.wname =  oldName + " (2H)";
+			console.log(newObject);
+			_createRow($table, monsterName, attr, arr, i, newObject, uid);
 		} else {
 			_createRow($table, monsterName, attr, arr, i, obj, uid);
 		}
