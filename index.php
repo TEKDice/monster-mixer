@@ -173,10 +173,10 @@ function is_dev() {
 							</ul>
 							<div class="tab-content">
 								<div class="tab-pane active" id="allTab">                    
-									<div id="allInfo"></div>                                         
+									<div id="allInfo" class="logHighlighter"></div>                                         
 								</div>
 								<div class="tab-pane" id="curTab">                 
-									<div id="curMon">
+									<div id="curMon" class="logHighlighter">
 									</div>    
 								</div>
 							</div>

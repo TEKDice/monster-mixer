@@ -5,9 +5,9 @@ var newLogEntryWidth;
 function addToLog(string, selector, uid) {
 
 	//bleh, damned inability to append the same element in two places..
-	var divString = "<div class='attackSide'><p class='pull-left "+selector+"' data-uid='"+uid+"'>"+
+	var divString = "<div class='logInner'><div class='attackSide'><p class='pull-left "+selector+"' data-uid='"+uid+"'>"+
 		string+"</p></div><div class='pull-right threat-status "+
-		selector+"'></div><div class='clearfix'></div>";
+		selector+"'></div><div class='clearfix'></div></div>";
 
 	$("#allInfo").append(divString);
 	$("#"+uid+"_log").append(divString);
