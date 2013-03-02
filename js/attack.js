@@ -93,16 +93,6 @@ function attack($rollable, $roller, uid) {
 			
 		var iters = 1;
 
-		iters = $rollable.attr('data-crit-mult');
-
-		if(typeof iters !== 'undefined' && iters.indexOf('[') != -1) {
-			iters = iters.substring(1, iters.length-1);
-			iters = iters.split(',');
-			iters = iters[fullAtkCount];
-		}
-
-		iters = parseInt(iters);
-
 		var creatureBab = parseInt($("#"+uid+"_bab").text());
 		var bonusAttacks = 0;
 
@@ -158,11 +148,17 @@ function attack($rollable, $roller, uid) {
 								threatBasicAttackResultText += i + ": "+threatBasicAttack[i]+"<br>";
 							}
 						}
-						/*
-						var threatBasicAttack = _buildRoll(uid, expr, true, isRanged, true);
-						if(bonusAttacks > 1) 
-							threatBasicAttack["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
-						*/
+
+						iters = $rollable.attr('data-crit-mult');
+
+						if(typeof iters !== 'undefined' && iters.indexOf('[') != -1) {
+							iters = iters.substring(1, iters.length-1);
+							iters = iters.split(',');
+							iters = iters[fullAtkCount];
+						}
+
+						iters = parseInt(iters);
+
 						threatData = _rollArray(threatData);
 						threatBasicAttack = _rollArray(threatBasicAttack);
 					}

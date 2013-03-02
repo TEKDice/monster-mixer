@@ -269,6 +269,11 @@ var rollable = {
 				}
 			}
 		} else {
+
+			if(obj.wname.toLowerCase().indexOf('composite') != -1) {
+				ret["STR Mod"] = clamp(0, strMod, strBonus);
+			}
+			
 			if(strBonus < 0 && obj.wname.toLowerCase().indexOf('crossbow') == -1)
 				ret["STR Mod"] = strBonus;
 		}
@@ -386,6 +391,11 @@ var attackRolls = {
 				ret["Javelin"] = -4;
 
 		} else {
+			if(obj.wname.toLowerCase().indexOf('composite') != -1) {
+				if(strBonus < strMod) {
+					ret["Composite Proficiency"] = -2;
+				}
+			}
 			var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
 			if(dexBonus!=0)	ret["DEX Mod"] = dexBonus;
 		}
