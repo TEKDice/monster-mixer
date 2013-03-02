@@ -98,6 +98,8 @@ function attack($rollable, $roller, uid) {
 
 		for(var atkCount=0; atkCount<howManyAttacks; atkCount++) {
 
+			iters = 1;
+
 			var result = 0;
 			var resultText = '';
 			var critStatus = '';
