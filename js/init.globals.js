@@ -235,7 +235,7 @@ var rollable = {
 		var ret = {};
 		ret["Base"] = obj.hitdc;
 		if(obj.dmgname != null) 
-			ret[obj.dmgname] = obj.dmgred_hd;
+			ret[obj.dmgname+" ("+obj.dmgred_hd+")"] = obj.dmgred_hd;
 
 		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
 		ret["STR Mod"] = Math.floor(strBonus*parseFloat(obj.max_str_mod));
@@ -249,35 +249,28 @@ var rollable = {
 		return JSON.stringify(ret);
 	},
 	mweapon: function(obj, uid, range, melee) {
+
 		var ret = {};
 		ret["Base"] = obj.hitdc;
 		if(obj.dmgname != null) 
-			ret[obj.dmgname] = obj.dmgred_hd;
+			ret[obj.dmgname+" ("+obj.dmgred_hd+")"] = obj.dmgred_hd;
 			
 		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
 		var strMod = parseFloat(obj.max_str_mod) || 0;
 
 		if(melee == "1") {
-
-			if(range!="0") {
-				if(strBonus != 0)
-					ret["STR Mod"] = strBonus > strMod && strMod != 0 ? strMod : strBonus;
-			} else {
+			if(obj.is_uses_str_mod == "1") {
 				if(obj.is_one_handed == "0") {
-					ret["STR Mod (2h)"] = strBonus*1.5;
+					if(strBonus != 0)
+						ret["STR Mod (2h)"] = (strBonus > strMod && strMod != 0 ? strMod : strBonus)*1.5;
 				} else {
-					ret["STR Mod"] = strBonus;
+					if(strBonus != 0)
+						ret["STR Mod"] = strBonus > strMod && strMod != 0 ? strMod : strBonus;
 				}
 			}
-
 		} else {
-
-			if(range!="0")
-				if(strBonus != 0)
-					ret["STR Mod"] = strBonus > strMod && strMod != 0 ? strMod : strBonus;
-			else
+			if(strBonus < 0 && obj.wname.toLowerCase().indexOf('crossbow') == -1)
 				ret["STR Mod"] = strBonus;
-
 		}
 
 		return JSON.stringify(ret);
