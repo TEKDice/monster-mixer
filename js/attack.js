@@ -101,6 +101,8 @@ function attack($rollable, $roller, uid) {
 			var iters = 1;
 			var critStatus = '';
 
+			var atkCtText = howManyAttacks > 1 ? '('+(atkCount+1)+'/'+howManyAttacks+') ' : '';
+
 			if(isFullAttack && babUseStr == '1') {
 				bonusAttacks++;
 				if(creatureBab > 5) {
@@ -144,11 +146,11 @@ function attack($rollable, $roller, uid) {
 					}
 				}
 				if(critStatus == 'threat' || critStatus == 'success') {
-					addToLog(logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus, idFor);
-					addToLog(logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
-					addToLog(logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus, idFor);
+					addToLog(atkCtText+logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus, idFor);
+					addToLog(atkCtText+logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
+					addToLog(atkCtText+logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus, idFor);
 				} else {
-					addToLog(logMessages.initiate(nameFor, exprFor, resultText, result), critStatus, idFor);
+					addToLog(atkCtText+logMessages.initiate(nameFor, exprFor, resultText, result), critStatus, idFor);
 				}
 			}
 
@@ -172,14 +174,12 @@ function attack($rollable, $roller, uid) {
 				}
 			}
 
-			console.log("test: "+ iters + " " + expr);
-
 			if((critStatus == 'threat' || critStatus == 'success') && isAttack) {
-				addToLog(logMessages.critSuccess(nameFor, exprFor, resultText, result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
+				addToLog(atkCtText+logMessages.critSuccess(nameFor, exprFor, resultText, result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
 			} else if(isAttack) {
-				addToLog(logMessages.hit(nameFor, exprFor, resultText, result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
+				addToLog(atkCtText+logMessages.hit(nameFor, exprFor, resultText, result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
 			} else {
-				addToLog(logMessages.skill(nameFor, exprFor, resultText, result), critStatus, idFor);
+				addToLog(atkCtText+logMessages.skill(nameFor, exprFor, resultText, result), critStatus, idFor);
 			}
 				
 		}
