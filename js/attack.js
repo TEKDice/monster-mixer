@@ -90,6 +90,18 @@ function attack($rollable, $roller, uid) {
 			babUseStr = babUseStr.split(',');
 			babUseStr = babUseStr[fullAtkCount];
 		}
+			
+		var iters = 1;
+
+		iters = $rollable.attr('data-crit-mult');
+
+		if(typeof iters !== 'undefined' && iters.indexOf('[') != -1) {
+			iters = iters.substring(1, iters.length-1);
+			iters = iters.split(',');
+			iters = iters[fullAtkCount];
+		}
+
+		iters = parseInt(iters);
 
 		var creatureBab = parseInt($("#"+uid+"_bab").text());
 		var bonusAttacks = 0;
@@ -98,7 +110,6 @@ function attack($rollable, $roller, uid) {
 
 			var result = 0;
 			var resultText = '';
-			var iters = 1;
 			var critStatus = '';
 
 			var atkCtText = howManyAttacks > 1 ? '('+(atkCount+1)+'/'+howManyAttacks+') ' : '';
@@ -124,30 +135,41 @@ function attack($rollable, $roller, uid) {
 					critStatus = _critStatus(attackRoll[i], i, threatRange, true) || critStatus;
 
 					if(critStatus == 'threat' || critStatus == 'success') {
+
 						var threatData = _buildRoll(uid, attackRollString, true, isRanged, false);
 						if(bonusAttacks > 1) 
 							threatData["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
+							
+						var threatBasicAttackResult=0,threatBasicAttackResultText='';
 
-						var threatBasicAttack = _buildRoll(uid, attackRollString, true, isRanged, false);
+						for(var x=0; x<iters; x++) {
+							var threatBasicAttack = _buildRoll(uid, expr, false, isRanged, isAttack);
+
+							if(is2h && threatBasicAttack["Power Attack"] !== undefined) {
+								threatBasicAttack["Power Attack"] *= 2;
+							}
+
+							if(bonusAttacks > 1) 
+								threatBasicAttack["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
+
+							for(var i in threatBasicAttack) {
+								if(threatBasicAttack[i] == 0) continue;
+								threatBasicAttackResult += threatBasicAttack[i];
+								threatBasicAttackResultText += i + ": "+threatBasicAttack[i]+"<br>";
+							}
+						}
+						/*
+						var threatBasicAttack = _buildRoll(uid, expr, true, isRanged, true);
 						if(bonusAttacks > 1) 
 							threatBasicAttack["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
-
+						*/
 						threatData = _rollArray(threatData);
 						threatBasicAttack = _rollArray(threatBasicAttack);
-						iters = $rollable.attr('data-crit-mult');
-
-						if(typeof iters !== 'undefined' && iters.indexOf('[') != -1) {
-							iters = iters.substring(1, iters.length-1);
-							iters = iters.split(',');
-							iters = iters[fullAtkCount];
-						}
-
-						iters = parseInt(iters);
 					}
 				}
 				if(critStatus == 'threat' || critStatus == 'success') {
 					addToLog(atkCtText+logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus, idFor);
-					addToLog(atkCtText+logMessages.critMiss(nameFor,exprFor,threatBasicAttack.text,threatBasicAttack.result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
+					addToLog(atkCtText+logMessages.critMiss(nameFor,exprFor,threatBasicAttackResultText,threatBasicAttackResult)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
 					addToLog(atkCtText+logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus, idFor);
 				} else {
 					addToLog(atkCtText+logMessages.initiate(nameFor, exprFor, resultText, result), critStatus, idFor);
