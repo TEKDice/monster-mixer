@@ -473,6 +473,16 @@ i, #showFilters, #medianArrowContainer {
 	display: none;
 }
 
+#logInHero {
+	box-shadow: 0 0 10px #aaa;
+	-moz-box-shadow: 0 0 10px #aaa;
+	-webkit-box-shadow: 0 0 10px #aaa;
+	background-color: #fafafa;
+	margin-top: 1%;
+	padding: 30px;
+	font-size: 98%;
+}
+
 /*
 
 Loading Stuff

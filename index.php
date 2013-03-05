@@ -572,8 +572,10 @@ function is_dev() {
 			<img src="../images/loading.gif" id="img-load" />
 		</div>
 		<?php } else { ?>
-		<div class="pagination-centered hero-unit" id="logInHero">
-			You need to be logged in to use this tool.
+		<div class="container">
+			<div class="pagination-centered hero-unit" id="logInHero">
+				You need to be logged in to use this tool.
+			</div>
 		</div>
 		<?php } ?>
 		<?php include('../include/foot.php'); ?>
