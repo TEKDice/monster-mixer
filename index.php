@@ -70,7 +70,7 @@ function is_dev() {
 
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
 
-		<script type="text/javascript" src="../min/b=/monster/min&amp;f=init.min.js,sync.min.js,storage.min.js,monster.min.js,roll.min.js,attack.min.js,init.filters.min.js,init.globals.min.js,init.monster.min.js,init.ui.min.js,log.min.js,serverfunctions.min.js,jquery.async.loops.min.js,dateformat.min.js,jquery.cookie.min.js,bootbox.min.min.js,jquery.livequery.min.min.js,jquery.nicescroll.min.min.js,jquery.boxshadow.min.min.js"></script>
+		<script type="text/javascript" src="../min/b=/monsters/min&amp;f=init.min.js,sync.min.js,storage.min.js,monster.min.js,roll.min.js,attack.min.js,init.filters.min.js,init.globals.min.js,init.monster.min.js,init.ui.min.js,log.min.js,serverfunctions.min.js,jquery.async.loops.min.js,dateformat.min.js,jquery.cookie.min.js,bootbox.min.min.js,jquery.livequery.min.min.js,jquery.nicescroll.min.min.js,jquery.boxshadow.min.min.js"></script>
 		<!--
 		<script src="min/jquery.boxshadow.min.min.js"></script>
 		<script src="min/jquery.nicescroll.min.min.js"></script>
