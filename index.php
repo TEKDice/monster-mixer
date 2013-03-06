@@ -69,6 +69,9 @@ function is_dev() {
 		<link href="min/1680x1050.min.css" 	rel="stylesheet" media="screen and (min-width: 1645px)" />
 
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
+
+		<script type="text/javascript" src="../min/b=tekdice/monsters/min&amp;f=init.min.js,sync.min.js,storage.min.js,monster.min.js,roll.min.js,attack.min.js,init.filters.min.js,init.globals.min.js,init.monster.min.js,init.ui.min.js,log.min.js,serverfunctions.min.js,jquery.async.loops.min.js,dateformat.min.js,jquery.cookie.min.js,bootbox.min.min.js,jquery.livequery.min.min.js,jquery.nicescroll.min.min.js,jquery.boxshadow.min.min.js"></script>
+		<!--
 		<script src="min/jquery.boxshadow.min.min.js"></script>
 		<script src="min/jquery.nicescroll.min.min.js"></script>
 		<script src="min/jquery.livequery.min.min.js"></script>
@@ -89,6 +92,7 @@ function is_dev() {
 		<script src="min/storage.min.js"></script>
 		<script src="min/sync.min.js"></script>
 		<script src="min/init.min.js"></script>
+		-->
 
 		<script type="text/javascript">
 			var filterData = <?=json_encode($filterNames);?>;
