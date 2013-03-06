@@ -50,7 +50,7 @@ function is_dev() {
 
 	$host = explode('.', $parsedUrl['path']);
 
-	return $host[0] != 'tekdice';
+	return $host[0] == 'localhost';
 }
 
 ?>
