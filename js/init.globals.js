@@ -280,7 +280,7 @@ var rollable = {
 						ret["STR Mod (2h)"] = strBonus*1.5;
 				} else {
 					if(strBonus != 0)
-						ret["STR Mod"] = strMod*strBonus;
+						ret["STR Mod"] = strBonus;
 				}
 			}
 		} else {
