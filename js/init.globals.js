@@ -229,6 +229,7 @@ var rollable = {
 
 			ret.push(retO);
 		});
+
 		return JSON.stringify(ret);
 	},
 	mattack: function(obj, uid) {
@@ -301,6 +302,8 @@ var attackRolls = {
 
 		var ret = [];
 
+		var weaponCount=[];
+
 		$.each(obj, function(i, e) {
 
 			var retO = {};
@@ -315,6 +318,8 @@ var attackRolls = {
 					else
 						retO["Secondary Penalty"] = -5;
 				}
+				e.wlight = "1";
+				e.mfa_class_mult == "0.50";
 			}
 
 			//weapon
@@ -323,9 +328,43 @@ var attackRolls = {
 				var parsed = $.parseJSON(json);
 				retO = collect(retO, parsed);
 			}
+			weaponCount.push(e);
 
 			ret.push(retO);
 		});
+
+		if(weaponCount.length > 1) {
+
+			var minusTwo = false;
+
+			$.each(weaponCount, function(i, e) {
+				if(e.wlight=="1" && e.mfa_class_mult == "0.50") {
+					minusTwo = true;
+				} 
+			});
+
+			$.each(weaponCount, function(i, e) {
+				var has2W = hasFeat(uid, "Two-Weapon Fighting") || hasFeat(uid, "Multiweapon Fighting");
+				var minus = 0;
+				if(e.mfa_class_mult == "1.00") {
+					minus = -6;
+					if(has2W) 
+						minus += 2;
+					if(minusTwo)
+						minus += 2;
+					ret[i]["Multiweapon Penalty (Primary)"] = minus;
+				} else {
+					minus = -10;
+					if(has2W) 
+						minus += 6;
+					if(minusTwo)
+						minus += 2;
+					ret[i]["Multiweapon Penalty (Secondary)"] = minus;
+				}
+			});
+		}
+
+		console.log(ret);
 
 		return JSON.stringify(ret);
 	},
