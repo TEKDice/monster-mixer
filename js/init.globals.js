@@ -264,6 +264,7 @@ var rollable = {
 		return JSON.stringify(ret);
 	},
 	mweapon: function(obj, uid, range, melee) {
+		console.log(obj);
 
 		var ret = {};
 		ret["Base"] = obj.hitdc;
@@ -292,6 +293,9 @@ var rollable = {
 			if(strBonus < 0 && obj.wname.toLowerCase().indexOf('crossbow') == -1)
 				ret["STR Mod"] = strBonus;
 		}
+
+		if(obj.enchantment_bonus != "0") 
+			ret["Enchantment"] = parseInt(obj.enchantment_bonus);
 
 		return JSON.stringify(ret);
 	},
@@ -451,6 +455,9 @@ var attackRolls = {
 			var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
 			if(dexBonus!=0)	ret["DEX Mod"] = dexBonus;
 		}
+
+		if(obj.enchantment_bonus != "0") 
+			ret["Enchantment"] = parseInt(obj.enchantment_bonus);
 
 		return JSON.stringify(ret);
 	},
