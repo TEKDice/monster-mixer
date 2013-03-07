@@ -10,14 +10,16 @@ var resizeTimer;
 
 function limitFeatNums(uid) {
 	$("#"+uid+"_mfeat_table .applyNum").each(function() {
+		var isPowerAttack = $(this).closest("td").prev().text() == 'Power Attack';
 		$(this).change(function() {
 			var val = parseInt($(this).val());
-			var max = clamp(0, 5, parseInt($("#"+uid+"_bab").attr('data-base-value')));
+			var paMax = parseInt($("#"+uid+"_bab").text());
+			var max = clamp(0, (isPowerAttack ? paMax : 5), parseInt($("#"+uid+"_bab").attr('data-base-value')));
 			if(val < 0) val = 0;
 			if(val > max) val = max;
 			$(this).val(val);
 		});
-		$(this).closest("td").attr('id', uid+'_calc_'+($(this).closest("td").prev().text() == 'Power Attack' ? "pa" : "ce"));
+		$(this).closest("td").attr('id', uid+'_calc_'+(isPowerAttack ? "pa" : "ce"));
 	});
 
 	$("#"+uid+"_mfeat_table .inline-checkbox").each(function() {

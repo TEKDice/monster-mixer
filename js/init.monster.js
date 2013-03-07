@@ -69,14 +69,19 @@ function sortMonsters() {
 }
 
 function buildACInfo(mon, attr) {
-	var acInfo;
-	switch(attr) {
-		case "ac": 			acInfo = getAc(mon); break;
-		case "flatfoot_ac": acInfo = getFlatac(mon); break;
-		case "touch_ac": 	acInfo = getTouchac(mon); break;
-	}
+	var acInfo = getACArr(mon, attr);
 	if(acInfo == null) return "";
 	return _arrToTooltip(acInfo);
+}
+
+function getACArr(mon, attr) {
+	switch(attr) {
+		case "ac": 			return getAc(mon); break;
+		case "flatfoot_ac": return getFlatac(mon); break;
+		case "touch_ac": 	return getTouchac(mon); break;
+		default: return null;
+	}
+	return null;
 }
 
 function addDataToMonster($parent, monster, uid) {
