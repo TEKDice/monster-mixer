@@ -1,4 +1,14 @@
 
+
+function _arrToTooltip(arr) {
+	var ret = '';
+	for(var i in arr) {
+		if(arr[i] == 0) continue;
+		ret += i + ": "+arr[i]+"<br>";
+	}
+	return ret;
+}
+
 function overlayLoadingGif() {
 	$t = $("#monsterListCont");
 	if(!$t.length) return;
@@ -45,6 +55,10 @@ function determineRoll($node) {
 		var hp = rollExpression($node.attr('data-base-value'));
 		$node.attr('data-initial-roll', hp);
 	}
+}
+
+function getBonus(num) {
+	return get_bonus(num);
 }
 
 function get_bonus(num) {
@@ -263,10 +277,10 @@ var rollable = {
 			if(obj.is_uses_str_mod == "1") {
 				if(obj.is_one_handed == "0") {
 					if(strBonus != 0)
-						ret["STR Mod (2h)"] = (strBonus > strMod && strMod != 0 ? strMod : strBonus)*1.5;
+						ret["STR Mod (2h)"] = strBonus*1.5;
 				} else {
 					if(strBonus != 0)
-						ret["STR Mod"] = strBonus > strMod && strMod != 0 ? strMod*strBonus : strBonus;
+						ret["STR Mod"] = strMod*strBonus;
 				}
 			}
 		} else {
