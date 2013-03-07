@@ -109,7 +109,15 @@ function addDataToMonster($parent, monster, uid) {
 					.addClass('has-tooltip reg-has-tt').attr('title', buildACInfo(monster, attr));
 				$(this).append($a);
 				manualTooltip($a);
-			} else 
+			} else if(attr == 'grapple') {
+				var $this = $(this);
+				$("#"+uid+"_mfeat_table .loaded").livequery(function() {
+					var grapple = parseInt(val);
+					if(hasFeat(uid, "Racial Grapple Bonus"))
+						grapple += 4;
+					$this.text(grapple);
+				});
+			} else
 				$(this).text(val);
 			$(this).attr('data-base-value',$(this).text());
 			determineRoll($(this));
@@ -188,6 +196,7 @@ function appendToTable($table, monsterName, attr, arr) {
 	var uid = $table.attr('data-uid');
 
 	$.each(arr, function(i, obj) {
+		if(obj.name == 'Racial Grapple Bonus') return;
 		if( ((attr=='mskill' || attr=='mfeat' || attr=='mqualit') && obj.name.indexOf('No ')!=-1) || (attr=='mattack' && obj.aname.indexOf('No ')!=-1)) {
 			$table.append('<tr class="no-data"><td>None</td></tr>');
 			return;
