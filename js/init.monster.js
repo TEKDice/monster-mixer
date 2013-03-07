@@ -75,9 +75,8 @@ function buildACInfo(mon, attr) {
 		case "flatfoot_ac": acInfo = getFlatac(mon); break;
 		case "touch_ac": 	acInfo = getTouchac(mon); break;
 	}
-	//_arrToTooltip
-	console.log(acInfo);
-	return "test";
+	if(acInfo == null) return "";
+	return _arrToTooltip(acInfo);
 }
 
 function addDataToMonster($parent, monster, uid) {
