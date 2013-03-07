@@ -72,7 +72,7 @@ function is_dev() {
 	<?php
 		if(!is_dev()) {
 	?>
-		<script type="text/javascript" src="../min/b=monsters/min&amp;f=init.min.js,sync.min.js,storage.min.js,monster.min.js,roll.min.js,attack.min.js,init.filters.min.js,init.globals.min.js,init.monster.min.js,init.ui.min.js,log.min.js,serverfunctions.min.js,jquery.async.loops.min.js,dateformat.min.js,jquery.cookie.min.js,bootbox.min.min.js,jquery.livequery.min.min.js,jquery.nicescroll.min.min.js,jquery.boxshadow.min.min.js"></script>
+		<script type="text/javascript" src="../min/b=monsters/min&amp;f=init.min.js,ac-calc.min.js,sync.min.js,storage.min.js,monster.min.js,roll.min.js,attack.min.js,init.filters.min.js,init.globals.min.js,init.monster.min.js,init.ui.min.js,log.min.js,serverfunctions.min.js,jquery.async.loops.min.js,dateformat.min.js,jquery.cookie.min.js,bootbox.min.min.js,jquery.livequery.min.min.js,jquery.nicescroll.min.min.js,jquery.boxshadow.min.min.js"></script>
 	<?php
 		} else {
 	?>
@@ -96,6 +96,7 @@ function is_dev() {
 		<script src="min/storage.min.js"></script>
 		<script src="min/sync.min.js"></script>
 		<script src="min/init.min.js"></script>
+		<script src="min/ac-calc.min.js"></script>
 	<?php } ?>
 		<script type="text/javascript">
 			var filterData = <?=json_encode($filterNames);?>;

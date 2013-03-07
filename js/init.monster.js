@@ -1,5 +1,6 @@
 
 var monsterCount=0;
+var tempMon;
 
 function addNewMonster(monster) {
 	$(".alert").hide();
@@ -67,7 +68,14 @@ function sortMonsters() {
 	$.each(listitems, function(idx, itm) { mylist.append(itm); });
 }
 
-function buildACInfo(acInfo) {
+function buildACInfo(mon, attr) {
+	var acInfo;
+	switch(attr) {
+		case "ac": 			acInfo = getAc(mon); break;
+		case "flatfoot_ac": acInfo = getFlatac(mon); break;
+		case "touch_ac": 	acInfo = getTouchac(mon); break;
+	}
+	//_arrToTooltip
 	console.log(acInfo);
 	return "test";
 }
@@ -94,7 +102,7 @@ function addDataToMonster($parent, monster, uid) {
 					$(this).text(parseInt(root[attr]));
 			} else if(attr == 'ac' || attr.indexOf('_ac') != -1) {
 				var $a = $("<a/>").text(val).attr('href','#').attr('rel','tooltip')
-					.addClass('has-tooltip reg-has-tt').attr('title', buildACInfo(root[attr]));
+					.addClass('has-tooltip reg-has-tt').attr('title', buildACInfo(monster, attr));
 				$(this).append($a);
 				manualTooltip($a);
 			} else 
