@@ -324,7 +324,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 
 	if(attr == 'mfatk') {
 		
-		var spatkA = [], rangeA = [], critMultA = [], minCritA = [], howManyA = [], babUseA = [];
+		var spatkA = [], rangeA = [], critMultA = [], minCritA = [], howManyA = [], babUseA = [], secA = [];
 		$.each(obj, function(i, e) {
 
 			if(e.spatkname != null && e.spatkname.indexOf(monsterName) != -1) e.spatkname = e.spatkname.substring(monsterName.length+1);
@@ -332,6 +332,8 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 			babUseA.push(parseInt(e.is_uses_bab));
 
 			spatkA.push(e.spatkname);
+
+			secA.push(e.mfa_class_mult == "0.50" ? 1 : 0);
 
 			if(e.wir) 
 				rangeA.push(e.wir);
@@ -388,6 +390,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		$tr.attr('data-crit-mult', JSON.stringify(critMultA));
 		$tr.attr('data-how-many', JSON.stringify(howManyA));
 		$tr.attr('data-bab-use', JSON.stringify(babUseA));
+		$tr.attr('data-secondary', JSON.stringify(secA));
 
 		obj["descript"] = getFullAttackInfo(obj);		
 	}

@@ -259,10 +259,7 @@ var rollable = {
 		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
 		var strMod = parseFloat(obj.max_str_mod) || 0;
 
-
 		if(melee == "1") {
-			console.log(obj);
-			console.log(strBonus + " " + strMod);
 			if(obj.is_uses_str_mod == "1") {
 				if(obj.is_one_handed == "0") {
 					if(strBonus != 0)

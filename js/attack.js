@@ -90,6 +90,14 @@ function attack($rollable, $roller, uid) {
 			babUseStr = babUseStr.split(',');
 			babUseStr = babUseStr[fullAtkCount];
 		}
+
+		var isSecondary = $rollable.attr('data-secondary');
+
+		if(typeof isSecondary !== 'undefined' && isSecondary.indexOf('[') != -1) {
+			isSecondary = isSecondary.substring(1, isSecondary.length-1);
+			isSecondary = isSecondary.split(',');
+			isSecondary = parseInt(isSecondary[fullAtkCount]);
+		}
 			
 		var iters = 1;
 
@@ -108,10 +116,28 @@ function attack($rollable, $roller, uid) {
 			var atkCtText = isFullAttack && totalAtks > 1 ? '('+(atkCount+1)+'/'+totalAtks+') ' : '';
 
 			if(isFullAttack && babUseStr == '1') {
-				bonusAttacks++;
-				if(creatureBab > 5) {
-					creatureBab-=5;
-					howManyAttacks++;
+				if(isSecondary) {
+					if((hasFeat(uid, "Greater Two-Weapon Fighting") || hasFeat(uid, "Greater Multiweapon Fighting")) && bonusAttacks == 1) {						bonusAttacks++;
+						bonusAttacks++;
+						if(creatureBab > 5) {
+							creatureBab-=5;
+							howManyAttacks++;
+						}
+						
+					}
+					if((hasFeat(uid, "Improved Two-Weapon Fighting") || hasFeat(uid, "Improved Multiweapon Fighting")) && bonusAttacks == 0) {
+						bonusAttacks++;
+						if(creatureBab > 5) {
+							creatureBab-=5;
+							howManyAttacks++;
+						}
+					}
+				} else {
+					bonusAttacks++;
+					if(creatureBab > 5) {
+						creatureBab-=5;
+						howManyAttacks++;
+					}
 				}
 			} 
 
