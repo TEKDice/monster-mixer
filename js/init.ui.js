@@ -10,7 +10,8 @@ var resizeTimer;
 
 function limitFeatNums(uid) {
 	$("#"+uid+"_mfeat_table .applyNum").each(function() {
-		var isPowerAttack = $(this).closest("td").prev().text() == 'Power Attack';
+		var cbName = $(this).closest("td").prev().text();
+		var isPowerAttack = cbName == 'Power Attack';
 		$(this).change(function() {
 			var val = parseInt($(this).val());
 			var paMax = parseInt($("#"+uid+"_bab").text());
@@ -18,13 +19,50 @@ function limitFeatNums(uid) {
 			if(val < 0) val = 0;
 			if(val > max) val = max;
 			$(this).val(val);
+
+			console.log(val);
+
+			if(val != 0 && cbName == 'Combat Expertise') {
+				incdecACStat(uid, "ac", "Combat Expertise", null, val);
+				incdecACStat(uid, "touch_ac", "Combat Expertise", null, val);
+			}
 		});
 		$(this).closest("td").attr('id', uid+'_calc_'+(isPowerAttack ? "pa" : "ce"));
 	});
 
 	$("#"+uid+"_mfeat_table .inline-checkbox").each(function() {
-		$(this).attr('id', uid+'_calc_'+($(this).closest("td").prev().text() == 'Awesome Blow' ? "ab" : "pbs"));
+		var cbName = checkboxName($(this).closest("td").prev().text());
+		$(this).attr('id', uid+'_calc_'+(cbName));
+
+		if(cbName == 'dodge') {
+			var $this = $(this);
+			$(this).click(function() {
+
+				if($this.is(':checked')) {
+					incdecACStat(uid, "ac", "Dodge", true);
+					incdecACStat(uid, "touch_ac", "Dodge", true);
+				} else {
+					incdecACStat(uid, "ac", "Dodge", false);
+					incdecACStat(uid, "touch_ac", "Dodge", false);
+				}
+			});
+		}
 	});
+}
+
+function incdecACStat(uid, acType, adder, isIncrement, value) {
+	var $ac = $("#"+uid+"_"+acType);
+	var ac = $.parseJSON($ac.attr('data-ac'));
+
+	if(ac[adder] == undefined) ac[adder] = 0;
+	else ac[adder] = parseInt(ac[adder]);
+
+	if(value) ac[adder] = value;
+	else 	  ac[adder] = isIncrement ? ac[adder]+1 : ac[adder]-1;
+
+	$ac.attr('data-ac',JSON.stringify(ac));
+	refreshAc($ac);
+
 }
 
 function setupRoller() {

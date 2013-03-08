@@ -150,6 +150,15 @@ var defaultFunction = function() {
 	return "THIS IS AN ERROR";
 };
 
+function checkboxName(name) {
+	switch(name) {
+		case 'Awesome Blow': 		return 'ab';
+		case 'Point Blank Shot': 	return 'pbs';
+		case 'Dodge': 				return 'dodge';
+		default: 					return false;
+	}
+}
+
 var formatting = {
 	madvanc: 	defaultFunction,
 	malign: 	defaultFunction,
@@ -165,7 +174,7 @@ var formatting = {
 	mfeat: 		function(obj) {
 		return obj.name + (obj.feat_level > 1 ? " (x"+obj.feat_level+")" : "") +"</td><td>"+
 		(obj.name == 'Power Attack' || obj.name == 'Combat Expertise' ? '<input class="input-mini-inline applyNum" type="number" placeholder="#"></input>' : '') + 
-		(obj.name == 'Awesome Blow' || obj.name == 'Point Blank Shot' ? '<input class="inline-checkbox" type="checkbox"></input>' : '') + 
+		(checkboxName(obj.name) ? '<input class="inline-checkbox" type="checkbox"></input>' : '') + 
 		"</td>";
 	},
 	mfatk: 		function(obj) {
@@ -264,8 +273,6 @@ var rollable = {
 		return JSON.stringify(ret);
 	},
 	mweapon: function(obj, uid, range, melee) {
-		console.log(obj);
-
 		var ret = {};
 		ret["Base"] = obj.hitdc;
 		if(obj.dmgname != null) 

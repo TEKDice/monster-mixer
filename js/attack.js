@@ -292,7 +292,7 @@ function _buildRoll(uid, roll, isAttack, isRanged, isDamage) {
 function _rollArray(arr) {
 	var ret = {result: 0, text: ''};
 	for(var i in arr) {
-		if(arr[i] == 0) continue;
+		if(arr[i] == 0 || arr[i] == null) continue;
 		ret.result += arr[i];
 		ret.text += i + ": "+arr[i]+"<br>";
 	}

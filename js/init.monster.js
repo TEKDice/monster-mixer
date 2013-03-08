@@ -25,7 +25,6 @@ function addNewMonster(monster) {
 	$parent.attr('data-for', uid);
 
 	addDataToMonster($parent, monster, uid);
-	addFullAttacksToMonster(monster, uid);
 
 	var nice = $('#monsterList').niceScroll({horizrailenabled: false, zindex:9, railoffset: {left: -118}});
 	$('#monsterList').css('overflow','hidden');
@@ -52,9 +51,6 @@ function addNewMonster(monster) {
 	saveMonsters();
 
 	return uid;
-}
-
-function addFullAttacksToMonster(monster, uid) {
 }
 
 function sortMonsters() {
@@ -84,6 +80,16 @@ function getACArr(mon, attr) {
 	return null;
 }
 
+function refreshAc($node) {
+	var arr = $.parseJSON($node.attr('data-ac'));
+	var val = _rollArray(arr);
+	$node.empty();
+	var $a = $("<a/>").text(val.result).attr('href','#').attr('rel','tooltip')
+		.addClass('has-tooltip reg-has-tt').attr('title', val.text);
+	$node.append($a);
+	manualTooltip($a);
+}
+
 function addDataToMonster($parent, monster, uid) {
 
 	var root = monster.data[0];
@@ -105,10 +111,8 @@ function addDataToMonster($parent, monster, uid) {
 				} else 
 					$(this).text(parseInt(root[attr]));
 			} else if(attr == 'ac' || attr.indexOf('_ac') != -1) {
-				var $a = $("<a/>").text(val).attr('href','#').attr('rel','tooltip')
-					.addClass('has-tooltip reg-has-tt').attr('title', buildACInfo(monster, attr));
-				$(this).append($a);
-				manualTooltip($a);
+				$(this).attr("data-ac", JSON.stringify(getACArr(monster, attr)));
+				refreshAc($(this));
 			} else if(attr == 'grapple') {
 				var $this = $(this);
 				$("#"+uid+"_mfeat_table .loaded").livequery(function() {
