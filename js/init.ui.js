@@ -20,8 +20,6 @@ function limitFeatNums(uid) {
 			if(val > max) val = max;
 			$(this).val(val);
 
-			console.log(val);
-
 			if(val != 0 && cbName == 'Combat Expertise') {
 				incdecACStat(uid, "ac", "Combat Expertise", null, val);
 				incdecACStat(uid, "touch_ac", "Combat Expertise", null, val);
