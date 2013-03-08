@@ -115,6 +115,8 @@ function addDataToMonster($parent, monster, uid) {
 					var grapple = parseInt(val);
 					if(hasFeat(uid, "Racial Grapple Bonus"))
 						grapple += 4;
+					if(hasFeat(uid, "Improved Grapple"))
+						grapple += 4;
 					$this.text(grapple);
 				});
 			} else
