@@ -1,6 +1,7 @@
 
 var SESSIONS_VARIABLE = "sessions";
 var LAST_SESSION_VARIABLE = "lastSessionId";
+var hasReloadedSession = false;
 
 
 //monster modify, monster create, monster remove
@@ -181,7 +182,9 @@ function sessionManagement() {
 	if(!loggedIn) return;
 	if(hasPreviousSession()) {		
 		bootbox.confirm("It looks like you had a session open. Would you like to reload it?", function(result) {
+			if(hasReloadedSession) return;
 			if(!result) { startSession(); return; }
+			hasReloadedSession = true; 
 			loadSession(getPreviousSession());
 		});
 	} else {
