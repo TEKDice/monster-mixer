@@ -14,13 +14,14 @@ function limitFeatNums(uid) {
 		var isPowerAttack = cbName == 'Power Attack';
 		$(this).change(function() {
 			var val = parseInt($(this).val());
+
 			var paMax = parseInt($("#"+uid+"_bab").text());
 			var max = clamp(0, (isPowerAttack ? paMax : 5), parseInt($("#"+uid+"_bab").attr('data-base-value')));
 			val = clamp(0, max, val);
 
 			$(this).val(val);
 
-			if(val > -1 && cbName == 'Combat Expertise') {
+			if(cbName == 'Combat Expertise') {
 				incdecACStat(uid, "ac", "Combat Expertise", null, val);
 				incdecACStat(uid, "touch_ac", "Combat Expertise", null, val);
 			}
@@ -55,8 +56,8 @@ function incdecACStat(uid, acType, adder, isIncrement, value, canBeNegative) {
 	if(ac[adder] == undefined) ac[adder] = 0;
 	else ac[adder] = parseInt(ac[adder]);
 
-	if(value) ac[adder] = value;
-	else 	  ac[adder] = isIncrement ? ac[adder]+1 : ac[adder]-1;
+	if(value!=null) {ac[adder] = value; }
+	else 	  		{ac[adder] = isIncrement ? ac[adder]+1 : ac[adder]-1; }
 
 	if(!canBeNegative && ac[adder] < 0) ac[adder] = 0;
 
