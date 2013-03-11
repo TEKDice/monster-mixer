@@ -16,6 +16,8 @@ function addNewMonster(monster) {
 
 	$a.appendTo($li);
 
+	$a.attr('class','hp-good');
+
 	var newHtml = $("#dummyData").html();
 	$("#monsterData").append(newHtml);
 
@@ -47,6 +49,7 @@ function addNewMonster(monster) {
 
 	$a.tab('show');
 	_hidePopup();
+	sortMonsters();
 
 	saveMonsters();
 
@@ -316,7 +319,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 					minCrit = 20;
 					$tr.attr('data-crit-mult', obj.critical.substring(1));
 				} else {
-					console.warn("critical wasn't parseable: "+obj.critical + " " + obj.name);
+					console.error("critical wasn't parseable: "+obj.critical + " " + obj.name);
 				}
 			}
 
@@ -383,7 +386,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 					minCrit = 20;
 					critMultA.push(e.critical.substring(1));
 				} else {
-					console.warn("critical wasn't parseable: "+obj.critical + " " + obj.name);
+					console.error("critical wasn't parseable: "+obj.critical + " " + obj.name);
 				}
 			}
 

@@ -82,8 +82,6 @@ function modifyHp(uid, mod, notLog) {
 
 function rollHp(uid, $rootNod, newHp, force) {
 
-	$("[href='#"+uid+"']").addClass('hp-good');
-
 	var $rootNode = $("#"+uid+"_hp");
 
 	var title = '';
@@ -119,7 +117,6 @@ function rollHp(uid, $rootNod, newHp, force) {
 	}
 
 	$("#"+uid+"_hp").children(".hp_val").tooltip({html: true, placement: 'bottom'});
-
 }
 
 function rollInit($node) {
