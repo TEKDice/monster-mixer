@@ -156,7 +156,7 @@ function remove(uid, killed) {
 
 	$node.parent().remove();
 	$(".tab-pane[data-for='"+uid+"']").remove();
-	$("div[data-nice-uid='"+uid+"']").remove();
+	$("div[data-nice-uid='"+uid+"']").hide();
 	$("#"+uid+"_log").remove();
 
 	var count = 0;

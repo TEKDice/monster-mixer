@@ -326,16 +326,22 @@ function _makeSelect(monster, data) {
 	$select.append("<option value='null' selected>No Org.</option>");
 }
 
+function _hideAllMiniboxScrollbars() {
+	$("div[data-nice-uid]").hide();
+}
+
 function _showScrollbars($a) {
 	$("#"+$a.attr('data-uid')).find(".minibox-content").each(function() {
-		var nice = $a.niceScroll({horizrailenabled: false, zindex:9});
+		var nice = $(this).niceScroll({horizrailenabled: false, zindex:9});
 		$("#"+nice.id).attr('data-nice-uid', $a.closest('tab-pane').attr('data-for'));
-		$a.css('overflow','hidden');
+		$("#"+nice.id).show();
+		//$(this).css('overflow','hidden');
 	});
 }
 
 function tabChangeScrollbars() {
 	$('a[data-toggle="tab"]').on('shown', function (e) {
+		_hideAllMiniboxScrollbars();
 		_showScrollbars($(this));
 		var uid = $(this).attr('data-uid');
 
