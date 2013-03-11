@@ -444,8 +444,6 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 					critMult: critMultA, howMany: howManyA, atkCt: atkCtA,
 					minCrit: minCritA, secondary: secA, rolls: rollsA};
 
-		console.log(fatk);
-
 		$tr.attr('data-fatk', JSON.stringify(fatk));
 
 		obj["descript"] = getFullAttackInfo(obj);		
