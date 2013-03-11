@@ -165,20 +165,18 @@ function remove(uid, killed) {
 		//$(this).find(".logCount").text(i+1);
 		count++;
 	});
+	
+	$("#monsterList li a").first().tab('show');
 
-	if(pos == 1 && count != 0) {
-		$("#monsterList li a").first().tab('show');
+	if(count > 0) {
+		$("#monsterList li:nth-child("+(pos-1)+")").find("a").tab('show');
 	} else {
-		if(count > 0) {
-			$("#monsterList li:nth-child("+(pos-1)+")").find("a").tab('show');
+		if(killed) {
+			$("#winAlert").show();
 		} else {
-			if(killed) {
-				$("#winAlert").show();
-			} else {
-				$("#genAlert").show();
-			}
-			$("#monsterList").hide();
+			$("#genAlert").show();
 		}
+		$("#monsterList").hide();
 	}
 
 	saveMonsters();
