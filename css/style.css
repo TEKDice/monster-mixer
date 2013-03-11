@@ -158,6 +158,7 @@ Grid-related
 .minibox-content {
 	overflow: auto;
 	overflow-x: hidden;
+	background-color: #fff;
 }
 
 .minibox-content .table {
