@@ -399,7 +399,9 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 			
 			if(e.is_uses_bab == "1") {
 				var creatureBab = parseInt($("#"+uid+"_bab").text());
-				var attacks = Math.max(Math.floor(creatureBab/5)+1, 1);
+				var div = creatureBab/5;
+				var attacks = Math.max(Math.floor(div)+(div>1 ? 1 : 0), 1);
+
 				var bonusAttacks = 1;
 
 				for(var i=0; i<attacks; i++) {
