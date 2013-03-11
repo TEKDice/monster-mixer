@@ -115,6 +115,7 @@ function setupGrids(uid) {
 	$(".draggable").not(".invisible").find(".minibox-content").each(function() {
 		var nice = $(this).niceScroll({horizrailenabled: false, zindex: 9});
 		$("#"+nice.id).attr('data-nice-uid', uid);
+		$("#"+nice.id+"-hr").remove();
 	});
 	resizeGrids();
 }
@@ -325,17 +326,17 @@ function _makeSelect(monster, data) {
 	$select.append("<option value='null' selected>No Org.</option>");
 }
 
-function rollableRowHighlighting($parent) {
+function _showScrollbars($a) {
+	$("#"+$a.attr('data-uid')).find(".minibox-content").each(function() {
+		var nice = $a.niceScroll({horizrailenabled: false, zindex:9});
+		$("#"+nice.id).attr('data-nice-uid', $a.closest('tab-pane').attr('data-for'));
+		$a.css('overflow','hidden');
+	});
 }
 
 function tabChangeScrollbars() {
 	$('a[data-toggle="tab"]').on('shown', function (e) {
-		$("#"+$(this).attr('data-uid')).find(".minibox-content").each(function() {
-			var nice = $(this).niceScroll({horizrailenabled: false, zindex:9});
-			$("#"+nice.id).attr('data-nice-uid', $(this).closest('tab-pane').attr('data-for'));
-			$(this).css('overflow','hidden');
-		});
-
+		_showScrollbars($(this));
 		var uid = $(this).attr('data-uid');
 
 		$("#curMon > div[data-for='"+uid+"']").show().siblings().hide();

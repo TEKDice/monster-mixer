@@ -33,8 +33,6 @@ function addNewMonster(monster) {
 
 	tabChangeScrollbars();
 
-	rollableRowHighlighting($parent);
-
 	setupRollables($parent);
 
 	limitFeatNums(uid);
@@ -403,7 +401,8 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 			if(e.is_uses_bab == "1") {
 				var creatureBab = parseInt($("#"+uid+"_bab").text());
 				var div = creatureBab/5;
-				var attacks = Math.max(Math.floor(div)+(div>1 ? 1 : 0), 1);
+				var mod = creatureBab%5;
+				var attacks = Math.max(Math.floor(div)+(mod!=0 ? 1 : 0), 1);
 
 				var bonusAttacks = 1;
 

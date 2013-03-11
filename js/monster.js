@@ -156,20 +156,24 @@ function remove(uid, killed) {
 
 	$node.parent().remove();
 	$(".tab-pane[data-for='"+uid+"']").remove();
-	$("[data-nice-uid='"+uid+"']").remove();
+	$("div[data-nice-uid='"+uid+"']").remove();
 	$("#"+uid+"_log").remove();
 
 	var count = 0;
 
 	$("#monsterList li").each(function(i, e) {
-		//$(this).find(".logCount").text(i+1);
 		count++;
 	});
 	
-	$("#monsterList li a").first().tab('show');
+	var $a = $("#monsterList li a").first();
+
+	_showScrollbars($a);
+	$a.tab('show');
 
 	if(count > 0) {
-		$("#monsterList li:nth-child("+(pos-1)+")").find("a").tab('show');
+		$a = $("#monsterList li:nth-child("+(pos-1)+")").find("a");
+		_showScrollbars($a);
+		$a.tab('show');
 	} else {
 		if(killed) {
 			$("#winAlert").show();
