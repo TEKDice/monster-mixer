@@ -284,16 +284,15 @@ var rollable = {
 			
 		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
 		var strMod = parseFloat(obj.max_str_mod) || 0;
+						
+		ret["STR Mod"] = strBonus;
 
 		if(melee == "1") {
 			if(obj.is_uses_str_mod == "1") {
 				if(obj.is_one_handed == "0") {
 					if(strBonus != 0)
-						ret["STR Mod (2h)"] = strBonus*1.5;
-				} else {
-					if(strBonus != 0)
-						ret["STR Mod"] = strBonus;
-				}
+						ret["STR Mod"] = strBonus*1.5;
+				} 
 			}
 		} else {
 
@@ -367,7 +366,7 @@ var attackRolls = {
 			var minusTwo = false;
 
 			$.each(weaponCount, function(i, e) {
-				if((e.aname != null && e.wlight == "1") ||e.wlight=="1" && e.mfa_class_mult == "0.50") {
+				if((e.aname != null && e.wlight == "1") || e.wlight=="1" && e.mfa_class_mult == "0.50") {
 					minusTwo = true;
 				} 
 			});
