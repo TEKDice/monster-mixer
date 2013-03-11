@@ -135,6 +135,7 @@ Grid-related
 	border-radius: 4px;
 	max-width: 140px;
 	min-width: 140px;
+	background-color: #fff;
 }
 
 .sortable { 
@@ -158,7 +159,6 @@ Grid-related
 .minibox-content {
 	overflow: auto;
 	overflow-x: hidden;
-	background-color: #fff;
 }
 
 .minibox-content .table {
