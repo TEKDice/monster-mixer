@@ -211,6 +211,10 @@ var formatting = {
 	}
 };
 
+function hasTwoWeapons(uid) {
+
+}
+
 function hasWeaponFocus(obj, uid) {
 	if(hasFeat(uid, "Weapon Focus")) {
 		var name = fullFeatName(uid, "Weapon Focus");
@@ -368,25 +372,26 @@ var attackRolls = {
 				} 
 			});
 
-			$.each(weaponCount, function(i, e) {
-				var has2W = hasFeat(uid, "Two-Weapon Fighting") || hasFeat(uid, "Multiweapon Fighting");
-				var minus = 0;
-				if(e.mfa_class_mult == "1.00") {
-					minus = -6;
-					if(has2W) 
-						minus += 2;
-					if(minusTwo)
-						minus += 2;
-					ret[i]["Multiweapon Penalty (Primary)"] = minus;
-				} else {
-					minus = -10;
-					if(has2W) 
-						minus += 6;
-					if(minusTwo)
-						minus += 2;
-					ret[i]["Multiweapon Penalty (Secondary)"] = minus;
-				}
-			});
+			var has2W = hasFeat(uid, "Two-Weapon Fighting") || hasFeat(uid, "Multiweapon Fighting");
+			if(has2W)
+				$.each(weaponCount, function(i, e) {
+					var minus = 0;
+					if(e.mfa_class_mult == "1.00") {
+						minus = -6;
+						if(has2W) 
+							minus += 2;
+						if(minusTwo)
+							minus += 2;
+						ret[i]["Multiweapon Penalty (Primary)"] = minus;
+					} else {
+						minus = -10;
+						if(has2W) 
+							minus += 6;
+						if(minusTwo)
+							minus += 2;
+						ret[i]["Multiweapon Penalty (Secondary)"] = minus;
+					}
+				});
 		}
 
 		return JSON.stringify(ret);
