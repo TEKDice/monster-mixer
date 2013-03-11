@@ -38,19 +38,17 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 						
 					var threatBasicAttackResult=0,threatBasicAttackResultText='';
 
-						var threatBasicAttack = _buildRoll(uid, expr, false, isRanged, isAttack);
+					var threatBasicAttack = _buildRoll(uid, expr, false, isRanged, isAttack);
 
-						if(is2h && threatBasicAttack["Power Attack"] !== undefined)
-							threatBasicAttack["Power Attack"] *= 2;
-						for(var i in threatBasicAttack) {
-							if(threatBasicAttack[i] == 0) continue;
-							threatBasicAttackResult += threatBasicAttack[i];
-							threatBasicAttackResultText += i + ": "+threatBasicAttack[i]+"<br>";
-						}
+					if(is2h && threatBasicAttack["Power Attack"] !== undefined)
+						threatBasicAttack["Power Attack"] *= 2;
+					for(var i in threatBasicAttack) {
+						if(threatBasicAttack[i] == 0) continue;
+						threatBasicAttackResult += threatBasicAttack[i];
+						threatBasicAttackResultText += i + ": "+threatBasicAttack[i]+"<br>";
+					}
 
 					iters = critMult || 1;
-
-					console.log(iters);
 
 					threatData = _rollArray(threatData);
 					threatBasicAttack = _rollArray(threatBasicAttack);
@@ -119,7 +117,7 @@ function attack($rollable, $roller, uid) {
 		$.each(fatk.rolls, function(i, ee) {
 			var index = ee.refIndex;
 			doAttack(uid, JSON.stringify(ee.tohit), true, fatk.spatk[index], fatk.names[index], 
-				idFor, fatk.howMany[index], isRanged, fatk.minCrit[index], JSON.stringify(ee.damage), 
+				idFor, 1, isRanged, fatk.minCrit[index], JSON.stringify(ee.damage), 
 				fatk.critMult[index], true, fatk.rolls.length, i);
 		});
 

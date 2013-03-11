@@ -396,7 +396,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 				minCritA.push(minCrit);
 				$tr.attr('data-min-crit', JSON.stringify(minCritA));
 			});
-
+			
 			if(e.is_uses_bab == "1") {
 				var creatureBab = parseInt($("#"+uid+"_bab").text());
 				var attacks = Math.max(Math.floor(creatureBab/5), 1);
@@ -435,7 +435,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 				atkCtA.push(bonusAttacks);
 			} else {
 				var roll = {damage: $.parseJSON(attackRoll)[ind], tohit: $.parseJSON(toHitRoll)[ind], refIndex: ind};
-				for(var i=0; i<howManyA[i]; i++)
+				for(var i=0; i<howManyA[ind]; i++)
 					rollsA.push(roll);
 			}
 		});
@@ -443,6 +443,8 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		var fatk = {range: rangeA, spatk: spatkA, names: nameA, 
 					critMult: critMultA, howMany: howManyA, atkCt: atkCtA,
 					minCrit: minCritA, secondary: secA, rolls: rollsA};
+
+		console.log(fatk);
 
 		$tr.attr('data-fatk', JSON.stringify(fatk));
 
@@ -457,7 +459,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 function getFullAttackInfo(obj) {
 	var ret = '';
 	$.each(obj, function(i, e) {
-		ret += (e.wname || e.aname)+": "+(e.whd || e.atkhd)+"<br>";
+		ret += (e.wname || e.aname)+": "+(e.whd || e.atkhd) + " x" + (e.how_many)+"<br>";
 	});
 	return ret;
 }

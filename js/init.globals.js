@@ -212,7 +212,7 @@ var formatting = {
 };
 
 function hasTwoWeapons(uid) {
-
+	return hasFeat(uid, "Two-Weapon Fighting") || hasFeat(uid, "Multiweapon Fighting");
 }
 
 function hasWeaponFocus(obj, uid) {
@@ -341,7 +341,7 @@ var attackRolls = {
 				var json = attackRolls.mattack(e, uid);
 				var parsed = $.parseJSON(json);
 				retO = collect(retO, parsed);
-				if(parseFloat(e.mfa_class_mult) == 0.5) {
+				if(parseFloat(e.mfa_class_mult) == 0.5 && !hasTwoWeapons(uid)) {
 					if(hasFeat(uid, "Multiattack")) 
 						retO["Secondary Penalty"] = -2;
 					else
@@ -372,7 +372,7 @@ var attackRolls = {
 				} 
 			});
 
-			var has2W = hasFeat(uid, "Two-Weapon Fighting") || hasFeat(uid, "Multiweapon Fighting");
+			var has2W = hasTwoWeapons(uid);
 			if(has2W)
 				$.each(weaponCount, function(i, e) {
 					var minus = 0;
