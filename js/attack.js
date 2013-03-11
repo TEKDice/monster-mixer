@@ -1,238 +1,132 @@
 
+function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks, isRanged, threatRange, attackRollString, critMult, isFullAttack, atkCtOverride, atkPosOverride) {
+
+	if(spatkFor) spatkFor = spatkFor.trim();
+	if(exprFor) exprFor = exprFor.trim();
+
+	var nameFor = $("a[href='#"+idFor+"']").html();
+	var is2h = expr.indexOf("(2h)") != -1;
+	var iters = 1;
+
+	var totalAttacks = atkCtOverride != null ? atkCtOverride : howManyAttacks;
+
+	for(var atkCount=0; atkCount<howManyAttacks; atkCount++) {
+
+		var curAtk = atkPosOverride != null ? atkPosOverride : atkCount;
+
+		iters = 1;
+
+		var result = 0;
+		var resultText = '';
+		var critStatus = '';
+
+		var atkCtText = isFullAttack && totalAttacks > 1 ? '('+(atkPosOverride+1)+'/'+totalAttacks+') ' : '';
+
+		if(isAttack) {
+			var attackRoll = _buildRoll(uid, attackRollString, true, isRanged, false);
+
+			for(var i in attackRoll) {
+				if(attackRoll[i] == 0) continue;
+				result += attackRoll[i];
+				resultText += i + ": "+attackRoll[i]+"<br>";
+
+				critStatus = _critStatus(attackRoll[i], i, threatRange, true) || critStatus;
+
+				if(critStatus == 'threat' || critStatus == 'success') {
+
+					var threatData = _buildRoll(uid, attackRollString, true, isRanged, false);
+						
+					var threatBasicAttackResult=0,threatBasicAttackResultText='';
+
+						var threatBasicAttack = _buildRoll(uid, expr, false, isRanged, isAttack);
+
+						if(is2h && threatBasicAttack["Power Attack"] !== undefined)
+							threatBasicAttack["Power Attack"] *= 2;
+						for(var i in threatBasicAttack) {
+							if(threatBasicAttack[i] == 0) continue;
+							threatBasicAttackResult += threatBasicAttack[i];
+							threatBasicAttackResultText += i + ": "+threatBasicAttack[i]+"<br>";
+						}
+
+					iters = critMult || 1;
+
+					console.log(iters);
+
+					threatData = _rollArray(threatData);
+					threatBasicAttack = _rollArray(threatBasicAttack);
+				}
+			}
+			if(critStatus == 'threat' || critStatus == 'success') {
+				addToLog(atkCtText+logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus, idFor);
+				addToLog(atkCtText+logMessages.critMiss(nameFor,exprFor,threatBasicAttackResultText,threatBasicAttackResult)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
+				addToLog(atkCtText+logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus, idFor);
+			} else {
+				addToLog(atkCtText+logMessages.initiate(nameFor, exprFor, resultText, result), critStatus, idFor);
+			}
+		}
+
+		result = 0;
+		resultText = '';
+
+		for(var x=0; x<iters; x++) {
+			var roll = _buildRoll(uid, expr, false, isRanged, isAttack);
+
+			if(is2h && roll["Power Attack"] !== undefined) {
+				roll["Power Attack"] *= 2;
+			}
+
+			for(var i in roll) {
+				if(roll[i] == 0) continue;
+				result += roll[i];
+				resultText += i + ": "+roll[i]+"<br>";
+
+				critStatus = _critStatus(roll[i], i, 0, false) || critStatus;
+			}
+		}
+
+		if((critStatus == 'threat' || critStatus == 'success') && isAttack) {
+			addToLog(atkCtText+logMessages.critSuccess(nameFor, exprFor, resultText, result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
+		} else if(isAttack) {
+			addToLog(atkCtText+logMessages.hit(nameFor, exprFor, resultText, result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
+		} else {
+			addToLog(atkCtText+logMessages.skill(nameFor, exprFor, resultText, result), critStatus, idFor);
+		}		
+	}
+}
 
 function attack($rollable, $roller, uid) {
+	var isFullAttack = typeof $rollable.attr('data-fatk') !== 'undefined';
+
+	var expr = $rollable.attr('data-roll');
+
+	var spatkFor = $rollable.attr('data-spatk');
+	var exprFor = $rollable.attr('data-roll-for');
+	var idFor = $roller.closest('div[data-for]').attr('id');
+
 	var isAttack = $rollable.attr('data-attack-roll');
-
-	var fullAttackAttacks = 1;
-	var isFullAttack = false;
-
-	if(typeof isAttack !== 'undefined' && isAttack.indexOf("[") != -1) {
-		fullAttackAttacks = (""+$.parseJSON(isAttack)).split(",").length;
-		isFullAttack = 1;
-	}
-
 	isAttack = typeof isAttack !== 'undefined' && isAttack !== false;
+	var howManyAttacks = parseInt($rollable.attr('data-how-many')) || 1;
+	var isRanged = $rollable.attr('data-range') != "0";
+	var threatRange = parseInt($rollable.attr('data-min-crit'));
+	var attackRollString = $rollable.attr('data-attack-roll');
+	var crits = parseInt($rollable.attr('data-crit-mult'));
 
-	for(var fullAtkCount=0; fullAtkCount<fullAttackAttacks; fullAtkCount++) {
+	if(isFullAttack) {
+		var fatk = $.parseJSON($rollable.attr('data-fatk'));
 
-		var expr = $rollable.attr('data-roll');
+		isRanged = fatk.range != "0";
 
-		if(expr.indexOf('[') != -1) {
-			expr = $.parseJSON(expr)[fullAtkCount];
-			expr = JSON.stringify(expr);
-		}
+		$.each(fatk.rolls, function(i, ee) {
+			var index = ee.refIndex;
+			doAttack(uid, JSON.stringify(ee.tohit), true, fatk.spatk[index], fatk.names[index], 
+				idFor, fatk.howMany[index], isRanged, fatk.minCrit[index], JSON.stringify(ee.damage), 
+				fatk.critMult[index], true, fatk.rolls.length, i);
+		});
 
-		var spatkFor = $rollable.attr('data-spatk');
-
-		if(spatkFor && typeof spatkFor !== 'undefined' ) {
-			if(spatkFor.indexOf('[') != -1) {
-				spatkFor = spatkFor.substring(1, spatkFor.length-1);
-				spatkFor = spatkFor.split(',');
-				spatkFor = spatkFor[fullAtkCount];
-			}
-			spatkFor = spatkFor.trim();
-		}
-
-		var exprFor = $rollable.attr('data-roll-for');
-		if(exprFor && typeof exprFor !== 'undefined' ) {
-			if(exprFor.indexOf(',') != -1) {
-				exprFor = exprFor.split(',');
-				exprFor = exprFor[fullAtkCount];
-			}
-			exprFor = exprFor.trim();
-		}
-		var idFor = $roller.closest('div[data-for]').attr('id');
-		var nameFor = $("a[href='#"+idFor+"']").html();
-
-		var howManyAttacks = $rollable.attr('data-how-many');
-
-		if(typeof howManyAttacks !== 'undefined' && howManyAttacks.indexOf('[') != -1) {
-			howManyAttacks = howManyAttacks.substring(1, howManyAttacks.length-1);
-			howManyAttacks = howManyAttacks.split(',');
-			howManyAttacks = howManyAttacks[fullAtkCount];
-		}
-
-		howManyAttacks = parseInt(howManyAttacks) || 1;		
-
-		var isRanged = $rollable.attr('data-range');
-
-		if(typeof isRanged !== 'undefined' && isRanged.indexOf('[') != -1) {
-			isRanged = isRanged.substring(1, isRanged.length-1);
-			isRanged = isRanged.split(',');
-			isRanged = isRanged[fullAtkCount];
-		}
-
-		isRanged = isRanged != '0';
-
-		var threatRange = $rollable.attr('data-min-crit');
-
-		if(typeof threatRange !== 'undefined' && threatRange.indexOf('[') != -1) {
-			threatRange = threatRange.substring(1, threatRange.length-1);
-			threatRange = threatRange.split(',');
-			threatRange = threatRange[fullAtkCount];
-		}
-
-		threatRange = parseInt(threatRange);
-
-		var is2h = expr.indexOf("(2h)") != -1;
-
-		var attackRollString = $rollable.attr('data-attack-roll');
-
-		if(typeof attackRollString !== 'undefined' && attackRollString.indexOf('[') != -1) {
-			attackRollString = $.parseJSON(attackRollString)[fullAtkCount];
-			attackRollString = JSON.stringify(attackRollString);
-		}
-
-		var babUseStr = $rollable.attr('data-bab-use');
-
-		if(typeof babUseStr !== 'undefined' && babUseStr.indexOf('[') != -1) {
-			babUseStr = babUseStr.substring(1, babUseStr.length-1);
-			babUseStr = babUseStr.split(',');
-			babUseStr = babUseStr[fullAtkCount];
-		}
-
-		var isSecondary = $rollable.attr('data-secondary');
-
-		if(typeof isSecondary !== 'undefined' && isSecondary.indexOf('[') != -1) {
-			isSecondary = isSecondary.substring(1, isSecondary.length-1);
-			isSecondary = isSecondary.split(',');
-			isSecondary = parseInt(isSecondary[fullAtkCount]);
-		}
-			
-		var iters = 1;
-
-		var creatureBab = parseInt($("#"+uid+"_bab").text());
-		var bonusAttacks = 0;
-		var totalAtks = Math.floor(creatureBab/5);
-
-		for(var atkCount=0; atkCount<howManyAttacks; atkCount++) {
-
-			iters = 1;
-
-			var result = 0;
-			var resultText = '';
-			var critStatus = '';
-
-			var atkCtText = isFullAttack && totalAtks > 1 ? '('+(atkCount+1)+'/'+totalAtks+') ' : '';
-
-			if(isFullAttack && babUseStr == '1') {
-				if(isSecondary) {
-					if((hasFeat(uid, "Greater Two-Weapon Fighting") || hasFeat(uid, "Greater Multiweapon Fighting")) && bonusAttacks == 1) {						bonusAttacks++;
-						bonusAttacks++;
-						if(creatureBab > 5) {
-							creatureBab-=5;
-							howManyAttacks++;
-						}
-						
-					}
-					if((hasFeat(uid, "Improved Two-Weapon Fighting") || hasFeat(uid, "Improved Multiweapon Fighting")) && bonusAttacks == 0) {
-						bonusAttacks++;
-						if(creatureBab > 5) {
-							creatureBab-=5;
-							howManyAttacks++;
-						}
-					}
-				} else {
-					bonusAttacks++;
-					if(creatureBab > 5) {
-						creatureBab-=5;
-						howManyAttacks++;
-					}
-				}
-			} 
-
-			if(isAttack) {
-				var attackRoll = _buildRoll(uid, attackRollString, true, isRanged, false);
-
-				if(bonusAttacks > 1) 
-					attackRoll["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
-  
-				for(var i in attackRoll) {
-					if(attackRoll[i] == 0) continue;
-					result += attackRoll[i];
-					resultText += i + ": "+attackRoll[i]+"<br>";
-
-					critStatus = _critStatus(attackRoll[i], i, threatRange, true) || critStatus;
-
-					if(critStatus == 'threat' || critStatus == 'success') {
-
-						var threatData = _buildRoll(uid, attackRollString, true, isRanged, false);
-						if(bonusAttacks > 1) 
-							threatData["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
-							
-						var threatBasicAttackResult=0,threatBasicAttackResultText='';
-
-						for(var x=0; x<iters; x++) {
-							var threatBasicAttack = _buildRoll(uid, expr, false, isRanged, isAttack);
-
-							if(is2h && threatBasicAttack["Power Attack"] !== undefined) {
-								threatBasicAttack["Power Attack"] *= 2;
-							}
-
-							if(bonusAttacks > 1) 
-								threatBasicAttack["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
-
-							for(var i in threatBasicAttack) {
-								if(threatBasicAttack[i] == 0) continue;
-								threatBasicAttackResult += threatBasicAttack[i];
-								threatBasicAttackResultText += i + ": "+threatBasicAttack[i]+"<br>";
-							}
-						}
-
-						iters = $rollable.attr('data-crit-mult');
-
-						if(typeof iters !== 'undefined' && iters.indexOf('[') != -1) {
-							iters = iters.substring(1, iters.length-1);
-							iters = iters.split(',');
-							iters = iters[fullAtkCount];
-						}
-
-						iters = parseInt(iters);
-
-						threatData = _rollArray(threatData);
-						threatBasicAttack = _rollArray(threatBasicAttack);
-					}
-				}
-				if(critStatus == 'threat' || critStatus == 'success') {
-					addToLog(atkCtText+logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus, idFor);
-					addToLog(atkCtText+logMessages.critMiss(nameFor,exprFor,threatBasicAttackResultText,threatBasicAttackResult)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
-					addToLog(atkCtText+logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus, idFor);
-				} else {
-					addToLog(atkCtText+logMessages.initiate(nameFor, exprFor, resultText, result), critStatus, idFor);
-				}
-			}
-
-			result = 0;
-			resultText = '';
-
-
-			for(var x=0; x<iters; x++) {
-				var roll = _buildRoll(uid, expr, false, isRanged, isAttack);
-
-				if(is2h && roll["Power Attack"] !== undefined) {
-					roll["Power Attack"] *= 2;
-				}
-
-				for(var i in roll) {
-					if(roll[i] == 0) continue;
-					result += roll[i];
-					resultText += i + ": "+roll[i]+"<br>";
-
-					critStatus = _critStatus(roll[i], i, 0, false) || critStatus;
-				}
-			}
-
-			if((critStatus == 'threat' || critStatus == 'success') && isAttack) {
-				addToLog(atkCtText+logMessages.critSuccess(nameFor, exprFor, resultText, result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
-			} else if(isAttack) {
-				addToLog(atkCtText+logMessages.hit(nameFor, exprFor, resultText, result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
-			} else {
-				addToLog(atkCtText+logMessages.skill(nameFor, exprFor, resultText, result), critStatus, idFor);
-			}
-				
-		}
-		
+	} else {
+		doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks, isRanged, threatRange, attackRollString, crits, false);
 	}
+
 }
 
 function _critStatus(roll, i, threatRange, canThreat) {

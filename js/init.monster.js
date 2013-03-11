@@ -277,15 +277,17 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 
 	var range = '';
 	var melee = '';
+
+	var toHitRoll = rollable.hasOwnProperty(attr) ? rollable[attr](obj, uid, range, melee) : null;
+	var attackRoll = attackRolls.hasOwnProperty(attr) ? attackRolls[attr](obj, uid, range) : null; 
 	
-	if(rollable.hasOwnProperty(attr))  {
+	if(toHitRoll)  {
 
 		$tr.attr('data-roll', '0');
 
 		$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
-			var roll = rollable[attr](obj, uid, range, melee);
-			if(roll != '{}')
-				$tr.attr('data-roll', roll);
+			if(toHitRoll != '{}')
+				$tr.attr('data-roll', toHitRoll);
 			else
 				$tr.unbind();
 		});
@@ -314,33 +316,23 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 					minCrit = 20;
 					$tr.attr('data-crit-mult', obj.critical.substring(1));
 				} else {
-					console.warn("critical wasn't parseable: "+obj.critical);
-					console.warn(obj);
+					console.warn("critical wasn't parseable: "+obj.critical + " " + obj.name);
 				}
 			}
 
 			$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
 				if(hasFeat(uid, "Improved Critical")) {
-					var name = fullFeatName(uid, "Improved Critical");
-					var atk = name.substring(name.indexOf("(")+1, name.indexOf(")"));
-					if(obj.aname != undefined) {
-						if(atk.toLowerCase() == obj.aname.toLowerCase())
-							minCrit = 21 - ((20 - minCrit + 1) * 2);
-					}
-					if(obj.wname != undefined) {
-						if(atk.toLowerCase() == obj.wname.toLowerCase())
-							minCrit = 21 - ((20 - minCrit + 1) * 2);
-					}
+					minCrit = 21 - ((20 - minCrit + 1) * 2);
 				}
 				$tr.attr('data-min-crit', minCrit);
 			});
 		}
 	}
 
-	if(attackRolls.hasOwnProperty(attr) && (obj.class_mult != null || attr == 'mspatk' || attr == 'mfatk')) {
+	if(attackRoll && (obj.class_mult != null || attr == 'mspatk' || attr == 'mfatk')) {
 		$tr.attr('data-attack-roll', '0');
 		$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
-			$tr.attr('data-attack-roll', attackRolls[attr](obj, uid, range));
+			$tr.attr('data-attack-roll', attackRoll);
 		});
 	}
 
@@ -350,9 +342,9 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 	}
 
 	if(attr == 'mfatk') {
-		
-		var spatkA = [], rangeA = [], critMultA = [], minCritA = [], howManyA = [], babUseA = [], secA = [];
-		$.each(obj, function(i, e) {
+		var spatkA = [], rangeA = [], critMultA = [], minCritA = [], howManyA = [],
+			babUseA = [], secA = [], rollsA = [], nameA = [], atkCtA = [];
+		$.each(obj, function(ind, e) {
 
 			if(e.spatkname != null && e.spatkname.indexOf(monsterName) != -1) e.spatkname = e.spatkname.substring(monsterName.length+1);
 
@@ -369,11 +361,13 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 
 			var minCrit = 0;
 
-			e.critical = e.atkct | e.wct;
+			e.critical = e.atkct || e.wct;
 			if(!e.critical) e.critical = '0';
 
-			e.how_many = e.atkhm | e.whm;
+			e.how_many = e.atkhm || e.whm;
 			if(!e.how_many) e.how_many = '1';
+
+			nameA.push(e.wname || e.aname);
 
 			howManyA.push(e.how_many);
 
@@ -389,35 +383,68 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 					minCrit = 20;
 					critMultA.push(e.critical.substring(1));
 				} else {
-					console.warn("critical wasn't parseable: "+e.critical);
-					console.warn(obj);
+					console.warn("critical wasn't parseable: "+obj.critical + " " + obj.name);
 				}
 			}
 
-			$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
+			$("#"+uid+"_mfeat_table .loaded").livequery(function() {
+
+				//critical
 				if(hasFeat(uid, "Improved Critical")) {
-					var name = fullFeatName(uid, "Improved Critical");
-					var atk = name.substring(name.indexOf("(")+1, name.indexOf(")"));
-					if(e.aname != undefined) {
-						if(atk.toLowerCase() == e.aname.toLowerCase())
-							minCrit = 21 - ((20 - minCrit + 1) * 2);
-					}
-					if(e.wname != undefined) {
-						if(atk.toLowerCase() == e.wname.toLowerCase())
-							minCrit = 21 - ((20 - minCrit + 1) * 2);
-					}
+					minCrit = 21 - ((20 - minCrit + 1) * 2);
 				}
 				minCritA.push(minCrit);
 				$tr.attr('data-min-crit', JSON.stringify(minCritA));
 			});
+
+			if(e.is_uses_bab == "1") {
+				var creatureBab = parseInt($("#"+uid+"_bab").text());
+				var attacks = Math.max(Math.floor(creatureBab/5), 1);
+				var bonusAttacks = 1;
+
+				for(var i=0; i<attacks; i++) {
+
+					var roll = {damage: $.parseJSON(attackRoll)[ind], tohit: $.parseJSON(toHitRoll)[ind], refIndex: ind};
+
+					//I tried renaming these variables and rearranging everything and it refused to work
+					//this is actually taking away from the rolls to-hit
+					if(bonusAttacks > 1) 
+						roll["damage"]["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
+
+					if(secA[ind]) {
+						if(i == 0) 
+							rollsA.push(roll);
+
+						else if((hasFeat(uid, "Greater Two-Weapon Fighting") || 
+							hasFeat(uid, "Greater Multiweapon Fighting")) && bonusAttacks == 2) {
+
+							rollsA.push(roll);
+							bonusAttacks++;
+							
+						} else if((hasFeat(uid, "Improved Two-Weapon Fighting") || 
+							hasFeat(uid, "Improved Multiweapon Fighting")) && bonusAttacks == 1) {
+
+							rollsA.push(roll);
+							bonusAttacks++;
+						}
+					} else {
+						rollsA.push(roll);
+						bonusAttacks++;
+					}	
+				}
+				atkCtA.push(bonusAttacks);
+			} else {
+				var roll = {damage: $.parseJSON(attackRoll)[ind], tohit: $.parseJSON(toHitRoll)[ind], refIndex: ind};
+				for(var i=0; i<howManyA[i]; i++)
+					rollsA.push(roll);
+			}
 		});
 
-		$tr.attr('data-spatk', JSON.stringify(spatkA));
-		$tr.attr('data-range', JSON.stringify(rangeA));
-		$tr.attr('data-crit-mult', JSON.stringify(critMultA));
-		$tr.attr('data-how-many', JSON.stringify(howManyA));
-		$tr.attr('data-bab-use', JSON.stringify(babUseA));
-		$tr.attr('data-secondary', JSON.stringify(secA));
+		var fatk = {range: rangeA, spatk: spatkA, names: nameA, 
+					critMult: critMultA, howMany: howManyA, atkCt: atkCtA,
+					minCrit: minCritA, secondary: secA, rolls: rollsA};
+
+		$tr.attr('data-fatk', JSON.stringify(fatk));
 
 		obj["descript"] = getFullAttackInfo(obj);		
 	}
