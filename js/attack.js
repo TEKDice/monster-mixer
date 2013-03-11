@@ -122,16 +122,7 @@ function attack($rollable, $roller, uid) {
 		});
 
 	} else {
-		var creatureBab = parseInt($("#"+uid+"_bab").text());
-		var attacks = Math.max(Math.floor(creatureBab/5)+1, 1);
-
-		for(var i=0; i<attacks; i++) {
-			var roll = $.parseJSON(attackRollString);
-			if(i > 0) 
-				roll["Attack "+(i+1)]=-(i)*5;
-			attackRollString = JSON.stringify(roll);
-			doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks, isRanged, threatRange, attackRollString, crits, false, attacks, i);
-		}
+		doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks, isRanged, threatRange, attackRollString, crits, false);
 	}
 
 }
