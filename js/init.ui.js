@@ -16,11 +16,11 @@ function limitFeatNums(uid) {
 			var val = parseInt($(this).val());
 			var paMax = parseInt($("#"+uid+"_bab").text());
 			var max = clamp(0, (isPowerAttack ? paMax : 5), parseInt($("#"+uid+"_bab").attr('data-base-value')));
-			if(val < 0) val = 0;
-			if(val > max) val = max;
+			val = clamp(0, max, val);
+
 			$(this).val(val);
 
-			if(val != 0 && cbName == 'Combat Expertise') {
+			if(val > -1 && cbName == 'Combat Expertise') {
 				incdecACStat(uid, "ac", "Combat Expertise", null, val);
 				incdecACStat(uid, "touch_ac", "Combat Expertise", null, val);
 			}
@@ -49,6 +49,7 @@ function limitFeatNums(uid) {
 }
 
 function incdecACStat(uid, acType, adder, isIncrement, value) {
+	if(value == 0) return;
 	var $ac = $("#"+uid+"_"+acType);
 	var ac = $.parseJSON($ac.attr('data-ac'));
 
