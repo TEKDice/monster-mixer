@@ -367,7 +367,7 @@ var attackRolls = {
 			var minusTwo = false;
 
 			$.each(weaponCount, function(i, e) {
-				if(e.wlight=="1" && e.mfa_class_mult == "0.50") {
+				if((e.aname != null && e.wlight == "1") ||e.wlight=="1" && e.mfa_class_mult == "0.50") {
 					minusTwo = true;
 				} 
 			});
