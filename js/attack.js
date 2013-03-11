@@ -149,7 +149,7 @@ function _buildRoll(uid, roll, isAttack, isRanged, isDamage) {
 	if(isAttack) {
 		if(hasFeat(uid, 'Combat Expertise')) {
 			var bonus = parseInt($("#"+uid+"_calc_ce").children("input").val());
-			if(bonus!=0 && !isNaN(bonus))
+			if(!isNaN(bonus))
 				retRoll["Combat Expertise"] = -bonus;
 		}
 

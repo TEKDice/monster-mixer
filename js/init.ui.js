@@ -48,8 +48,7 @@ function limitFeatNums(uid) {
 	});
 }
 
-function incdecACStat(uid, acType, adder, isIncrement, value) {
-	if(value == 0) return;
+function incdecACStat(uid, acType, adder, isIncrement, value, canBeNegative) {
 	var $ac = $("#"+uid+"_"+acType);
 	var ac = $.parseJSON($ac.attr('data-ac'));
 
@@ -58,6 +57,8 @@ function incdecACStat(uid, acType, adder, isIncrement, value) {
 
 	if(value) ac[adder] = value;
 	else 	  ac[adder] = isIncrement ? ac[adder]+1 : ac[adder]-1;
+
+	if(!canBeNegative && ac[adder] < 0) ac[adder] = 0;
 
 	$ac.attr('data-ac',JSON.stringify(ac));
 	refreshAc($ac);
