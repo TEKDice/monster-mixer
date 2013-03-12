@@ -51,7 +51,12 @@ function limitFeatNums(uid) {
 
 function incdecACStat(uid, acType, adder, isIncrement, value, canBeNegative) {
 	var $ac = $("#"+uid+"_"+acType);
-	var ac = $.parseJSON($ac.attr('data-ac'));
+	var ac;
+	try {
+		ac = $.parseJSON($ac.attr('data-ac'));
+	} catch(e) {
+		console.error("an error happened when trying to inc or dec an ac stat "+e+ " "+arguments);
+	}
 
 	if(ac[adder] == undefined) ac[adder] = 0;
 	else ac[adder] = parseInt(ac[adder]);
@@ -201,7 +206,11 @@ function _seeMoreButtonFunctionality($button) {
 	}
 
 	$.post('ajax.php', {action: "gen", orgs: JSON.stringify(advObj)}, function(monsters) {
-		_parseSuggestedMonsters($.parseJSON(monsters), singlesCt);
+		try {
+			_parseSuggestedMonsters($.parseJSON(monsters), singlesCt);
+		} catch(e) {
+			console.error("an issue parsing suggested monsters has occurred: monsters<"+monsters+"> orgs<" +advObj+">");
+		}
 		$("#finalAddButton").button('reset');
 
 	}).always(function() {
@@ -287,9 +296,13 @@ function _genButtonFunctionality($button) {
 			return;
 		}
 		if(!advMode) {
-			monster = $.parseJSON(monster);
-			var uid = addNewMonster(monster);
-			setupGrids(uid);
+			try {
+				monster = $.parseJSON(monster);
+				var uid = addNewMonster(monster);
+				setupGrids(uid);
+			} catch(e) {
+				console.error("error parsing monster: "+monster);
+			}
 			return;
 		}
 		$("#advGenMonsters").empty();
