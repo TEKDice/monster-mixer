@@ -10,7 +10,7 @@ $filterNamesArr = run_query_arr($conn, "select name,is_numeric,sql_name,join_tab
 $filterNames = array();
 
 $json_obj = new stdClass;
-
+//test
 foreach($filterNamesArr as $name=>$filter) {
 	if($filter["is_numeric"] == 1)
 		$filterNames[$filter["name"]] = true;
