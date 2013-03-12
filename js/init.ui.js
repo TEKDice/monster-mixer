@@ -1,5 +1,4 @@
 
-//
 var defaultPopupSize=500;
 var extendPopupSize	=1200;
 			
