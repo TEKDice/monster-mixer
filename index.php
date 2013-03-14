@@ -591,7 +591,7 @@ function is_dev() {
 		<?php } else { ?>
 		<div class="container">
 			<div class="pagination-centered hero-unit" id="logInHero">
-				You need to be logged in to use this tool. Also test..
+				You need to be logged in to use this tool. Also test.
 			</div>
 		</div>
 		<?php } ?>
