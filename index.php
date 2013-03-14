@@ -1,6 +1,6 @@
 
 <?php
-
+//
 define('readonly',true);
 
 include('../include/database.php');
