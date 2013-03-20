@@ -154,9 +154,17 @@ function checkboxName(name) {
 	switch(name) {
 		case 'Awesome Blow': 		return 'ab';
 		case 'Point Blank Shot': 	return 'pbs';
+		case 'Rage': 				return 'rage';
 		case 'Dodge': 				return 'dodge';
-		default: 					return false;
+		case 'Frenzy': 				return 'frenzy';
 	}
+	return searchNameForNamedEntries(name);
+}
+
+function searchNameForNamedEntries(name) {
+	if(name.indexOf('Frenzy') != -1) return 'frenzy';
+	if(name.indexOf('Rage') != -1) return 'rage';
+	return false;
 }
 
 var formatting = {
@@ -173,7 +181,7 @@ var formatting = {
 	},
 	mfeat: 		function(obj) {
 		return obj.name + (obj.feat_level > 1 ? " (x"+obj.feat_level+")" : "") +"</td><td>"+
-		(obj.name == 'Power Attack' || obj.name == 'Combat Expertise' ? '<input class="input-mini-inline applyNum" type="number" placeholder="#"></input>' : '') + 
+		(obj.name == 'Power Attack' || obj.name == 'Combat Expertise' || obj.name == 'Cleave' ? '<input class="input-mini-inline applyNum" type="number" placeholder="#"></input>' : '') + 
 		(checkboxName(obj.name) ? '<input class="inline-checkbox" type="checkbox"></input>' : '') + 
 		"</td>";
 	},
@@ -197,9 +205,11 @@ var formatting = {
 		return obj.name + (obj.sub_skill!="" && obj.sub_skill!=null? " ("+obj.sub_skill+")" : "") + "</td><td>" + (parseInt(obj.skill_level)<0 ? obj.skill_level : "+"+obj.skill_level);
 	},
 	mspatk: 	function(obj) {
+
 		return obj.name + "</td><td>" 
 		+ (obj.range != "0" ? obj.range+"ft" : "") 
 		+ "</td><td class='rightalign'>" 
+		+ (checkboxName(obj.name) ? '<input class="inline-checkbox" type="checkbox"></input>' : '')
 		+ (obj.hit_dice != "0" ? obj.hit_dice : "")+" "
 		+ (obj.dmgred_hd != "0" && obj.dmgred_hd != null? "+"+obj.dmgred_hd+" "+obj.dmgred_nm : "");
 	},
@@ -220,11 +230,11 @@ function hasWeaponFocus(obj, uid) {
 		var name = fullFeatName(uid, "Weapon Focus");
 		var atk = name.substring(name.indexOf("(")+1, name.indexOf(")"));
 		if(obj.aname != undefined) {
-			if(atk.toLowerCase() == obj.aname.toLowerCase())
+			if(obj.aname.toLowerCase().indexOf(atk.toLowerCase()) != -1)
 				return true;
 		}
 		if(obj.wname != undefined) {
-			if(atk.toLowerCase() == obj.wname.toLowerCase())
+			if(obj.wname.toLowerCase().indexOf(atk.toLowerCase()) != -1)
 				return true;
 		}
 	}
