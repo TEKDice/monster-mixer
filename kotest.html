@@ -1,0 +1,48 @@
+<html>
+<head>
+	<script src='js/knockout.js'></script>
+	<script src='../js/jquery.min.js'></script>
+	<script type='text/javascript'>
+
+	function $$(i) { return $("#"+i); }
+
+	var monsters = {};
+
+	$(function() {
+
+		var uid = 123456;
+
+		var monsterModel = new MonsterModel(uid);
+		monsters[uid] = {monModel: monsterModel};
+		ko.applyBindings(monsterModel, $$(uid)[0]);
+	});
+
+	var MonsterModel = function(uid) {
+		var self = this;
+		self.uid = ko.observable(uid);
+		self.statModel = new StatModel();
+	}
+
+	var StatModel = function() {
+		var self = this;
+		self.baseVal = ko.observable(10);
+		self.updateVal = function() {
+			self.baseVal(self.baseVal()*10);
+		};
+		self.format = function(val) {
+			return val + "cake";
+		};
+	}
+	</script>
+</head>
+<body>
+	<div id="123456" data-bind="with: monsters[$element.id].monModel">
+		<div>
+			<div data-bind="with: $parent.statModel">
+				<span data-bind="text: $data.format(baseVal())"></span>
+				<button id='dostuff' data-bind="click: updateVal">test</button>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<bundle minify="true" runOnBuild="true" output="monster_generator.js">
+  <!--The order of the <file> elements determines the order of them when bundled.-->
+  <file>/monsters/js/ac-calc.js</file>
+  <file>/monsters/js/attack.js</file>
+  <file>/monsters/js/bootbox.min.js</file>
+  <file>/monsters/js/dateformat.js</file>
+  <file>/monsters/js/encounterstats.js</file>
+  <file>/monsters/js/init.filters.js</file>
+  <file>/monsters/js/init.globals.js</file>
+  <file>/monsters/js/init.js</file>
+  <file>/monsters/js/init.monster.js</file>
+  <file>/monsters/js/init.ui.js</file>
+  <file>/monsters/js/jquery.async.loops.js</file>
+  <file>/monsters/js/jquery.boxshadow.min.js</file>
+  <file>/monsters/js/jquery.cookie.js</file>
+  <file>/monsters/js/jquery.livequery.min.js</file>
+  <file>/monsters/js/jquery.nicescroll.min.js</file>
+  <file>/monsters/js/knockout.js</file>
+  <file>/monsters/js/log.js</file>
+  <file>/monsters/js/models.js</file>
+  <file>/monsters/js/monster.js</file>
+  <file>/monsters/js/roll.js</file>
+  <file>/monsters/js/serverfunctions.js</file>
+  <file>/monsters/js/storage.js</file>
+  <file>/monsters/js/sync.js</file>
+</bundle>
