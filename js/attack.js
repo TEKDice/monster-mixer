@@ -109,6 +109,8 @@ function attack($rollable, $roller, uid) {
 	var attackRollString = $rollable.attr('data-attack-roll');
 	var crits = parseInt($rollable.attr('data-crit-mult'));
 
+	var cleaveVal = $("#"+uid+"_calc_cleave").children().val();
+
 	if(isFullAttack) {
 		var fatk = $.parseJSON($rollable.attr('data-fatk'));
 
@@ -121,7 +123,7 @@ function attack($rollable, $roller, uid) {
 				fatk.critMult[index], true, fatk.rolls.length, i);
 		});
 
-	} else {
+	}  else {
 		doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks, isRanged, threatRange, attackRollString, crits, false);
 	}
 

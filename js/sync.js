@@ -10,24 +10,32 @@ function saveMonsters() {
 	if(!currentSessionId) return;
 	//TODO -- "loading icon"
 
-	var monsters = [];
+	var saveTheseMonsters = [];
 
+	/*
 	$("#monsterList li a").each(function(i, e) {
 		var uid = $(this).attr('data-uid');
 
+		var arrMon = monsters[uid];
+
+		console.log(arrMon);
+
 		var mon = {
-			id: $("#"+uid+"_id").text(),
-			curHp: $("#"+uid+"_hp .hp_val").text(),
-			maxHp: $("#"+uid+"_hp").attr('data-initial-roll'),
-			init: $("#"+uid+"_init").attr('data-initial-value')
+			id: arrMon.uid,
+			modHp: arrMon.hp.mod.val(),
+			maxHp: arrMon.hp.initTotal(),
+			init: arrMon.init.num.val()
 		};
 
 		if(mon.id == '') return;
 
-		monsters.push(mon);
+		saveTheseMonsters.push(mon);
 	});
+	*/
 
-	Data.setVar("monsters_"+currentSessionId, monsters);
+	if (monsters.length == 0) return;
+
+	Data.setVar("monsters_" + currentSessionId, monsters);
 
 	saveSession(false);
 
@@ -35,7 +43,8 @@ function saveMonsters() {
 }
 
 function loadMonsters(monsterSet) {
-	if(!loggedIn) return;
+	if (!loggedIn) return;
+	/*
 
 	$("#overlay").fadeIn();
 
@@ -56,9 +65,9 @@ function loadMonsters(monsterSet) {
 					
 					var oldMonData = monsterSet[i];
 
-					rollHp(uid, null, oldMonData.maxHp, true);
-					modifyHp(uid, parseInt(oldMonData.curHp) - parseInt($("#"+uid+"_hp .hp_val").text()) , true);
-					_rollInit(uid, parseInt(oldMonData.init));
+					//rollHp(uid, null, oldMonData.maxHp, true);
+					//modifyHp(uid, parseInt(oldMonData.curHp) - parseInt($("#"+uid+"_hp .hp_val").text()) , true);
+					//_rollInit(uid, parseInt(oldMonData.init));
 					saveMonsters();
 				}, 1);
 			},
@@ -66,7 +75,7 @@ function loadMonsters(monsterSet) {
 				$("#overlay").fadeOut();
 			}
 		});
-	});
+	});*/
 }
 
 function removeAllMonsters() {

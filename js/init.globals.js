@@ -1,4 +1,6 @@
-
+function $$(str) {
+	return $("#"+str);
+}
 
 function _arrToTooltip(arr) {
 	var ret = '';
@@ -75,9 +77,7 @@ function bodyBinding() {
 
 	$("body").on('click', '.reroll-hp', function() {
 		var uid = $(this).attr('data-uid');
-		var $rootNode = $(this).closest("span[data-attr='hit_dice']");
-		var newHp = rollExpression($rootNode.attr('data-base-value'));
-		rollHp(uid, $rootNode, newHp);
+		monsters[uid].hp.hp().reroll();
 	});
 
 	$("body").on('click', '.left', function() {
@@ -225,7 +225,7 @@ function hasTwoWeapons(uid) {
 	return hasFeat(uid, "Two-Weapon Fighting") || hasFeat(uid, "Multiweapon Fighting");
 }
 
-function hasWeaponFocus(obj, uid) {
+function hasWeaponFocus(obj, uid) {	
 	if(hasFeat(uid, "Weapon Focus")) {
 		var name = fullFeatName(uid, "Weapon Focus");
 		var atk = name.substring(name.indexOf("(")+1, name.indexOf(")"));

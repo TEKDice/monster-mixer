@@ -2,6 +2,8 @@
 var monsterCount=0;
 var tempMon;
 
+var monsters = {};
+
 function addNewMonster(monster) {
 	$(".alert").hide();
 	$("#monsterList").show();
@@ -25,8 +27,15 @@ function addNewMonster(monster) {
 
 	$parent.attr('id', uid);
 	$parent.attr('data-for', uid);
+	
+	$parent.find("*[id*='1A']").each(function () {
+		$(this).attr('id', $(this).attr('id').replace('1A', uid));
+	});
 
-	addDataToMonster($parent, monster, uid);
+	monsters[uid] = new MonsterModel(uid, monster);
+	ko.applyBindings(monsters[uid], $$(uid)[0]);
+
+	setUpHp(uid);
 
 	var nice = $('#monsterList').niceScroll({horizrailenabled: false, zindex:9, railoffset: {left: -118}});
 	$('#monsterList').css('overflow','hidden');
@@ -59,7 +68,7 @@ function sortMonsters() {
 	var listitems = mylist.children('li').get();
 	listitems.sort(function(a, b) {
 		var left = parseInt($("#"+$(a).children("a").attr('data-uid')+"_init").text());
-		var right = parseInt($("#"+$(b).children("a").attr('data-uid')+"_init").text());
+		var right = parseInt($("#" + $(b).children("a").attr('data-uid') + "_init").text());
 		return right - left;
 	});
 	$.each(listitems, function(idx, itm) { mylist.append(itm); });
@@ -107,7 +116,7 @@ function addDataToMonster($parent, monster, uid) {
 					switch(root[attr]) {
 						case '0.25': $(this).html($("<div/>").html("&frac14;").text()); break;
 						case '0.33': $(this).html($("<div/>").html("&frac13;").text()); break;
-						case '0.50':  $(this).html($("<div/>").html("&frac12;").text()); break;
+						case '0.50': $(this).html($("<div/>").html("&frac12;").text()); break;
 					}
 				} else 
 					$(this).text(parseInt(root[attr]));
@@ -169,13 +178,13 @@ function addDataToMonster($parent, monster, uid) {
 	rollInit($("#"+uid+"_init"));
 }
 
-function setUpHp($parent, uid) {
-	$hpNode = $parent.find("span[data-attr='hit_dice']");
+function setUpHp(uid) {
+	/*$hpNode = $parent.find("span[data-attr='hit_dice']");
 	var hp = $hpNode.attr('data-initial-roll');
 	$hpNode.text('');
 	$hpNode.append("<span class='hp_val' data-for='hp'></span>");
 	rollHp(uid, $hpNode, hp);
-	$hpNode.append('<i id="health_'+uid+'" class="icon-heart"></i>');
+	$hpNode.append('<i id="health_'+uid+'" class="icon-heart"></i>');*/
 	var popover = $("#dummyModifiable").html();
 	popover = popover.split("1A").join(uid);
 	$("#health_"+uid).popover({
@@ -183,10 +192,9 @@ function setUpHp($parent, uid) {
 		placement: 'bottom',
 		content: popover,
 		title: "Modify HP"
-	}).click(function() {
+	}).click(function () {
 		$(".modify-hp").click(function() {
-			var uid = $(this).attr('data-uid');
-			var modHp = parseInt($("#"+uid+"_hp_mod").val());
+			var modHp = parseInt($$(uid+"_hp_mod").val());
 			if($(this).hasClass('subtract')) {
 				modifyHp(uid, -modHp);
 			} else {

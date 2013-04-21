@@ -11,11 +11,15 @@ function limitFeatNums(uid) {
 	$("#"+uid+"_mfeat_table .applyNum").each(function() {
 		var cbName = $(this).closest("td").prev().text();
 		var isPowerAttack = cbName == 'Power Attack';
+		var isCleave = cbName == 'Cleave';
 		$(this).change(function() {
 			var val = parseInt($(this).val());
 
 			var paMax = parseInt($("#"+uid+"_bab").text());
-			var max = clamp(0, (isPowerAttack ? paMax : 5), parseInt($("#"+uid+"_bab").attr('data-base-value')));
+			var cleaveMax = 4;
+			var expertMax = 5;
+			var finMax = isPowerAttack ? paMax : (isCleave ? cleaveMax : expertMax);
+			var max = clamp(0, finMax, parseInt($("#"+uid+"_bab").attr('data-base-value')));
 			val = clamp(0, max, val);
 
 			$(this).val(val);
@@ -25,10 +29,10 @@ function limitFeatNums(uid) {
 				incdecACStat(uid, "touch_ac", "Combat Expertise", null, val);
 			}
 		});
-		$(this).closest("td").attr('id', uid+'_calc_'+(isPowerAttack ? "pa" : "ce"));
+		$(this).closest("td").attr('id', uid+'_calc_'+(isPowerAttack ? "pa" : isCleave ? "cleave": "ce"));
 	});
 
-	$("#"+uid+"_mfeat_table .inline-checkbox").each(function() {
+	$(".inline-checkbox").each(function() {
 		var cbName = checkboxName($(this).closest("td").prev().text());
 		$(this).attr('id', uid+'_calc_'+(cbName));
 
@@ -43,6 +47,12 @@ function limitFeatNums(uid) {
 					incdecACStat(uid, "ac", "Dodge", false);
 					incdecACStat(uid, "touch_ac", "Dodge", false);
 				}
+			});
+		}
+
+		if(cbName == 'frenzy' || cbName == 'rage') {
+			var $this = $(this);
+			$(this).click(function() {
 			});
 		}
 	});
@@ -295,13 +305,13 @@ function _genButtonFunctionality($button) {
 			return;
 		}
 		if(!advMode) {
-			try {
+			//try {
 				monster = $.parseJSON(monster);
 				var uid = addNewMonster(monster);
 				setupGrids(uid);
-			} catch(e) {
-				console.error("error parsing monster: "+monster);
-			}
+			//} catch(e) {
+			//	console.error("error parsing monster: "+e);
+			//}
 			return;
 		}
 		$("#advGenMonsters").empty();

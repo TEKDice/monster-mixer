@@ -32,14 +32,14 @@ function hasNeedle(id, table, needle, returnVal) {
 }
 
 function modifyHp(uid, mod, notLog) {
+	if (isNaN(mod) || mod == 0) return;
+	monsters[uid].hp.mod().relative(mod);
+	/*
 	if(mod == 0) return;
 	var curHp = parseInt($("#"+uid+"_hp").children(".hp_val").text());
 
 	var newHp = eval(curHp+mod);
 	$("#"+uid+"_hp").children(".hp_val").text(newHp);
-
-	var $monsterNode = $("[href=#"+uid+"]");
-	var monsterName = $monsterNode.html();
 
 	var maxHp = parseInt($("#"+uid+"_hp").attr('data-initial-roll')) + parseInt($("#"+uid+"_hp").attr('data-mod-value'));
 
@@ -61,18 +61,24 @@ function modifyHp(uid, mod, notLog) {
 	} else {
 		$("#"+uid+"_hp").children(".hp_val").attr('data-original-title', text+"<br>Modification: "+(maxHp-curHp+mod));
 	}
+	*/
 
-	var hpPerc = Math.round((newHp/maxHp)*100);
+	var curHp = monsters[uid].hp.total();
+	var maxHp = monsters[uid].hp.initTotal();
+	var $monsterNode = $("[href=#" + uid + "]");
+	var monsterName = $monsterNode.html();
+
+	var hpPerc = Math.round((curHp/maxHp)*100);
 	if(hpPerc < 15)		 $monsterNode.attr('class','hp-critical');
 	else if(hpPerc < 50) $monsterNode.attr('class','hp-warning');
 	else 				 $monsterNode.attr('class','hp-good');
 
 	if(!notLog)
-		addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp. ("+newHp+"/"+maxHp+") ["+hpPerc+"%]");
+		addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp. ("+curHp+"/"+maxHp+") ["+hpPerc+"%]");
 
 	saveMonsters();
 
-	if(newHp <= 0) {		
+	if(curHp <= 0) {		
 		bootbox.confirm("It looks like "+$monsterNode.text()+" has died. Would you like to mark it as 'killed'?", function(result) {
 			if(result)
 				remove(uid, true);

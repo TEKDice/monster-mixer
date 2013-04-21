@@ -126,3 +126,13 @@ function roll(string) {
 	if(x <= 0 || y <= 0) return 0;
 	return Math.floor(Math.random()*(((x*y)-x)+1))+x;
 }
+
+var Roller = function () {
+	this.roll = new function (string) {
+		var xdy = string.split("d");
+		var x = parseInt(xdy[0]);
+		var y = parseInt(xdy[1]);
+		if (x <= 0 || y <= 0) return 0;
+		return Math.floor(Math.random() * (((x * y) - x) + 1)) + x;
+	};
+}
