@@ -2605,12 +2605,14 @@ var MonsterModel = function(uid, data) {
 	self.hp = new HPModel(self.monsterBaseStats.hit_dice, self.stats.con, self.uid);
 
 	self.speeds = new SpeedModel(data.mmove);
+
+	self.fatks = new FullAttackModel(data.mfatk);
 	
 	self.ac = new ACModel(self, {
 		"Natural AC": parseInt(self.monsterBaseStats.natural_ac),
 		"Base": 10,
-		"DEX Bonus": 0,
-		"Size Mod": 0
+		"DEX Bonus": self.stats.dex.bonus(),
+		"Size Mod": _getSizeModifier(self.stats.size())
 	});
 
 	self.formatCR = function (cr) {
@@ -2621,7 +2623,7 @@ var MonsterModel = function(uid, data) {
 function ACModel(monsterModel, props) {
 	var self = this;
 
-	self.sizeBonus = ko.observable(_getSizeModifier(monsterModel.size));
+	self.sizeBonus = ko.observable(_getSizeModifier(monsterModel.stats.size()));
 	self.dex = ko.observable(monsterModel.stats.dex.bonus());
 
 	monsterModel.stats.size.subscribe(function (newValue) {
@@ -2635,7 +2637,6 @@ function ACModel(monsterModel, props) {
 	});
 
 	self.arrayProps = ko.observable(props);
-	self.arrayProps()["DEX Bonus"] = self.dex();
 
 	self.flatfoot = new ArrayValueCountModel(monsterModel.uid + "_flatfoot_ac", self, []);
 	self.touch =	new ArrayValueCountModel(monsterModel.uid + "_touch_ac", self, ["Natural AC"]);
@@ -2676,6 +2677,35 @@ function HPModel(hpRoll, conModel, uid) {
 
 function FullAttackModel(fatks) {
 	var self = this;
+
+	if (fatks.length == 0) fatks.push({ "0": { aname: "None" }});
+
+	self.fatks = ko.observableArray(fatks);
+
+	self.formatName = function (fatk) {
+		var retStr = [];
+		$.each(fatk, function (i, e) {
+			retStr.push(e.aname || e.wname);
+		});
+		return retStr.join(", ");
+	};
+
+	self.toolTip = function (fatk) {
+		var retStr = '';
+		$.each(fatk, function (i, e) {
+			var atkStr = e.aname || e.wname;
+			atkStr += ': ';
+			var rollStr = e.hitdc;
+			var eleStr = (rollStr == '0' ? '' : '+') + e.dmgred_hd + ' ' + e.dmgname;
+			var count = e.whm || e.atkhm;
+
+			if (rollStr != '0') atkStr += rollStr + "x" + count + " ";
+			if (e.dmgname != null) atkStr += eleStr;
+			atkStr += "<br />";
+			retStr += atkStr;
+		});
+		return retStr;
+	};
 }
 
 function InitiativeModel(dexModel) {

@@ -345,10 +345,15 @@ function is_dev() {
 											</tr>
 										</tbody>
 									</table>
-									<table class="table table-striped table-condensed">
+									<table class="table table-striped table-condensed" data-bind="with: $parent.fatks">
 										<caption>Full Attacks</caption>
-										<tbody class="mfatk" id="1A_mfatk_table">
-											<tr class="no-data"><td>None</td></tr>
+										<tbody class="mfatk" id="1A_mfatk_table" data-bind="foreach: fatks">
+											<tr>
+												<td>
+													<i class="icon-bookmark"></i>
+													<a href="#" rel="tooltip" data-bind="text: $parent.formatName($data), bootstrapTooltip: {title: $parent.toolTip($data), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+												</td>
+											</tr>
 										</tbody>
 									</table>
 								</div> 
