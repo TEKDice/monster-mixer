@@ -5,19 +5,35 @@ var tempMon;
 var monsters = {};
 
 function addNewMonster(monster) {
+
 	$(".alert").hide();
 	$("#monsterList").show();
 
 	var uid = new Date().getTime();
 
+	_addNewMonster(monster, uid)
+
+	_hidePopup();
+
+	saveMonsters();
+
+	return uid;
+
+}
+
+function _addNewMonster(monster, uid, name) {
+
 	var $li = $("<li/>");
+
+	var realName = monster == null ? name : monster.data[0].name;
 
 	var $a = $("<a/>",{
 		href: "#"+uid
-	}).html("[<span class='logCount'>"+(++monsterCount)+"</span>] "+monster.data[0].name).attr('data-toggle','tab').attr('data-uid', uid);
+	}).html("[<span class='logCount'>"+(++monsterCount)+"</span>] "+realName).attr('data-toggle','tab').attr('data-uid', uid);
 
 	$a.appendTo($li);
 
+	//TODO make a 'getHpStatus' function or call modifyHp 0, 0
 	$a.attr('class','hp-good');
 
 	var newHtml = $("#dummyData").html();
@@ -32,7 +48,13 @@ function addNewMonster(monster) {
 		$(this).attr('id', $(this).attr('id').replace('1A', uid));
 	});
 
-	monsters[uid] = new MonsterModel(uid, monster);
+	$parent.find("*[data-uid*='1A']").each(function () {
+		$(this).attr('data-uid', $(this).attr('data-uid').replace('1A', uid));
+	});
+
+	if (!(uid in monsters)) {
+		monsters[uid] = new MonsterModel(uid, monster);
+	}
 	ko.applyBindings(monsters[uid], $$(uid)[0]);
 
 	setUpHp(uid);
@@ -55,12 +77,7 @@ function addNewMonster(monster) {
 	$li.appendTo($("#monsterList"));
 
 	$a.tab('show');
-	_hidePopup();
 	sortMonsters();
-
-	saveMonsters();
-
-	return uid;
 }
 
 function sortMonsters() {
@@ -114,9 +131,9 @@ function addDataToMonster($parent, monster, uid) {
 			if(attr == 'cr') {
 				if(root[attr] < 1) {
 					switch(root[attr]) {
-						case '0.25': $(this).html($("<div/>").html("&frac14;").text()); break;
-						case '0.33': $(this).html($("<div/>").html("&frac13;").text()); break;
-						case '0.50': $(this).html($("<div/>").html("&frac12;").text()); break;
+						case '0.25': return $("<div/>").html("&frac14;").text();
+						case '0.33': return $("<div/>").html("&frac13;").text();
+						case '0.50': return $("<div/>").html("&frac12;").text();
 					}
 				} else 
 					$(this).text(parseInt(root[attr]));
@@ -179,12 +196,6 @@ function addDataToMonster($parent, monster, uid) {
 }
 
 function setUpHp(uid) {
-	/*$hpNode = $parent.find("span[data-attr='hit_dice']");
-	var hp = $hpNode.attr('data-initial-roll');
-	$hpNode.text('');
-	$hpNode.append("<span class='hp_val' data-for='hp'></span>");
-	rollHp(uid, $hpNode, hp);
-	$hpNode.append('<i id="health_'+uid+'" class="icon-heart"></i>');*/
 	var popover = $("#dummyModifiable").html();
 	popover = popover.split("1A").join(uid);
 	$("#health_"+uid).popover({

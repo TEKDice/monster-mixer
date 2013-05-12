@@ -34,34 +34,6 @@ function hasNeedle(id, table, needle, returnVal) {
 function modifyHp(uid, mod, notLog) {
 	if (isNaN(mod) || mod == 0) return;
 	monsters[uid].hp.mod().relative(mod);
-	/*
-	if(mod == 0) return;
-	var curHp = parseInt($("#"+uid+"_hp").children(".hp_val").text());
-
-	var newHp = eval(curHp+mod);
-	$("#"+uid+"_hp").children(".hp_val").text(newHp);
-
-	var maxHp = parseInt($("#"+uid+"_hp").attr('data-initial-roll')) + parseInt($("#"+uid+"_hp").attr('data-mod-value'));
-
-	var text = $("#"+uid+"_hp").children(".hp_val").attr('data-original-title');
-	if(text.indexOf("Modification")!=-1) {
-		var newText = '';
-		text = text.split("<br>");
-		$.each(text, function(i, e) {
-			if(e.indexOf("Modification")!=-1) {
-				if((curHp+mod) == maxHp) return;
-				var newMod = parseInt(e.split(" ")[1]);
-				newText += "Modification: "+(mod+newMod);
-			} else {
-				newText += e;
-			}
-			if(i!=text.length-1)newText+="<br>";
-		});
-		$("#"+uid+"_hp").children(".hp_val").attr('data-original-title', newText);
-	} else {
-		$("#"+uid+"_hp").children(".hp_val").attr('data-original-title', text+"<br>Modification: "+(maxHp-curHp+mod));
-	}
-	*/
 
 	var curHp = monsters[uid].hp.total();
 	var maxHp = monsters[uid].hp.initTotal();
@@ -157,13 +129,8 @@ function _rollInit(uid, roll) {
 }
 
 function remove(uid, killed) {
-	var $node = $("#monsterList a[href=#"+uid+"]");
+	var $node = $("#monsterList a[href='#"+uid+"']");
 	var pos = parseInt($node.find('.logCount').text());
-
-	$node.parent().remove();
-	$(".tab-pane[data-for='"+uid+"']").remove();
-	$("div[data-nice-uid='"+uid+"']").hide();
-	$("#"+uid+"_log").remove();
 
 	var count = 0;
 
@@ -176,7 +143,8 @@ function remove(uid, killed) {
 	_showScrollbars($a);
 	$a.tab('show');
 
-	if(count > 0) {
+	if (count > 0) {
+		console.log(pos);
 		$a = $("#monsterList li:nth-child("+(pos-1)+")").find("a");
 		_showScrollbars($a);
 		$a.tab('show');
@@ -188,6 +156,11 @@ function remove(uid, killed) {
 		}
 		$("#monsterList").hide();
 	}
+
+	$node.parent().remove();
+	$(".tab-pane[data-for='" + uid + "']").remove();
+	$("div[data-nice-uid='" + uid + "']").hide();
+	$("#" + uid + "_log").remove();
 
 	saveMonsters();
 
@@ -204,7 +177,7 @@ function updateLogNumbers(uid, killed) {
 
 		if($monNode.length == 0) {
 			$(this).text(killed ? 'DEAD' : 'GONE');
-		} else {0
+		} else {
 			//$(this).text($monNode.find('.logCount').text());
 		}
 	});

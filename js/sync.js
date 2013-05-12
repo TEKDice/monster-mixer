@@ -3,7 +3,6 @@ var SESSIONS_VARIABLE = "sessions";
 var LAST_SESSION_VARIABLE = "lastSessionId";
 var hasReloadedSession = false;
 
-
 //monster modify, monster create, monster remove
 function saveMonsters() {
 	if(!loggedIn) return;
@@ -12,30 +11,28 @@ function saveMonsters() {
 
 	var saveTheseMonsters = [];
 
-	/*
+	
 	$("#monsterList li a").each(function(i, e) {
 		var uid = $(this).attr('data-uid');
 
 		var arrMon = monsters[uid];
 
-		console.log(arrMon);
-
 		var mon = {
-			id: arrMon.uid,
-			modHp: arrMon.hp.mod.val(),
+			id: arrMon.id,
+			modHp: arrMon.hp.mod().val(),
 			maxHp: arrMon.hp.initTotal(),
-			init: arrMon.init.num.val()
+			init: arrMon.initiative.init.num().val()
 		};
 
 		if(mon.id == '') return;
 
 		saveTheseMonsters.push(mon);
 	});
-	*/
+	
 
-	if (monsters.length == 0) return;
+	if (saveTheseMonsters.length == 0) return;
 
-	Data.setVar("monsters_" + currentSessionId, monsters);
+	Data.setVar("monsters_" + currentSessionId, saveTheseMonsters);
 
 	saveSession(false);
 
@@ -44,17 +41,16 @@ function saveMonsters() {
 
 function loadMonsters(monsterSet) {
 	if (!loggedIn) return;
-	/*
 
 	$("#overlay").fadeIn();
 
-	var monsters = [];
+	var loadTheseMonsters = [];
 
 	$.each(monsterSet, function(i, e) {
-		monsters.push(e.id);
+		loadTheseMonsters.push(e.id);
 	});
 
-	$.post('ajax.php', {action: "gen", ids: JSON.stringify(monsters)}, function(monsterArr) {
+	$.post('ajax.php', { action: "gen", ids: JSON.stringify(loadTheseMonsters) }, function (monsterArr) {
 		var arr = $.parseJSON(monsterArr);
 		$.eachAsync(arr, {
 			loop: function(i, e){
@@ -65,9 +61,10 @@ function loadMonsters(monsterSet) {
 					
 					var oldMonData = monsterSet[i];
 
-					//rollHp(uid, null, oldMonData.maxHp, true);
-					//modifyHp(uid, parseInt(oldMonData.curHp) - parseInt($("#"+uid+"_hp .hp_val").text()) , true);
-					//_rollInit(uid, parseInt(oldMonData.init));
+					monsters[uid].hp.mod().val(oldMonData.modHp);
+					monsters[uid].hp.hp().num().val(oldMonData.maxHp);
+					monsters[uid].initiative.init.num().val(oldMonData.init);
+
 					saveMonsters();
 				}, 1);
 			},
@@ -75,7 +72,7 @@ function loadMonsters(monsterSet) {
 				$("#overlay").fadeOut();
 			}
 		});
-	});*/
+	});
 }
 
 function removeAllMonsters() {

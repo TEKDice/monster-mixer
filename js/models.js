@@ -9,6 +9,10 @@ var MonsterModel = function(uid, data) {
 
 	self.uid = uid;
 
+	self.id = self.monsterBaseStats.m_id;
+
+	self.feats = new FeatModel(data.mfeat, uid);
+
 	//statmodel
 	self.stats = {
 		str:	new StatModel(self.monsterBaseStats['str']),
@@ -20,7 +24,7 @@ var MonsterModel = function(uid, data) {
 		fort:	new StatModel(self.monsterBaseStats['fort']),
 		ref:	new StatModel(self.monsterBaseStats['ref']),
 		will:	new StatModel(self.monsterBaseStats['will']),
-		grapple:new StatModel(self.monsterBaseStats['grapple']),
+		grapple:new GrappleModel(self.monsterBaseStats['grapple'],self.feats),
 		bab:	new StatModel(self.monsterBaseStats['base_atk']),
 		cmd:	new StatModel(self.monsterBaseStats['cmd']),
 		cmb:	new StatModel(self.monsterBaseStats['cmb']),
@@ -29,7 +33,8 @@ var MonsterModel = function(uid, data) {
 		space:	  self.monsterBaseStats['space_taken'],
 		treasure: self.monsterBaseStats['treasure'],
 
-		size:	ko.observable(self.monsterBaseStats.size)
+		size:	ko.observable(self.monsterBaseStats.size),
+		category: ko.observable(self.monsterBaseStats.category)
 	};
 
 	self.skills = new SkillModel(data.mskill);
@@ -37,8 +42,6 @@ var MonsterModel = function(uid, data) {
 	self.reductions = new DRModel(data.mdmgred);
 
 	self.qualities = new QualityModel(data.mqualit, self.monsterBaseStats.name);
-
-	self.feats = new FeatModel(data.mfeat);
 
 	self.armor = new ArmorModel(data.marmor);
 
@@ -48,9 +51,9 @@ var MonsterModel = function(uid, data) {
 
 	self.attacks = new WeaponAttackModel(data.mattack, self.monsterBaseStats.name);
 
-	self.initiative = new InitiativeModel(self.stats.dex);
+	self.initiative = new InitiativeModel(self.stats.dex, self.feats, self.uid);
 
-	self.hp = new HPModel(self.monsterBaseStats.hit_dice, self.stats.con, self.uid);
+	self.hp = new HPModel(self.monsterBaseStats.hit_dice, self.stats.con, self.feats, self.uid);
 
 	self.speeds = new SpeedModel(data.mmove);
 
@@ -64,8 +67,28 @@ var MonsterModel = function(uid, data) {
 	});
 
 	self.formatCR = function (cr) {
+		switch (cr) {
+			case '0.25': return $("<div/>").html("&frac14;").text();
+			case '0.33': return $("<div/>").html("&frac13;").text();
+			case '0.50': return $("<div/>").html("&frac12;").text();
+		}
 		return parseInt(cr);
 	};
+
+	self.nameTooltip = ko.computed(function () {
+		var retStr = self.stats.size() + " " + self.stats.category();
+
+		if (data.msubcat.length != 0) {
+			var arr = [];
+			$.each(data.msubcat, function (i, e) {
+				arr.push(e.subcategory);
+			});
+			retStr += " (" + arr.join(', ') + ")";
+		}
+
+		$$(uid + "_name").attr('data-original-title', retStr);
+		return retStr;
+	});
 }
 
 function ACModel(monsterModel, props) {
@@ -86,29 +109,42 @@ function ACModel(monsterModel, props) {
 
 	self.arrayProps = ko.observable(props);
 
-	self.flatfoot = new ArrayValueCountModel(monsterModel.uid + "_flatfoot_ac", self, []);
+	self.flatfoot = new ArrayValueCountModel(monsterModel.uid + "_flatfoot_ac", self, ["Dodge","Combat Expertise"]);
 	self.touch =	new ArrayValueCountModel(monsterModel.uid + "_touch_ac", self, ["Natural AC"]);
 	self.total =	new ArrayValueCountModel(monsterModel.uid + "_ac", self, []);
 }
 
-function HPModel(hpRoll, conModel, uid) {
+function HPModel(hpRoll, conModel, featModel, uid) {
 	var self = this;
 
 	self.hp = ko.observable(new RollableNumberModel(hpRoll));
 	self.con = ko.observable(conModel.bonus());
 	self.mod = ko.observable(new ModifiableNumberModel(0));
+	self.feats = ko.observable(featModel.feats);
 	self.uid = uid;
+
+	self.countToughness = ko.computed(function () {
+		var ret = 0;
+		$.each(self.feats()(), function (i, e) {
+			if (e.name == 'Toughness') ret = parseInt(e.feat_level);
+		});
+		return ret;
+	});
 
 	conModel.bonus.subscribe(function (newValue) {
 		self.con(newValue);
 	});
 
-	self.total = ko.computed(function () {
-		return self.hp().num().val() + self.mod().val();
-	});
-
 	self.initTotal = ko.computed(function () {
 		return self.hp().num().val();
+	});
+
+	self.calcConBonus = ko.computed(function () {
+		return self.con() * parseInt(hpRoll.split('d')[0]);
+	});
+
+	self.total = ko.computed(function () {
+		return self.initTotal() + self.mod().val() + (3 * self.countToughness()) + self.calcConBonus();
 	});
 
 	self.toolTip = ko.computed(function () {
@@ -116,6 +152,9 @@ function HPModel(hpRoll, conModel, uid) {
 		var modHp = self.mod().val();
 		var retStr = "Base (" + hpRoll + "): " + curHp;
 		if (modHp != 0) retStr += "<br>Modification: " + modHp;
+		if (self.calcConBonus() != 0) retStr += "<br>CON Bonus: " + self.calcConBonus();
+		if (self.countToughness() != 0) retStr += "<br>Toughness: " + (3 * self.countToughness());
+
 
 		//hack for dynamic tooltip text
 		$$(uid + "_hp").attr('data-original-title', retStr);
@@ -156,15 +195,30 @@ function FullAttackModel(fatks) {
 	};
 }
 
-function InitiativeModel(dexModel) {
+function InitiativeModel(dexModel, featModel, uid) {
 	var self = this;
 	self.init = new RollableNumberModel('1d20');
 	self.dex = ko.observable(dexModel.bonus());
+	self.feats = ko.observable(featModel.feats);
+
+	self.countImprovedInitiative = ko.computed(function () {
+		var ret = 0;
+		$.each(self.feats()(), function (i, e) {
+			if (e.name == 'Improved Initiative') ret = parseInt(e.feat_level);
+		});
+		return ret;
+	});
 
 	self.toolTip = ko.computed(function () {
 		var retStr = "Base (1d20): "+self.init.num().val();
-		if (self.dex != 0) retStr+= ("<br>DEX: " + self.dex());
+		if (self.dex != 0) retStr += ("<br>DEX: " + self.dex());
+		if (self.countImprovedInitiative() != 0) retStr += ("<br>Improved Initiative: "+(4 * self.countImprovedInitiative()));
+		$$(uid + "_init").attr('data-original-title', retStr);
 		return retStr;
+	});
+
+	featModel.feats.subscribe(function (newValue) {
+		self.feats(newValue);
 	});
 
 	dexModel.bonus.subscribe(function (newValue) {
@@ -172,17 +226,54 @@ function InitiativeModel(dexModel) {
 	});
 
 	self.totalInit = ko.computed(function () {
-		return self.init.num().val()+self.dex();
+		return self.init.num().val()+self.dex()+(4 * self.countImprovedInitiative());
 	});
 }
 
 function WeaponAttackModel(damagers, mname) {
 	var self = this;
 
-	if (damagers.length == 0) damagers.push({ name: "None", descript: "", hit_dice: '0' });
+	var _damagers = [];
+
+	$.each(damagers, function (i, e) {
+		if (e.hasOwnProperty("is_melee") && e.hasOwnProperty("is_ranged") && e.hasOwnProperty("wname") && e.is_melee == "1" && e.is_ranged != "0") {
+
+			var oldName = e.wname.trim();
+			var range = e.is_ranged;
+
+			e.wname = oldName + " (Melee)";
+			e.is_ranged = "0";
+			_damagers.push(e);
+
+			var newObject = $.extend(true, {}, e);
+
+			newObject.is_ranged = range;
+			newObject.is_melee = "0";
+			newObject.wname = oldName + " (Ranged)";
+
+			_damagers.push(newObject);
+
+		} else if (e.hasOwnProperty("is_multi_handed") && e.is_multi_handed == "1") {
+			var oldName = e.wname.trim();
+
+			e.is_one_handed = "1";
+			e.wname = oldName + " (1H)";
+			_damagers.push(e);
+
+			var newObject = $.extend(true, {}, e);
+
+			newObject.is_one_handed = "0";
+			newObject.wname = oldName + " (2H)";
+			_damagers.push(newObject);
+		} else {
+			_damagers.push(e);
+		}
+	});
+
+	if (damagers.length == 0) _damagers.push({ name: "None", descript: "", hit_dice: '0' });
 
 	self.mname = mname;
-	self.damagers = ko.observableArray(damagers);
+	self.damagers = ko.observableArray(_damagers);
 
 	self.countColumns = function (spatk) {
 		var cols = 3;
@@ -248,6 +339,26 @@ function ArmorModel(armors) {
 	this.armors = ko.observableArray(armors);
 }
 
+function GrappleModel(base, featModel) {
+	if (typeof base !== "number") base = parseInt(base);
+	var self = this;
+	self.feats = ko.observable(featModel.feats);
+	self.base = new ModifiableNumberModel(base);
+
+	self.grappleBonus = ko.computed(function () {
+		var ret = 0;
+		$.each(self.feats()(), function (i, e) {
+			if (e.name == 'Racial Grapple Bonus') ret += 4;
+			if (e.name == 'Improved Grapple') ret += 4;
+		});
+		return ret;
+	});
+
+	self.calc = ko.computed(function () {
+		return self.base.val() + self.grappleBonus();
+	});
+}
+
 function StatModel(base) {
 	if (typeof base !== "number") base = parseInt(base);
 	var self = this;
@@ -302,6 +413,8 @@ function ArrayValueCountModel(tag, model, filterProps) {
 function SkillModel(skills) {
 	var self = this;
 
+	if (skills.length == 1) if (skills[0].name == 'No Skills') skills.pop();
+
 	if (skills.length == 0) skills.push({ name: "None", sub_skill: "", descript: "", skill_level: 0 });
 
 	self.skills = ko.observableArray(skills);
@@ -317,22 +430,48 @@ function SkillModel(skills) {
 	};
 }
 
-function FeatModel(feats) {
+function FeatModel(feats, uid) {
 	var self = this;
+
+	if (feats.length == 1) if (feats[0].name == 'No Feats') feats.pop();
 
 	if (feats.length == 0) feats.push({ name: "None", descript: "" });
 
-	this.feats = ko.observableArray(feats);
+	self.uid = uid;
+	self.feats = ko.observableArray(feats);
+	self.checkboxFeats = ["Dodge", "Point Blank Shot", "Awesome Blow", "Frenzy", "Rage"];
+	self.numberFeats   = ["Power Attack", "Combat Expertise", "Cleave"];
 
-	//TODO count entries and show none if there are "no" entries (that grapple feat is not counted)
+	self.format = function (feat) {
+		return feat.name + (feat.feat_level > 1 ? " (x" + feat.feat_level + ")" : "");
+	};
 
-	self.format = function (name) {
-		return name;
+	self.canBeShown = function (name) {
+		return name != 'Racial Grapple Bonus';
+	};
+
+	self.hasCheckbox = function (name) {
+		return self.checkboxFeats.indexOf(name) != -1;
+	};
+
+	self.hasNumber = function (name) {
+		return self.numberFeats.indexOf(name) != -1;
+	};
+
+	self.countColumns = function (name) {
+		if (self.hasCheckbox(name) || self.hasNumber(name)) return 1;
+		return 2;
+	};
+	
+	self.formatSpName = function (name) {
+		return self.uid+"_calc_"+formatSpecialFeatName(name);
 	};
 }
 
 function QualityModel(qualities, mname) {
 	var self = this;
+
+	if (qualities.length == 1) if (qualities[0].name == 'No Qualities') qualities.pop();
 
 	if (qualities.length == 0) qualities.push({ name: "None", descript: "" });
 

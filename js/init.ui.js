@@ -8,7 +8,7 @@ var heightAdjust = 140;
 var resizeTimer;
 
 function limitFeatNums(uid) {
-	$("#"+uid+"_mfeat_table .applyNum").each(function() {
+	/*$("#"+uid+"_mfeat_table .applyNum").each(function() {
 		var cbName = $(this).closest("td").prev().text();
 		var isPowerAttack = cbName == 'Power Attack';
 		var isCleave = cbName == 'Cleave';
@@ -55,7 +55,7 @@ function limitFeatNums(uid) {
 			$(this).click(function() {
 			});
 		}
-	});
+	});*/
 }
 
 function incdecACStat(uid, acType, adder, isIncrement, value, canBeNegative) {

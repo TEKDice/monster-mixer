@@ -192,11 +192,11 @@ function is_dev() {
 				<div class="tab-pane" data-for="none" data-bind="with: monsters[$element.id]">
 					<div class="header lead" style="margin-bottom: 7px">
 						<span class="pull-left">Initiative: <span class="reg-has-tt" data-uid="1A" id="1A_init" data-bind="text: $parent.initiative.totalInit(), bootstrapTooltip: {title: $parent.initiative.toolTip(), html: true, placement: 'bottom'}"></span></span>
-						<span class="pull-right">CR: <span id="1A_cr" data-bind="text: $parent.formatCR($parent.monsterBaseStats['cr'])"></span>&nbsp;<i class='icon-trash delete' id="1A_remove"></i></span>
+						<span class="pull-right">CR: <span id="1A_cr" data-bind="text: $parent.formatCR($parent.monsterBaseStats['cr'])"></span>&nbsp;<i class='icon-trash delete' id="1A_remove" data-uid="1A"></i></span>
 						<center>
 							<span class="left"><i class="icon-backward"></i></span>
 
-							<span id="1A_name" rel='tooltip' href='#' class='reg-has-tt' data-bind="text: $parent.monsterBaseStats['name']"></span>
+							<span id="1A_name" rel='tooltip' href='#' class='reg-has-tt' data-bind="text: $parent.monsterBaseStats['name'], bootstrapTooltip: {title: $parent.nameTooltip(),html: true, placement: 'bottom'}"></span>
 							<span class="hp">
 								(<span class="reg-has-tt" id="1A_hp" data-bind="text: $parent.hp.total(), bootstrapTooltip: {title: $parent.hp.toolTip(),html: true, placement: 'bottom'}"></span><i class="icon-heart" data-bind="attr: {id: 'health_'+$parent.uid}"></i> 
 								hp)
@@ -277,7 +277,7 @@ function is_dev() {
 												<td>Will</td><td data-bind="text: $data.will.base.val()"  id="1A_will"></td>
 											</tr>
 											<tr>
-												<td>Grapple</td><td data-bind="text: $data.grapple.base.val()"  id="1A_grapple"></td>
+												<td>Grapple</td><td data-bind="text: $data.grapple.calc()"  id="1A_grapple"></td>
 											</tr>
 											<tr>
 												<td>CMB</td><td data-bind="text: $data.cmb.base.val()"  id="1A_cmb"></td>
@@ -520,17 +520,29 @@ function is_dev() {
 								<div class="minibox-content">
 									<table class="table table-striped table-condensed" data-bind="with: $parent.feats">
 										<tbody class="mfeat" id="1A_mfeat_table" data-bind="foreach: feats">
+											<!-- ko if: $parent.canBeShown($data.name) -->
 											<tr>
-												<td>
+												<td data-bind="attr: {colspan: $parent.countColumns($data.name)}">
 													<!-- ko if: descript !== "" -->
 													<i class="icon-bookmark"></i>
-													<a href="#" rel="tooltip" data-bind="text: $data.name, bootstrapTooltip: {title: $data.descript, html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+													<a href="#" rel="tooltip" data-bind="text: $parent.format($data), bootstrapTooltip: {title: $data.descript, html: true, placement: 'bottom', trigger: 'manual'}" ></a>
 													<!-- /ko -->
 													<!-- ko if: descript === "" -->
 													None
 													<!-- /ko -->
 												</td>
+												<!-- ko if: $parent.hasCheckbox($data.name) -->
+												<td class='sp'> 
+													<input class="inline-checkbox" data-bind="attr: {'data-spfunc': $data.name, 'data-uid': $parent.uid, id: $parent.formatSpName($data.name)}" type="checkbox" />
+												</td>
+												<!-- /ko -->
+												<!-- ko if: $parent.hasNumber($data.name) -->
+												<td class='sp'> 
+													<input class="input-mini-inline applyNum" placeholder="#" data-bind="attr: {'data-spfunc': $data.name, 'data-uid': $parent.uid, id: $parent.formatSpName($data.name)}" type="number" />
+												</td>
+												<!-- /ko -->
 											</tr>
+											<!-- /ko -->
 										</tbody>
 									</table>
 								</div> 
