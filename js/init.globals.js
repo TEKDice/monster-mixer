@@ -1,31 +1,31 @@
 function $$(str) {
-	return $("#"+str);
+	return $("#" + str);
 }
 
 function _arrToTooltip(arr) {
 	var ret = '';
-	for(var i in arr) {
-		if(arr[i] == 0) continue;
-		ret += i + ": "+arr[i]+"<br>";
+	for (var i in arr) {
+		if (arr[i] == 0) continue;
+		ret += i + ": " + arr[i] + "<br>";
 	}
 	return ret;
 }
 
 function overlayLoadingGif() {
 	$t = $("#monsterListCont");
-	if(!$t.length) return;
+	if (!$t.length) return;
 
 	$("#overlay").css({
-	  opacity : 0.8,
-	  top     : $t.offset().top,
-	  left	  : $t.offset().left,
-	  width   : $t.outerWidth(),
-	  height  : $t.outerHeight()
+		opacity: 0.8,
+		top: $t.offset().top,
+		left: $t.offset().left,
+		width: $t.outerWidth(),
+		height: $t.outerHeight()
 	});
 
 	$("#img-load").css({
-	  top  : ($t.height() / 2),
-	  left : ($t.width() / 2)
+		top: ($t.height() / 2),
+		left: ($t.width() / 2)
 	});
 }
 
@@ -34,26 +34,26 @@ function rollDice(str) {
 	try {
 		var rolls = $.parseJSON(str);
 		result = [];
-		$.each(rolls, function(i, e) {
-			if(i == 'Base') i = 'Base ('+e+')';
-			if(typeof e == 'string' && e.indexOf('d') != -1) 
+		$.each(rolls, function (i, e) {
+			if (i == 'Base') i = 'Base (' + e + ')';
+			if (typeof e == 'string' && e.indexOf('d') != -1)
 				result[i] = parseInt(rollExpression(e));
 			else
 				result[i] = isNaN(parseInt(e)) ? 0 : parseInt(e);
 		});
 
-	} catch(e) {
+	} catch (e) {
 		result = rollExpression(str);
 	}
-	if(result === undefined) {
-		bootbox.alert("The roll '"+str+"'' is invalid.");
+	if (result === undefined) {
+		bootbox.alert("The roll '" + str + "'' is invalid.");
 		return null;
 	}
 	return result;
 }
 
 function determineRoll($node) {
-	if($node.hasClass('roll_me')) {
+	if ($node.hasClass('roll_me')) {
 		var hp = rollExpression($node.attr('data-base-value'));
 		$node.attr('data-initial-roll', hp);
 	}
@@ -64,9 +64,9 @@ function getBonus(num) {
 }
 
 function get_bonus(num) {
-	num=parseInt(num);
-	if(num == 0 || isNaN(num)) return 0;
-	return Math.floor(num/2)-5;
+	num = parseInt(num);
+	if (num == 0 || isNaN(num)) return 0;
+	return Math.floor(num / 2) - 5;
 }
 
 function _cleanName(str) {
@@ -75,15 +75,15 @@ function _cleanName(str) {
 
 function bodyBinding() {
 
-	$("body").on('click', '.reroll-hp', function() {
+	$("body").on('click', '.reroll-hp', function () {
 		var uid = $(this).attr('data-uid');
 		monsters[uid].hp.hp().reroll();
 	});
 
-	$("body").on('click', '.left', function() {
+	$("body").on('click', '.left', function () {
 		var $cur = $("#monsterList").children(".active");
 		var $newtab;
-		if($cur.is($("#monsterList").children().first())) {
+		if ($cur.is($("#monsterList").children().first())) {
 			$newtab = $("#monsterList").children().last();
 		} else {
 			$newtab = $("#monsterList").children(".active").prev();
@@ -91,10 +91,10 @@ function bodyBinding() {
 		$newtab.children("a").tab('show');
 	});
 
-	$("body").on('click', '.right', function() {
+	$("body").on('click', '.right', function () {
 		var $cur = $("#monsterList").children(".active");
 		var $newtab;
-		if($cur.is($("#monsterList").children().last())) {
+		if ($cur.is($("#monsterList").children().last())) {
 			$newtab = $("#monsterList").children().first();
 		} else {
 			$newtab = $("#monsterList").children(".active").next();
@@ -102,8 +102,9 @@ function bodyBinding() {
 		$newtab.children("a").tab('show');
 	});
 
+	/*
 	$(".loaded").livequery(function() {
-		var $set = $(this).closest('.minibox-content').find("tr[data-roll]:not(.unrollable)");
+		var $set = $(this).closest('.minibox-content').find("tr:not(.unrollable)");
 		$set.each(function() {
 			$(this).click(function() {
 				$set.removeClass('info');
@@ -113,24 +114,24 @@ function bodyBinding() {
 					$(this).addClass('info');
 			});
 		});
-	});
+	});*/
 
-	$(".delete").livequery(function() {
-		$(this).click(function() {
+	$(".delete").livequery(function () {
+		$(this).click(function () {
 			var uid = $(this).attr('data-uid');
-			var name = $("#"+uid+"_name").text();
-			bootbox.confirm("Are you sure you want to remove "+name+" from the encounter?", function(result) {
-				if(result)
+			var name = $("#" + uid + "_name").text();
+			bootbox.confirm("Are you sure you want to remove " + name + " from the encounter?", function (result) {
+				if (result)
 					remove(uid, false);
 			});
 		});
 	});
-	
+
 	addFeatFunctions();
 }
 
 function addFeatFunctions() {
-	$("[data-spfunc='Dodge']").livequery(function() {
+	$("[data-spfunc='Dodge']").livequery(function () {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
 		$this.click(function () {
@@ -141,7 +142,7 @@ function addFeatFunctions() {
 			} else {
 				props["Dodge"] = 0;
 				monsters[uid].ac.arrayProps(props);
-			}			
+			}
 		})
 	});
 
@@ -162,7 +163,6 @@ function addFeatFunctions() {
 			var props = monsters[uid].ac.arrayProps();
 			props["Combat Expertise"] = val;
 			monsters[uid].ac.arrayProps(props);
-
 		}
 
 	};
@@ -177,7 +177,7 @@ function addFeatFunctions() {
 function collect() {
 	var ret = {};
 	var len = arguments.length;
-	for (var i=0; i<len; i++) {
+	for (var i = 0; i < len; i++) {
 		for (p in arguments[i]) {
 			if (arguments[i].hasOwnProperty(p)) {
 				ret[p] = arguments[i][p];
@@ -193,81 +193,81 @@ function clamp(min, max, num) {
 	return num;
 }
 
-var defaultFunction = function() {
+var defaultFunction = function () {
 	return "THIS IS AN ERROR";
 };
 
 function formatSpecialFeatName(name) {
-	switch(name) {
-		case 'Awesome Blow': 		return 'ab';
-		case 'Point Blank Shot': 	return 'pbs';
-		case 'Rage': 				return 'rage';
-		case 'Dodge': 				return 'dodge';
-		case 'Frenzy': 				return 'frenzy';
-		case 'Power Attack':		return 'pa';
-		case 'Cleave':				return 'cleave';
-		case 'Combat Expertise':	return 'ce';
+	switch (name) {
+		case 'Awesome Blow': return 'ab';
+		case 'Point Blank Shot': return 'pbs';
+		case 'Rage': return 'rage';
+		case 'Dodge': return 'dodge';
+		case 'Frenzy': return 'frenzy';
+		case 'Power Attack': return 'pa';
+		case 'Cleave': return 'cleave';
+		case 'Combat Expertise': return 'ce';
 	}
 	return searchNameForNamedEntries(name);
 }
 
 function searchNameForNamedEntries(name) {
-	if(name.indexOf('Frenzy') != -1) return 'frenzy';
-	if(name.indexOf('Rage') != -1) return 'rage';
+	if (name.indexOf('Frenzy') != -1) return 'frenzy';
+	if (name.indexOf('Rage') != -1) return 'rage';
 	return false;
 }
 
 var formatting = {
-	madvanc: 	defaultFunction,
-	malign: 	defaultFunction,
-	marmor: 	function(obj) {
-		return obj.aname + (obj.enchantment_bonus != "0" ? " +"+obj.enchantment_bonus : "");
+	madvanc: defaultFunction,
+	malign: defaultFunction,
+	marmor: function (obj) {
+		return obj.aname + (obj.enchantment_bonus != "0" ? " +" + obj.enchantment_bonus : "");
 	},
-	mattack:  	function(obj) {
-		return obj.aname + "</td><td>"+(obj.hitdc!='0' ? obj.hitdc : '')+"</td><td class='rightalign'>" + (obj.dmgname != null ? "+"+obj.dmgred_hd + " " + obj.dmgname : "");
+	mattack: function (obj) {
+		return obj.aname + "</td><td>" + (obj.hitdc != '0' ? obj.hitdc : '') + "</td><td class='rightalign'>" + (obj.dmgname != null ? "+" + obj.dmgred_hd + " " + obj.dmgname : "");
 	},
-	mdmgred: 	function(obj) {
-		return obj.name + "</td><td>" + (obj.reduction_amount=="0" ? "Immune" : obj.reduction_amount);
+	mdmgred: function (obj) {
+		return obj.name + "</td><td>" + (obj.reduction_amount == "0" ? "Immune" : obj.reduction_amount);
 	},
-	mfeat: 		function(obj) {
-		return obj.name + (obj.feat_level > 1 ? " (x"+obj.feat_level+")" : "") +"</td><td>"+
-		(obj.name == 'Power Attack' || obj.name == 'Combat Expertise' || obj.name == 'Cleave' ? '<input class="input-mini-inline applyNum" type="number" placeholder="#"></input>' : '') + 
-		(checkboxName(obj.name) ? '<input class="inline-checkbox" type="checkbox"></input>' : '') + 
+	mfeat: function (obj) {
+		return obj.name + (obj.feat_level > 1 ? " (x" + obj.feat_level + ")" : "") + "</td><td>" +
+		(obj.name == 'Power Attack' || obj.name == 'Combat Expertise' || obj.name == 'Cleave' ? '<input class="input-mini-inline applyNum" type="number" placeholder="#"></input>' : '') +
+		(checkboxName(obj.name) ? '<input class="inline-checkbox" type="checkbox"></input>' : '') +
 		"</td>";
 	},
-	mfatk: 		function(obj) {
+	mfatk: function (obj) {
 		var name = [];
-		$.each(obj, function(i, e) {
-			if(e.wname) name.push(e.wname);
-			if(e.atkname) name.push(e.atkname);
+		$.each(obj, function (i, e) {
+			if (e.wname) name.push(e.wname);
+			if (e.atkname) name.push(e.atkname);
 		});
 		return name.join(", ");
 	},
-	mlang: 		defaultFunction,
-	mmove:    	function(obj) {
-		return obj.movement_type + "</td><td>" + obj.movement_speed+"ft";
+	mlang: defaultFunction,
+	mmove: function (obj) {
+		return obj.movement_type + "</td><td>" + obj.movement_speed + "ft";
 	},
-	morgani: 	defaultFunction,
-	mqualit:  	function(obj) {
-		return obj.name + "</td><td>" + (obj.value != "0" ? obj.value+ (obj.name!="Spell Resistance" && obj.name!="Regeneration" && obj.name!="Turn Resistance" ? "ft" : "") : "");
+	morgani: defaultFunction,
+	mqualit: function (obj) {
+		return obj.name + "</td><td>" + (obj.value != "0" ? obj.value + (obj.name != "Spell Resistance" && obj.name != "Regeneration" && obj.name != "Turn Resistance" ? "ft" : "") : "");
 	},
-	mskill: 	function(obj) {
-		return obj.name + (obj.sub_skill!="" && obj.sub_skill!=null? " ("+obj.sub_skill+")" : "") + "</td><td>" + (parseInt(obj.skill_level)<0 ? obj.skill_level : "+"+obj.skill_level);
+	mskill: function (obj) {
+		return obj.name + (obj.sub_skill != "" && obj.sub_skill != null ? " (" + obj.sub_skill + ")" : "") + "</td><td>" + (parseInt(obj.skill_level) < 0 ? obj.skill_level : "+" + obj.skill_level);
 	},
-	mspatk: 	function(obj) {
+	mspatk: function (obj) {
 
-		return obj.name + "</td><td>" 
-		+ (obj.range != "0" ? obj.range+"ft" : "") 
-		+ "</td><td class='rightalign'>" 
+		return obj.name + "</td><td>"
+		+ (obj.range != "0" ? obj.range + "ft" : "")
+		+ "</td><td class='rightalign'>"
 		+ (checkboxName(obj.name) ? '<input class="inline-checkbox" type="checkbox"></input>' : '')
-		+ (obj.hit_dice != "0" ? obj.hit_dice : "")+" "
-		+ (obj.dmgred_hd != "0" && obj.dmgred_hd != null? "+"+obj.dmgred_hd+" "+obj.dmgred_nm : "");
+		+ (obj.hit_dice != "0" ? obj.hit_dice : "") + " "
+		+ (obj.dmgred_hd != "0" && obj.dmgred_hd != null ? "+" + obj.dmgred_hd + " " + obj.dmgred_nm : "");
 	},
-	msubcat: 	defaultFunction,
-	mterr: 		defaultFunction,
-	mtype: 		defaultFunction,
-	mweapon: 	function(obj) {
-		return obj.extra_wsize + " " + obj.wname + (obj.enchantment_bonus != "0" ? " +"+obj.enchantment_bonus : "") + "</td><td>" + obj.hitdc + "</td><td class='rightalign'>" + (obj.dmgname != null ? "+"+obj.dmgred_hd + " " + obj.dmgname : "");
+	msubcat: defaultFunction,
+	mterr: defaultFunction,
+	mtype: defaultFunction,
+	mweapon: function (obj) {
+		return obj.extra_wsize + " " + obj.wname + (obj.enchantment_bonus != "0" ? " +" + obj.enchantment_bonus : "") + "</td><td>" + obj.hitdc + "</td><td class='rightalign'>" + (obj.dmgname != null ? "+" + obj.dmgred_hd + " " + obj.dmgname : "");
 	}
 };
 
@@ -275,16 +275,16 @@ function hasTwoWeapons(uid) {
 	return hasFeat(uid, "Two-Weapon Fighting") || hasFeat(uid, "Multiweapon Fighting");
 }
 
-function hasWeaponFocus(obj, uid) {	
-	if(hasFeat(uid, "Weapon Focus")) {
+function hasWeaponFocus(obj, uid) {
+	if (hasFeat(uid, "Weapon Focus")) {
 		var name = fullFeatName(uid, "Weapon Focus");
-		var atk = name.substring(name.indexOf("(")+1, name.indexOf(")"));
-		if(obj.aname != undefined) {
-			if(obj.aname.toLowerCase().indexOf(atk.toLowerCase()) != -1)
+		var atk = name.substring(name.indexOf("(") + 1, name.indexOf(")"));
+		if (obj.aname != undefined) {
+			if (obj.aname.toLowerCase().indexOf(atk.toLowerCase()) != -1)
 				return true;
 		}
-		if(obj.wname != undefined) {
-			if(obj.wname.toLowerCase().indexOf(atk.toLowerCase()) != -1)
+		if (obj.wname != undefined) {
+			if (obj.wname.toLowerCase().indexOf(atk.toLowerCase()) != -1)
 				return true;
 		}
 	}
@@ -293,21 +293,21 @@ function hasWeaponFocus(obj, uid) {
 
 //DAMAGE
 var rollable = {
-	mfatk: function(obj, uid) {
+	mfatk: function (obj, uid) {
 		var ret = [];
 
-		$.each(obj, function(i, e) {
+		$.each(obj, function (i, e) {
 			var retO = {};
 
 			//attack
-			if(e.atkhd) {
+			if (e.atkhd) {
 				var json = rollable.mattack(e, uid);
 				var parsed = $.parseJSON(json);
 				retO = collect(retO, parsed);
 			}
 
 			//weapon
-			if(e.wname) {
+			if (e.wname) {
 				e.mfa_strict = e.mfa_strict == "0" ? "1" : "0";
 				var json = rollable.mweapon(e, uid, e.wir || e.mfa_range, e.mfa_strict);
 				var parsed = $.parseJSON(json);
@@ -319,66 +319,66 @@ var rollable = {
 
 		return JSON.stringify(ret);
 	},
-	mattack: function(obj, uid) {
+	mattack: function (obj, uid) {
 		var ret = {};
 		ret["Base"] = obj.hitdc;
-		if(obj.dmgname != null) 
-			ret[obj.dmgname+" ("+obj.dmgred_hd+")"] = obj.dmgred_hd;
+		if (obj.dmgname != null)
+			ret[obj.dmgname + " (" + obj.dmgred_hd + ")"] = obj.dmgred_hd;
 
-		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
-		ret["STR Mod"] = Math.floor(strBonus*parseFloat(obj.max_str_mod));
+		var strBonus = get_bonus(parseInt($("#" + uid + "_str").attr('data-base-value')));
+		ret["STR Mod"] = Math.floor(strBonus * parseFloat(obj.max_str_mod));
 
 		return JSON.stringify(ret);
 	},
-	mskill: function(obj, uid) {
+	mskill: function (obj, uid) {
 		var ret = {};
 		ret["Base"] = "1d20";
 		ret["Bonus"] = obj.skill_level;
 		return JSON.stringify(ret);
 	},
-	mweapon: function(obj, uid, range, melee) {
+	mweapon: function (obj, uid, range, melee) {
 		var ret = {};
 		ret["Base"] = obj.hitdc;
-		if(obj.dmgname != null) 
-			ret[obj.dmgname+" ("+obj.dmgred_hd+")"] = obj.dmgred_hd;
-			
-		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
+		if (obj.dmgname != null)
+			ret[obj.dmgname + " (" + obj.dmgred_hd + ")"] = obj.dmgred_hd;
+
+		var strBonus = get_bonus(parseInt($("#" + uid + "_str").attr('data-base-value')));
 		var strMod = parseFloat(obj.max_str_mod) || 0;
-						
+
 		ret["STR Mod"] = strBonus;
 
-		if(melee == "1") {
-			if(obj.is_uses_str_mod == "1") {
-				if(obj.is_one_handed == "0") {
-					if(strBonus != 0)
-						ret["STR Mod"] = strBonus*1.5;
-				} 
+		if (melee == "1") {
+			if (obj.is_uses_str_mod == "1") {
+				if (obj.is_one_handed == "0") {
+					if (strBonus != 0)
+						ret["STR Mod"] = strBonus * 1.5;
+				}
 			}
 		} else {
 
-			if(obj.wname.toLowerCase().indexOf('composite') != -1) {
+			if (obj.wname.toLowerCase().indexOf('composite') != -1) {
 				ret["STR Mod"] = clamp(0, strMod, strBonus);
 			}
 
-			if(strBonus < 0 && obj.wname.toLowerCase().indexOf('crossbow') == -1)
+			if (strBonus < 0 && obj.wname.toLowerCase().indexOf('crossbow') == -1)
 				ret["STR Mod"] = strBonus;
 		}
 
-		if(obj.enchantment_bonus != "0") 
+		if (obj.enchantment_bonus != "0")
 			ret["Enchantment"] = parseInt(obj.enchantment_bonus);
 
 		return JSON.stringify(ret);
 	},
-	mspatk: function(obj, uid) {
+	mspatk: function (obj, uid) {
 		var ret = {};
-		if(obj.hit_dice!='0')
+		if (obj.hit_dice != '0')
 			ret["Base"] = obj.hit_dice;
-		
-		if(obj.dmgred_hd!='0') 
+
+		if (obj.dmgred_hd != '0')
 			ret[obj.dmgred_nm] = obj.dmgred_hd;
 
-		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value'))) * parseFloat(obj.max_str_mod);
-		if(strBonus!=0)	ret["STR Mod"] = strBonus;
+		var strBonus = get_bonus(parseInt($("#" + uid + "_str").attr('data-base-value'))) * parseFloat(obj.max_str_mod);
+		if (strBonus != 0) ret["STR Mod"] = strBonus;
 		return JSON.stringify(ret);
 	}
 
@@ -386,32 +386,32 @@ var rollable = {
 
 //TO HIT ROLLS
 var attackRolls = {
-	mfatk: function(obj, uid, range) {
+	mfatk: function (obj, uid, range) {
 
 		var ret = [];
 
-		var weaponCount=[];
+		var weaponCount = [];
 
-		$.each(obj, function(i, e) {
+		$.each(obj, function (i, e) {
 
 			var retO = {};
 			//attack
-			if(e.atkhd) {
+			if (e.atkhd) {
 				var json = attackRolls.mattack(e, uid);
 				var parsed = $.parseJSON(json);
 				retO = collect(retO, parsed);
-				if(parseFloat(e.mfa_class_mult) == 0.5 && !hasTwoWeapons(uid)) {
-					if(hasFeat(uid, "Multiattack")) 
+				if (parseFloat(e.mfa_class_mult) == 0.5 && !hasTwoWeapons(uid)) {
+					if (hasFeat(uid, "Multiattack"))
 						retO["Secondary Penalty"] = -2;
 					else
 						retO["Secondary Penalty"] = -5;
 				}
 				e.wlight = "1";
-				e.mfa_class_mult == "0.50";
+				e.mfa_class_mult = "0.50";
 			}
 
 			//weapon
-			if(e.wname) {
+			if (e.wname) {
 				var json = attackRolls.mweapon(e, uid, e.mfa_range);
 				var parsed = $.parseJSON(json);
 				retO = collect(retO, parsed);
@@ -421,32 +421,32 @@ var attackRolls = {
 			ret.push(retO);
 		});
 
-		if(weaponCount.length > 1) {
+		if (weaponCount.length > 1) {
 
 			var minusTwo = false;
 
-			$.each(weaponCount, function(i, e) {
-				if((e.aname != null && e.wlight == "1") || e.wlight=="1" && e.mfa_class_mult == "0.50") {
+			$.each(weaponCount, function (i, e) {
+				if ((e.aname != null && e.wlight == "1") || e.wlight == "1" && e.mfa_class_mult == "0.50") {
 					minusTwo = true;
-				} 
+				}
 			});
 
 			var has2W = hasTwoWeapons(uid);
-			if(has2W)
-				$.each(weaponCount, function(i, e) {
+			if (has2W)
+				$.each(weaponCount, function (i, e) {
 					var minus = 0;
-					if(e.mfa_class_mult == "1.00") {
+					if (e.mfa_class_mult == "1.00") {
 						minus = -6;
-						if(has2W) 
+						if (has2W)
 							minus += 2;
-						if(minusTwo)
+						if (minusTwo)
 							minus += 2;
 						ret[i]["Multiweapon Penalty (Primary)"] = minus;
 					} else {
 						minus = -10;
-						if(has2W) 
+						if (has2W)
 							minus += 6;
-						if(minusTwo)
+						if (minusTwo)
 							minus += 2;
 						ret[i]["Multiweapon Penalty (Secondary)"] = minus;
 					}
@@ -455,93 +455,93 @@ var attackRolls = {
 
 		return JSON.stringify(ret);
 	},
-	mattack: function(obj, uid) {
+	mattack: function (obj, uid) {
 		var ret = {};
 		ret["Base"] = "1d20";
 
-		if(hasWeaponFocus(obj, uid)) 
+		if (hasWeaponFocus(obj, uid))
 			ret["Weapon Focus"] = 1;
 
-		var bab = parseInt($("#"+uid+"_bab").attr('data-base-value'));
-		if(bab!=0)		ret["BAB"] = bab;
+		var bab = parseInt($("#" + uid + "_bab").attr('data-base-value'));
+		if (bab != 0) ret["BAB"] = bab;
 
-		var size = $("#"+uid+"_size").attr('data-base-value');
+		var size = $("#" + uid + "_size").attr('data-base-value');
 		var sizeNum = sizeModifier(size);
-		if(sizeNum != 0) 
-			ret["Size ("+size+")"] = sizeNum;
+		if (sizeNum != 0)
+			ret["Size (" + size + ")"] = sizeNum;
 
-		if(obj.is_strictly_melee == "0") {
-			if(hasFeat(uid, "Weapon Finesse")) {
-				var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
+		if (obj.is_strictly_melee == "0") {
+			if (hasFeat(uid, "Weapon Finesse")) {
+				var dexBonus = get_bonus(parseInt($("#" + uid + "_dex").attr('data-base-value')));
 				ret["DEX Mod"] = dexBonus;
 
 			} else {
-				var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
-				if(strBonus!=0)	ret["STR Mod"] = strBonus;
+				var strBonus = get_bonus(parseInt($("#" + uid + "_str").attr('data-base-value')));
+				if (strBonus != 0) ret["STR Mod"] = strBonus;
 			}
 
 		} else {
-			var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
-			if(dexBonus!=0)	ret["DEX Mod"] = dexBonus;
+			var dexBonus = get_bonus(parseInt($("#" + uid + "_dex").attr('data-base-value')));
+			if (dexBonus != 0) ret["DEX Mod"] = dexBonus;
 		}
 
 		return JSON.stringify(ret);
 	},
-	mweapon: function(obj, uid, range) {
+	mweapon: function (obj, uid, range) {
 		var ret = {};
 		ret["Base"] = "1d20";
 
-		if(hasWeaponFocus(obj, uid)) 
+		if (hasWeaponFocus(obj, uid))
 			ret["Weapon Focus"] = 1;
 
-		var bab = parseInt($("#"+uid+"_bab").attr('data-base-value'));
-		if(bab!=0)		ret["BAB"] = bab;
+		var bab = parseInt($("#" + uid + "_bab").attr('data-base-value'));
+		if (bab != 0) ret["BAB"] = bab;
 
-		var size = $("#"+uid+"_size").attr('data-base-value');
+		var size = $("#" + uid + "_size").attr('data-base-value');
 		var sizeNum = sizeModifier(size);
-		if(sizeNum != 0) 
-			ret["Size ("+size+")"] = sizeNum;
+		if (sizeNum != 0)
+			ret["Size (" + size + ")"] = sizeNum;
 
-		if(range == "0") {
+		if (range == "0") {
 
-			if(hasFeat(uid, "Weapon Finesse")) {
-				var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
+			if (hasFeat(uid, "Weapon Finesse")) {
+				var dexBonus = get_bonus(parseInt($("#" + uid + "_dex").attr('data-base-value')));
 				ret["DEX Mod"] = dexBonus;
 
 			} else {
-				var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
-				if(strBonus!=0)	ret["STR Mod"] = strBonus;
+				var strBonus = get_bonus(parseInt($("#" + uid + "_str").attr('data-base-value')));
+				if (strBonus != 0) ret["STR Mod"] = strBonus;
 			}
 
-			if(obj.wname.indexOf('Javelin') != -1)
+			if (obj.wname.indexOf('Javelin') != -1)
 				ret["Javelin"] = -4;
 
 		} else {
-			if(obj.wname.toLowerCase().indexOf('composite') != -1) {
+			if (obj.wname.toLowerCase().indexOf('composite') != -1) {
 				var strMod = parseFloat(obj.max_str_mod) || 0;
-				if(strBonus < strMod) {
+				if (strBonus < strMod) {
 					ret["Composite Proficiency"] = -2;
 				}
 			}
-			var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
-			if(dexBonus!=0)	ret["DEX Mod"] = dexBonus;
+			var dexBonus = get_bonus(parseInt($("#" + uid + "_dex").attr('data-base-value')));
+			if (dexBonus != 0) ret["DEX Mod"] = dexBonus;
 		}
 
-		if(obj.enchantment_bonus != "0") 
+		if (obj.enchantment_bonus != "0")
 			ret["Enchantment"] = parseInt(obj.enchantment_bonus);
 
 		return JSON.stringify(ret);
 	},
-	mspatk: function(obj, uid, range) {
+	mspatk: function (obj, uid, range) {
 		var ret = {};
 		ret["Base"] = "1d20";
-		if(range == "0") {
-			var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
-			if(strBonus!=0)	ret["STR Mod"] = strBonus;
+		if (range == "0") {
+			var strBonus = get_bonus(parseInt($("#" + uid + "_str").attr('data-base-value')));
+			if (strBonus != 0) ret["STR Mod"] = strBonus;
 
 		} else {
-			var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
-			if(dexBonus!=0)	ret["DEX Mod"] = dexBonus;
+			var dexBonus = get_bonus(parseInt($("#" + uid + "_dex").attr('data-base-value')));
+			if (dexBonus != 0) ret["DEX Mod"] = dexBonus;
 		}
 
 		return JSON.stringify(ret);
@@ -549,19 +549,19 @@ var attackRolls = {
 };
 
 var mainStat = {
-	mattack: function(obj) {
+	mattack: function (obj) {
 		return obj.aname;
 	},
-	mskill: function(obj) {
+	mskill: function (obj) {
 		return obj.name;
 	},
-	mweapon: function(obj) {
+	mweapon: function (obj) {
 		return obj.wname;
 	},
-	mspatk: function(obj) {
+	mspatk: function (obj) {
 		return obj.name;
 	},
-	mfatk: function(obj) {
+	mfatk: function (obj) {
 		return formatting["mfatk"](obj);
 	}
 };

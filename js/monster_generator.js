@@ -78,7 +78,7 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 	if(exprFor) exprFor = exprFor.trim();
 
 	var nameFor = $("a[href='#"+idFor+"']").html();
-	var is2h = expr.indexOf("(2h)") != -1;
+	var is2h = expr.indexOf("(2H)") != -1;
 	var iters = 1;
 
 	var totalAttacks = atkCtOverride != null ? atkCtOverride : howManyAttacks;
@@ -166,28 +166,30 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 }
 
 function attack($rollable, $roller, uid) {
-	var isFullAttack = typeof $rollable.attr('data-fatk') !== 'undefined';
 
-	var expr = $rollable.attr('data-roll');
+	var data = $.parseJSON($rollable.attr('data-roll'));
 
-	var spatkFor = $rollable.attr('data-spatk');
-	var exprFor = $rollable.attr('data-roll-for');
+	var isFullAttack = data.isFatk;
+
+	var expr = JSON.stringify(data.primary);
+
+	var spatkFor = data.spatk;
+	var exprFor = data.for;
 	var idFor = $roller.closest('div[data-for]').attr('id');
 
-	var isAttack = $rollable.attr('data-attack-roll');
-	isAttack = typeof isAttack !== 'undefined' && isAttack !== false;
-	var howManyAttacks = parseInt($rollable.attr('data-how-many')) || 1;
-	var isRanged = $rollable.attr('data-range') != "0";
-	var threatRange = parseInt($rollable.attr('data-min-crit'));
-	var attackRollString = $rollable.attr('data-attack-roll');
-	var crits = parseInt($rollable.attr('data-crit-mult'));
+	var isAttack = typeof data.secondary !== 'undefined' && data.secondary !== false;
+	var howManyAttacks = data.howMany || 1;
+	var isRanged = data.range;
+	var threatRange = data.minCrit;
+	var attackRollString = JSON.stringify(data.secondary);
+	var crits = data.critMult;
 
-	var cleaveVal = $("#"+uid+"_calc_cleave").children().val();
+	var cleaveVal = $$(uid+"_calc_cleave").children().val();
 
 	if(isFullAttack) {
-		var fatk = $.parseJSON($rollable.attr('data-fatk'));
+		var fatk = data.primary;
 
-		isRanged = fatk.range != "0";
+		isRanged = fatk.range != 0;
 
 		$.each(fatk.rolls, function(i, ee) {
 			var index = ee.refIndex;
@@ -614,33 +616,33 @@ function initializeFilterSelect() {
 }
 ///#source 1 1 /monsters/js/init.globals.js
 function $$(str) {
-	return $("#"+str);
+	return $("#" + str);
 }
 
 function _arrToTooltip(arr) {
 	var ret = '';
-	for(var i in arr) {
-		if(arr[i] == 0) continue;
-		ret += i + ": "+arr[i]+"<br>";
+	for (var i in arr) {
+		if (arr[i] == 0) continue;
+		ret += i + ": " + arr[i] + "<br>";
 	}
 	return ret;
 }
 
 function overlayLoadingGif() {
 	$t = $("#monsterListCont");
-	if(!$t.length) return;
+	if (!$t.length) return;
 
 	$("#overlay").css({
-	  opacity : 0.8,
-	  top     : $t.offset().top,
-	  left	  : $t.offset().left,
-	  width   : $t.outerWidth(),
-	  height  : $t.outerHeight()
+		opacity: 0.8,
+		top: $t.offset().top,
+		left: $t.offset().left,
+		width: $t.outerWidth(),
+		height: $t.outerHeight()
 	});
 
 	$("#img-load").css({
-	  top  : ($t.height() / 2),
-	  left : ($t.width() / 2)
+		top: ($t.height() / 2),
+		left: ($t.width() / 2)
 	});
 }
 
@@ -649,26 +651,26 @@ function rollDice(str) {
 	try {
 		var rolls = $.parseJSON(str);
 		result = [];
-		$.each(rolls, function(i, e) {
-			if(i == 'Base') i = 'Base ('+e+')';
-			if(typeof e == 'string' && e.indexOf('d') != -1) 
+		$.each(rolls, function (i, e) {
+			if (i == 'Base') i = 'Base (' + e + ')';
+			if (typeof e == 'string' && e.indexOf('d') != -1)
 				result[i] = parseInt(rollExpression(e));
 			else
 				result[i] = isNaN(parseInt(e)) ? 0 : parseInt(e);
 		});
 
-	} catch(e) {
+	} catch (e) {
 		result = rollExpression(str);
 	}
-	if(result === undefined) {
-		bootbox.alert("The roll '"+str+"'' is invalid.");
+	if (result === undefined) {
+		bootbox.alert("The roll '" + str + "'' is invalid.");
 		return null;
 	}
 	return result;
 }
 
 function determineRoll($node) {
-	if($node.hasClass('roll_me')) {
+	if ($node.hasClass('roll_me')) {
 		var hp = rollExpression($node.attr('data-base-value'));
 		$node.attr('data-initial-roll', hp);
 	}
@@ -679,9 +681,9 @@ function getBonus(num) {
 }
 
 function get_bonus(num) {
-	num=parseInt(num);
-	if(num == 0 || isNaN(num)) return 0;
-	return Math.floor(num/2)-5;
+	num = parseInt(num);
+	if (num == 0 || isNaN(num)) return 0;
+	return Math.floor(num / 2) - 5;
 }
 
 function _cleanName(str) {
@@ -690,15 +692,15 @@ function _cleanName(str) {
 
 function bodyBinding() {
 
-	$("body").on('click', '.reroll-hp', function() {
+	$("body").on('click', '.reroll-hp', function () {
 		var uid = $(this).attr('data-uid');
 		monsters[uid].hp.hp().reroll();
 	});
 
-	$("body").on('click', '.left', function() {
+	$("body").on('click', '.left', function () {
 		var $cur = $("#monsterList").children(".active");
 		var $newtab;
-		if($cur.is($("#monsterList").children().first())) {
+		if ($cur.is($("#monsterList").children().first())) {
 			$newtab = $("#monsterList").children().last();
 		} else {
 			$newtab = $("#monsterList").children(".active").prev();
@@ -706,10 +708,10 @@ function bodyBinding() {
 		$newtab.children("a").tab('show');
 	});
 
-	$("body").on('click', '.right', function() {
+	$("body").on('click', '.right', function () {
 		var $cur = $("#monsterList").children(".active");
 		var $newtab;
-		if($cur.is($("#monsterList").children().last())) {
+		if ($cur.is($("#monsterList").children().last())) {
 			$newtab = $("#monsterList").children().first();
 		} else {
 			$newtab = $("#monsterList").children(".active").next();
@@ -717,8 +719,9 @@ function bodyBinding() {
 		$newtab.children("a").tab('show');
 	});
 
+	/*
 	$(".loaded").livequery(function() {
-		var $set = $(this).closest('.minibox-content').find("tr[data-roll]:not(.unrollable)");
+		var $set = $(this).closest('.minibox-content').find("tr:not(.unrollable)");
 		$set.each(function() {
 			$(this).click(function() {
 				$set.removeClass('info');
@@ -728,24 +731,24 @@ function bodyBinding() {
 					$(this).addClass('info');
 			});
 		});
-	});
+	});*/
 
-	$(".delete").livequery(function() {
-		$(this).click(function() {
+	$(".delete").livequery(function () {
+		$(this).click(function () {
 			var uid = $(this).attr('data-uid');
-			var name = $("#"+uid+"_name").text();
-			bootbox.confirm("Are you sure you want to remove "+name+" from the encounter?", function(result) {
-				if(result)
+			var name = $("#" + uid + "_name").text();
+			bootbox.confirm("Are you sure you want to remove " + name + " from the encounter?", function (result) {
+				if (result)
 					remove(uid, false);
 			});
 		});
 	});
-	
+
 	addFeatFunctions();
 }
 
 function addFeatFunctions() {
-	$("[data-spfunc='Dodge']").livequery(function() {
+	$("[data-spfunc='Dodge']").livequery(function () {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
 		$this.click(function () {
@@ -756,7 +759,7 @@ function addFeatFunctions() {
 			} else {
 				props["Dodge"] = 0;
 				monsters[uid].ac.arrayProps(props);
-			}			
+			}
 		})
 	});
 
@@ -777,7 +780,6 @@ function addFeatFunctions() {
 			var props = monsters[uid].ac.arrayProps();
 			props["Combat Expertise"] = val;
 			monsters[uid].ac.arrayProps(props);
-
 		}
 
 	};
@@ -792,7 +794,7 @@ function addFeatFunctions() {
 function collect() {
 	var ret = {};
 	var len = arguments.length;
-	for (var i=0; i<len; i++) {
+	for (var i = 0; i < len; i++) {
 		for (p in arguments[i]) {
 			if (arguments[i].hasOwnProperty(p)) {
 				ret[p] = arguments[i][p];
@@ -808,81 +810,81 @@ function clamp(min, max, num) {
 	return num;
 }
 
-var defaultFunction = function() {
+var defaultFunction = function () {
 	return "THIS IS AN ERROR";
 };
 
 function formatSpecialFeatName(name) {
-	switch(name) {
-		case 'Awesome Blow': 		return 'ab';
-		case 'Point Blank Shot': 	return 'pbs';
-		case 'Rage': 				return 'rage';
-		case 'Dodge': 				return 'dodge';
-		case 'Frenzy': 				return 'frenzy';
-		case 'Power Attack':		return 'pa';
-		case 'Cleave':				return 'cleave';
-		case 'Combat Expertise':	return 'ce';
+	switch (name) {
+		case 'Awesome Blow': return 'ab';
+		case 'Point Blank Shot': return 'pbs';
+		case 'Rage': return 'rage';
+		case 'Dodge': return 'dodge';
+		case 'Frenzy': return 'frenzy';
+		case 'Power Attack': return 'pa';
+		case 'Cleave': return 'cleave';
+		case 'Combat Expertise': return 'ce';
 	}
 	return searchNameForNamedEntries(name);
 }
 
 function searchNameForNamedEntries(name) {
-	if(name.indexOf('Frenzy') != -1) return 'frenzy';
-	if(name.indexOf('Rage') != -1) return 'rage';
+	if (name.indexOf('Frenzy') != -1) return 'frenzy';
+	if (name.indexOf('Rage') != -1) return 'rage';
 	return false;
 }
 
 var formatting = {
-	madvanc: 	defaultFunction,
-	malign: 	defaultFunction,
-	marmor: 	function(obj) {
-		return obj.aname + (obj.enchantment_bonus != "0" ? " +"+obj.enchantment_bonus : "");
+	madvanc: defaultFunction,
+	malign: defaultFunction,
+	marmor: function (obj) {
+		return obj.aname + (obj.enchantment_bonus != "0" ? " +" + obj.enchantment_bonus : "");
 	},
-	mattack:  	function(obj) {
-		return obj.aname + "</td><td>"+(obj.hitdc!='0' ? obj.hitdc : '')+"</td><td class='rightalign'>" + (obj.dmgname != null ? "+"+obj.dmgred_hd + " " + obj.dmgname : "");
+	mattack: function (obj) {
+		return obj.aname + "</td><td>" + (obj.hitdc != '0' ? obj.hitdc : '') + "</td><td class='rightalign'>" + (obj.dmgname != null ? "+" + obj.dmgred_hd + " " + obj.dmgname : "");
 	},
-	mdmgred: 	function(obj) {
-		return obj.name + "</td><td>" + (obj.reduction_amount=="0" ? "Immune" : obj.reduction_amount);
+	mdmgred: function (obj) {
+		return obj.name + "</td><td>" + (obj.reduction_amount == "0" ? "Immune" : obj.reduction_amount);
 	},
-	mfeat: 		function(obj) {
-		return obj.name + (obj.feat_level > 1 ? " (x"+obj.feat_level+")" : "") +"</td><td>"+
-		(obj.name == 'Power Attack' || obj.name == 'Combat Expertise' || obj.name == 'Cleave' ? '<input class="input-mini-inline applyNum" type="number" placeholder="#"></input>' : '') + 
-		(checkboxName(obj.name) ? '<input class="inline-checkbox" type="checkbox"></input>' : '') + 
+	mfeat: function (obj) {
+		return obj.name + (obj.feat_level > 1 ? " (x" + obj.feat_level + ")" : "") + "</td><td>" +
+		(obj.name == 'Power Attack' || obj.name == 'Combat Expertise' || obj.name == 'Cleave' ? '<input class="input-mini-inline applyNum" type="number" placeholder="#"></input>' : '') +
+		(checkboxName(obj.name) ? '<input class="inline-checkbox" type="checkbox"></input>' : '') +
 		"</td>";
 	},
-	mfatk: 		function(obj) {
+	mfatk: function (obj) {
 		var name = [];
-		$.each(obj, function(i, e) {
-			if(e.wname) name.push(e.wname);
-			if(e.atkname) name.push(e.atkname);
+		$.each(obj, function (i, e) {
+			if (e.wname) name.push(e.wname);
+			if (e.atkname) name.push(e.atkname);
 		});
 		return name.join(", ");
 	},
-	mlang: 		defaultFunction,
-	mmove:    	function(obj) {
-		return obj.movement_type + "</td><td>" + obj.movement_speed+"ft";
+	mlang: defaultFunction,
+	mmove: function (obj) {
+		return obj.movement_type + "</td><td>" + obj.movement_speed + "ft";
 	},
-	morgani: 	defaultFunction,
-	mqualit:  	function(obj) {
-		return obj.name + "</td><td>" + (obj.value != "0" ? obj.value+ (obj.name!="Spell Resistance" && obj.name!="Regeneration" && obj.name!="Turn Resistance" ? "ft" : "") : "");
+	morgani: defaultFunction,
+	mqualit: function (obj) {
+		return obj.name + "</td><td>" + (obj.value != "0" ? obj.value + (obj.name != "Spell Resistance" && obj.name != "Regeneration" && obj.name != "Turn Resistance" ? "ft" : "") : "");
 	},
-	mskill: 	function(obj) {
-		return obj.name + (obj.sub_skill!="" && obj.sub_skill!=null? " ("+obj.sub_skill+")" : "") + "</td><td>" + (parseInt(obj.skill_level)<0 ? obj.skill_level : "+"+obj.skill_level);
+	mskill: function (obj) {
+		return obj.name + (obj.sub_skill != "" && obj.sub_skill != null ? " (" + obj.sub_skill + ")" : "") + "</td><td>" + (parseInt(obj.skill_level) < 0 ? obj.skill_level : "+" + obj.skill_level);
 	},
-	mspatk: 	function(obj) {
+	mspatk: function (obj) {
 
-		return obj.name + "</td><td>" 
-		+ (obj.range != "0" ? obj.range+"ft" : "") 
-		+ "</td><td class='rightalign'>" 
+		return obj.name + "</td><td>"
+		+ (obj.range != "0" ? obj.range + "ft" : "")
+		+ "</td><td class='rightalign'>"
 		+ (checkboxName(obj.name) ? '<input class="inline-checkbox" type="checkbox"></input>' : '')
-		+ (obj.hit_dice != "0" ? obj.hit_dice : "")+" "
-		+ (obj.dmgred_hd != "0" && obj.dmgred_hd != null? "+"+obj.dmgred_hd+" "+obj.dmgred_nm : "");
+		+ (obj.hit_dice != "0" ? obj.hit_dice : "") + " "
+		+ (obj.dmgred_hd != "0" && obj.dmgred_hd != null ? "+" + obj.dmgred_hd + " " + obj.dmgred_nm : "");
 	},
-	msubcat: 	defaultFunction,
-	mterr: 		defaultFunction,
-	mtype: 		defaultFunction,
-	mweapon: 	function(obj) {
-		return obj.extra_wsize + " " + obj.wname + (obj.enchantment_bonus != "0" ? " +"+obj.enchantment_bonus : "") + "</td><td>" + obj.hitdc + "</td><td class='rightalign'>" + (obj.dmgname != null ? "+"+obj.dmgred_hd + " " + obj.dmgname : "");
+	msubcat: defaultFunction,
+	mterr: defaultFunction,
+	mtype: defaultFunction,
+	mweapon: function (obj) {
+		return obj.extra_wsize + " " + obj.wname + (obj.enchantment_bonus != "0" ? " +" + obj.enchantment_bonus : "") + "</td><td>" + obj.hitdc + "</td><td class='rightalign'>" + (obj.dmgname != null ? "+" + obj.dmgred_hd + " " + obj.dmgname : "");
 	}
 };
 
@@ -890,16 +892,16 @@ function hasTwoWeapons(uid) {
 	return hasFeat(uid, "Two-Weapon Fighting") || hasFeat(uid, "Multiweapon Fighting");
 }
 
-function hasWeaponFocus(obj, uid) {	
-	if(hasFeat(uid, "Weapon Focus")) {
+function hasWeaponFocus(obj, uid) {
+	if (hasFeat(uid, "Weapon Focus")) {
 		var name = fullFeatName(uid, "Weapon Focus");
-		var atk = name.substring(name.indexOf("(")+1, name.indexOf(")"));
-		if(obj.aname != undefined) {
-			if(obj.aname.toLowerCase().indexOf(atk.toLowerCase()) != -1)
+		var atk = name.substring(name.indexOf("(") + 1, name.indexOf(")"));
+		if (obj.aname != undefined) {
+			if (obj.aname.toLowerCase().indexOf(atk.toLowerCase()) != -1)
 				return true;
 		}
-		if(obj.wname != undefined) {
-			if(obj.wname.toLowerCase().indexOf(atk.toLowerCase()) != -1)
+		if (obj.wname != undefined) {
+			if (obj.wname.toLowerCase().indexOf(atk.toLowerCase()) != -1)
 				return true;
 		}
 	}
@@ -908,21 +910,21 @@ function hasWeaponFocus(obj, uid) {
 
 //DAMAGE
 var rollable = {
-	mfatk: function(obj, uid) {
+	mfatk: function (obj, uid) {
 		var ret = [];
 
-		$.each(obj, function(i, e) {
+		$.each(obj, function (i, e) {
 			var retO = {};
 
 			//attack
-			if(e.atkhd) {
+			if (e.atkhd) {
 				var json = rollable.mattack(e, uid);
 				var parsed = $.parseJSON(json);
 				retO = collect(retO, parsed);
 			}
 
 			//weapon
-			if(e.wname) {
+			if (e.wname) {
 				e.mfa_strict = e.mfa_strict == "0" ? "1" : "0";
 				var json = rollable.mweapon(e, uid, e.wir || e.mfa_range, e.mfa_strict);
 				var parsed = $.parseJSON(json);
@@ -934,66 +936,66 @@ var rollable = {
 
 		return JSON.stringify(ret);
 	},
-	mattack: function(obj, uid) {
+	mattack: function (obj, uid) {
 		var ret = {};
 		ret["Base"] = obj.hitdc;
-		if(obj.dmgname != null) 
-			ret[obj.dmgname+" ("+obj.dmgred_hd+")"] = obj.dmgred_hd;
+		if (obj.dmgname != null)
+			ret[obj.dmgname + " (" + obj.dmgred_hd + ")"] = obj.dmgred_hd;
 
-		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
-		ret["STR Mod"] = Math.floor(strBonus*parseFloat(obj.max_str_mod));
+		var strBonus = get_bonus(parseInt($("#" + uid + "_str").attr('data-base-value')));
+		ret["STR Mod"] = Math.floor(strBonus * parseFloat(obj.max_str_mod));
 
 		return JSON.stringify(ret);
 	},
-	mskill: function(obj, uid) {
+	mskill: function (obj, uid) {
 		var ret = {};
 		ret["Base"] = "1d20";
 		ret["Bonus"] = obj.skill_level;
 		return JSON.stringify(ret);
 	},
-	mweapon: function(obj, uid, range, melee) {
+	mweapon: function (obj, uid, range, melee) {
 		var ret = {};
 		ret["Base"] = obj.hitdc;
-		if(obj.dmgname != null) 
-			ret[obj.dmgname+" ("+obj.dmgred_hd+")"] = obj.dmgred_hd;
-			
-		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
+		if (obj.dmgname != null)
+			ret[obj.dmgname + " (" + obj.dmgred_hd + ")"] = obj.dmgred_hd;
+
+		var strBonus = get_bonus(parseInt($("#" + uid + "_str").attr('data-base-value')));
 		var strMod = parseFloat(obj.max_str_mod) || 0;
-						
+
 		ret["STR Mod"] = strBonus;
 
-		if(melee == "1") {
-			if(obj.is_uses_str_mod == "1") {
-				if(obj.is_one_handed == "0") {
-					if(strBonus != 0)
-						ret["STR Mod"] = strBonus*1.5;
-				} 
+		if (melee == "1") {
+			if (obj.is_uses_str_mod == "1") {
+				if (obj.is_one_handed == "0") {
+					if (strBonus != 0)
+						ret["STR Mod"] = strBonus * 1.5;
+				}
 			}
 		} else {
 
-			if(obj.wname.toLowerCase().indexOf('composite') != -1) {
+			if (obj.wname.toLowerCase().indexOf('composite') != -1) {
 				ret["STR Mod"] = clamp(0, strMod, strBonus);
 			}
 
-			if(strBonus < 0 && obj.wname.toLowerCase().indexOf('crossbow') == -1)
+			if (strBonus < 0 && obj.wname.toLowerCase().indexOf('crossbow') == -1)
 				ret["STR Mod"] = strBonus;
 		}
 
-		if(obj.enchantment_bonus != "0") 
+		if (obj.enchantment_bonus != "0")
 			ret["Enchantment"] = parseInt(obj.enchantment_bonus);
 
 		return JSON.stringify(ret);
 	},
-	mspatk: function(obj, uid) {
+	mspatk: function (obj, uid) {
 		var ret = {};
-		if(obj.hit_dice!='0')
+		if (obj.hit_dice != '0')
 			ret["Base"] = obj.hit_dice;
-		
-		if(obj.dmgred_hd!='0') 
+
+		if (obj.dmgred_hd != '0')
 			ret[obj.dmgred_nm] = obj.dmgred_hd;
 
-		var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value'))) * parseFloat(obj.max_str_mod);
-		if(strBonus!=0)	ret["STR Mod"] = strBonus;
+		var strBonus = get_bonus(parseInt($("#" + uid + "_str").attr('data-base-value'))) * parseFloat(obj.max_str_mod);
+		if (strBonus != 0) ret["STR Mod"] = strBonus;
 		return JSON.stringify(ret);
 	}
 
@@ -1001,32 +1003,32 @@ var rollable = {
 
 //TO HIT ROLLS
 var attackRolls = {
-	mfatk: function(obj, uid, range) {
+	mfatk: function (obj, uid, range) {
 
 		var ret = [];
 
-		var weaponCount=[];
+		var weaponCount = [];
 
-		$.each(obj, function(i, e) {
+		$.each(obj, function (i, e) {
 
 			var retO = {};
 			//attack
-			if(e.atkhd) {
+			if (e.atkhd) {
 				var json = attackRolls.mattack(e, uid);
 				var parsed = $.parseJSON(json);
 				retO = collect(retO, parsed);
-				if(parseFloat(e.mfa_class_mult) == 0.5 && !hasTwoWeapons(uid)) {
-					if(hasFeat(uid, "Multiattack")) 
+				if (parseFloat(e.mfa_class_mult) == 0.5 && !hasTwoWeapons(uid)) {
+					if (hasFeat(uid, "Multiattack"))
 						retO["Secondary Penalty"] = -2;
 					else
 						retO["Secondary Penalty"] = -5;
 				}
 				e.wlight = "1";
-				e.mfa_class_mult == "0.50";
+				e.mfa_class_mult = "0.50";
 			}
 
 			//weapon
-			if(e.wname) {
+			if (e.wname) {
 				var json = attackRolls.mweapon(e, uid, e.mfa_range);
 				var parsed = $.parseJSON(json);
 				retO = collect(retO, parsed);
@@ -1036,32 +1038,32 @@ var attackRolls = {
 			ret.push(retO);
 		});
 
-		if(weaponCount.length > 1) {
+		if (weaponCount.length > 1) {
 
 			var minusTwo = false;
 
-			$.each(weaponCount, function(i, e) {
-				if((e.aname != null && e.wlight == "1") || e.wlight=="1" && e.mfa_class_mult == "0.50") {
+			$.each(weaponCount, function (i, e) {
+				if ((e.aname != null && e.wlight == "1") || e.wlight == "1" && e.mfa_class_mult == "0.50") {
 					minusTwo = true;
-				} 
+				}
 			});
 
 			var has2W = hasTwoWeapons(uid);
-			if(has2W)
-				$.each(weaponCount, function(i, e) {
+			if (has2W)
+				$.each(weaponCount, function (i, e) {
 					var minus = 0;
-					if(e.mfa_class_mult == "1.00") {
+					if (e.mfa_class_mult == "1.00") {
 						minus = -6;
-						if(has2W) 
+						if (has2W)
 							minus += 2;
-						if(minusTwo)
+						if (minusTwo)
 							minus += 2;
 						ret[i]["Multiweapon Penalty (Primary)"] = minus;
 					} else {
 						minus = -10;
-						if(has2W) 
+						if (has2W)
 							minus += 6;
-						if(minusTwo)
+						if (minusTwo)
 							minus += 2;
 						ret[i]["Multiweapon Penalty (Secondary)"] = minus;
 					}
@@ -1070,93 +1072,93 @@ var attackRolls = {
 
 		return JSON.stringify(ret);
 	},
-	mattack: function(obj, uid) {
+	mattack: function (obj, uid) {
 		var ret = {};
 		ret["Base"] = "1d20";
 
-		if(hasWeaponFocus(obj, uid)) 
+		if (hasWeaponFocus(obj, uid))
 			ret["Weapon Focus"] = 1;
 
-		var bab = parseInt($("#"+uid+"_bab").attr('data-base-value'));
-		if(bab!=0)		ret["BAB"] = bab;
+		var bab = parseInt($("#" + uid + "_bab").attr('data-base-value'));
+		if (bab != 0) ret["BAB"] = bab;
 
-		var size = $("#"+uid+"_size").attr('data-base-value');
+		var size = $("#" + uid + "_size").attr('data-base-value');
 		var sizeNum = sizeModifier(size);
-		if(sizeNum != 0) 
-			ret["Size ("+size+")"] = sizeNum;
+		if (sizeNum != 0)
+			ret["Size (" + size + ")"] = sizeNum;
 
-		if(obj.is_strictly_melee == "0") {
-			if(hasFeat(uid, "Weapon Finesse")) {
-				var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
+		if (obj.is_strictly_melee == "0") {
+			if (hasFeat(uid, "Weapon Finesse")) {
+				var dexBonus = get_bonus(parseInt($("#" + uid + "_dex").attr('data-base-value')));
 				ret["DEX Mod"] = dexBonus;
 
 			} else {
-				var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
-				if(strBonus!=0)	ret["STR Mod"] = strBonus;
+				var strBonus = get_bonus(parseInt($("#" + uid + "_str").attr('data-base-value')));
+				if (strBonus != 0) ret["STR Mod"] = strBonus;
 			}
 
 		} else {
-			var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
-			if(dexBonus!=0)	ret["DEX Mod"] = dexBonus;
+			var dexBonus = get_bonus(parseInt($("#" + uid + "_dex").attr('data-base-value')));
+			if (dexBonus != 0) ret["DEX Mod"] = dexBonus;
 		}
 
 		return JSON.stringify(ret);
 	},
-	mweapon: function(obj, uid, range) {
+	mweapon: function (obj, uid, range) {
 		var ret = {};
 		ret["Base"] = "1d20";
 
-		if(hasWeaponFocus(obj, uid)) 
+		if (hasWeaponFocus(obj, uid))
 			ret["Weapon Focus"] = 1;
 
-		var bab = parseInt($("#"+uid+"_bab").attr('data-base-value'));
-		if(bab!=0)		ret["BAB"] = bab;
+		var bab = parseInt($("#" + uid + "_bab").attr('data-base-value'));
+		if (bab != 0) ret["BAB"] = bab;
 
-		var size = $("#"+uid+"_size").attr('data-base-value');
+		var size = $("#" + uid + "_size").attr('data-base-value');
 		var sizeNum = sizeModifier(size);
-		if(sizeNum != 0) 
-			ret["Size ("+size+")"] = sizeNum;
+		if (sizeNum != 0)
+			ret["Size (" + size + ")"] = sizeNum;
 
-		if(range == "0") {
+		if (range == "0") {
 
-			if(hasFeat(uid, "Weapon Finesse")) {
-				var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
+			if (hasFeat(uid, "Weapon Finesse")) {
+				var dexBonus = get_bonus(parseInt($("#" + uid + "_dex").attr('data-base-value')));
 				ret["DEX Mod"] = dexBonus;
 
 			} else {
-				var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
-				if(strBonus!=0)	ret["STR Mod"] = strBonus;
+				var strBonus = get_bonus(parseInt($("#" + uid + "_str").attr('data-base-value')));
+				if (strBonus != 0) ret["STR Mod"] = strBonus;
 			}
 
-			if(obj.wname.indexOf('Javelin') != -1)
+			if (obj.wname.indexOf('Javelin') != -1)
 				ret["Javelin"] = -4;
 
 		} else {
-			if(obj.wname.toLowerCase().indexOf('composite') != -1) {
+			if (obj.wname.toLowerCase().indexOf('composite') != -1) {
 				var strMod = parseFloat(obj.max_str_mod) || 0;
-				if(strBonus < strMod) {
+				if (strBonus < strMod) {
 					ret["Composite Proficiency"] = -2;
 				}
 			}
-			var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
-			if(dexBonus!=0)	ret["DEX Mod"] = dexBonus;
+			var dexBonus = get_bonus(parseInt($("#" + uid + "_dex").attr('data-base-value')));
+			if (dexBonus != 0) ret["DEX Mod"] = dexBonus;
 		}
 
-		if(obj.enchantment_bonus != "0") 
+		if (obj.enchantment_bonus != "0")
 			ret["Enchantment"] = parseInt(obj.enchantment_bonus);
 
 		return JSON.stringify(ret);
 	},
-	mspatk: function(obj, uid, range) {
+	mspatk: function (obj, uid, range) {
 		var ret = {};
 		ret["Base"] = "1d20";
-		if(range == "0") {
-			var strBonus = get_bonus(parseInt($("#"+uid+"_str").attr('data-base-value')));
-			if(strBonus!=0)	ret["STR Mod"] = strBonus;
+		if (range == "0") {
+			var strBonus = get_bonus(parseInt($("#" + uid + "_str").attr('data-base-value')));
+			if (strBonus != 0) ret["STR Mod"] = strBonus;
 
 		} else {
-			var dexBonus = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
-			if(dexBonus!=0)	ret["DEX Mod"] = dexBonus;
+			var dexBonus = get_bonus(parseInt($("#" + uid + "_dex").attr('data-base-value')));
+			if (dexBonus != 0) ret["DEX Mod"] = dexBonus;
 		}
 
 		return JSON.stringify(ret);
@@ -1164,19 +1166,19 @@ var attackRolls = {
 };
 
 var mainStat = {
-	mattack: function(obj) {
+	mattack: function (obj) {
 		return obj.aname;
 	},
-	mskill: function(obj) {
+	mskill: function (obj) {
 		return obj.name;
 	},
-	mweapon: function(obj) {
+	mweapon: function (obj) {
 		return obj.wname;
 	},
-	mspatk: function(obj) {
+	mspatk: function (obj) {
 		return obj.name;
 	},
-	mfatk: function(obj) {
+	mfatk: function (obj) {
 		return formatting["mfatk"](obj);
 	}
 };
@@ -1225,7 +1227,7 @@ $(function() {
 });
 ///#source 1 1 /monsters/js/init.monster.js
 
-var monsterCount=0;
+var monsterCount = 0;
 var tempMon;
 
 var monsters = {};
@@ -1253,14 +1255,14 @@ function _addNewMonster(monster, uid, name) {
 
 	var realName = monster == null ? name : monster.data[0].name;
 
-	var $a = $("<a/>",{
-		href: "#"+uid
-	}).html("[<span class='logCount'>"+(++monsterCount)+"</span>] "+realName).attr('data-toggle','tab').attr('data-uid', uid);
+	var $a = $("<a/>", {
+		href: "#" + uid
+	}).html("[<span class='logCount'>" + (++monsterCount) + "</span>] " + realName).attr('data-toggle', 'tab').attr('data-uid', uid);
 
 	$a.appendTo($li);
 
 	//TODO make a 'getHpStatus' function or call modifyHp 0, 0
-	$a.attr('class','hp-good');
+	$a.attr('class', 'hp-good');
 
 	var newHtml = $("#dummyData").html();
 	$("#monsterData").append(newHtml);
@@ -1269,7 +1271,7 @@ function _addNewMonster(monster, uid, name) {
 
 	$parent.attr('id', uid);
 	$parent.attr('data-for', uid);
-	
+
 	$parent.find("*[id*='1A']").each(function () {
 		$(this).attr('id', $(this).attr('id').replace('1A', uid));
 	});
@@ -1285,8 +1287,8 @@ function _addNewMonster(monster, uid, name) {
 
 	setUpHp(uid);
 
-	var nice = $('#monsterList').niceScroll({horizrailenabled: false, zindex:9, railoffset: {left: -118}});
-	$('#monsterList').css('overflow','hidden');
+	var nice = $('#monsterList').niceScroll({ horizrailenabled: false, zindex: 9, railoffset: { left: -118 } });
+	$('#monsterList').css('overflow', 'hidden');
 
 	tabChangeScrollbars();
 
@@ -1298,7 +1300,7 @@ function _addNewMonster(monster, uid, name) {
 	$("#curMon").append(newLog);
 
 	var $pLog = $(".log[data-for='none']").not("#dummyLog > [data-for='none']");
-	$pLog.attr('id', uid+"_log").attr('data-for', uid);
+	$pLog.attr('id', uid + "_log").attr('data-for', uid);
 
 	$li.appendTo($("#monsterList"));
 
@@ -1309,25 +1311,25 @@ function _addNewMonster(monster, uid, name) {
 function sortMonsters() {
 	var mylist = $('#monsterList');
 	var listitems = mylist.children('li').get();
-	listitems.sort(function(a, b) {
-		var left = parseInt($("#"+$(a).children("a").attr('data-uid')+"_init").text());
+	listitems.sort(function (a, b) {
+		var left = parseInt($("#" + $(a).children("a").attr('data-uid') + "_init").text());
 		var right = parseInt($("#" + $(b).children("a").attr('data-uid') + "_init").text());
 		return right - left;
 	});
-	$.each(listitems, function(idx, itm) { mylist.append(itm); });
+	$.each(listitems, function (idx, itm) { mylist.append(itm); });
 }
 
 function buildACInfo(mon, attr) {
 	var acInfo = getACArr(mon, attr);
-	if(acInfo == null) return "";
+	if (acInfo == null) return "";
 	return _arrToTooltip(acInfo);
 }
 
 function getACArr(mon, attr) {
-	switch(attr) {
-		case "ac": 			return getAc(mon); break;
+	switch (attr) {
+		case "ac": return getAc(mon); break;
 		case "flatfoot_ac": return getFlatac(mon); break;
-		case "touch_ac": 	return getTouchac(mon); break;
+		case "touch_ac": return getTouchac(mon); break;
 		default: return null;
 	}
 	return null;
@@ -1337,7 +1339,7 @@ function refreshAc($node) {
 	var arr = $.parseJSON($node.attr('data-ac'));
 	var val = _rollArray(arr);
 	$node.empty();
-	var $a = $("<a/>").text(val.result).attr('href','#').attr('rel','tooltip')
+	var $a = $("<a/>").text(val.result).attr('href', '#').attr('rel', 'tooltip')
 		.addClass('has-tooltip reg-has-tt').attr('title', val.text);
 	$node.append($a);
 	manualTooltip($a);
@@ -1348,91 +1350,91 @@ function addDataToMonster($parent, monster, uid) {
 	var root = monster.data[0];
 
 	//all of the base attributes in the data object
-	$parent.find("*[id*='1A']").each(function() {
+	$parent.find("*[id*='1A']").each(function () {
 		var attr = $(this).attr('data-attr');
 		$(this).attr('id', $(this).attr('id').replace('1A', uid));
 		$(this).attr('data-uid', uid);
-		if(root.hasOwnProperty(attr)) {
+		if (root.hasOwnProperty(attr)) {
 			var val = root[attr] == '0' && $(this).hasClass('dashable') ? '--' : root[attr] + ($(this).hasClass('ftable') ? 'ft' : '');
-			if(attr == 'cr') {
-				if(root[attr] < 1) {
-					switch(root[attr]) {
+			if (attr == 'cr') {
+				if (root[attr] < 1) {
+					switch (root[attr]) {
 						case '0.25': return $("<div/>").html("&frac14;").text();
 						case '0.33': return $("<div/>").html("&frac13;").text();
 						case '0.50': return $("<div/>").html("&frac12;").text();
 					}
-				} else 
+				} else
 					$(this).text(parseInt(root[attr]));
-			} else if(attr == 'ac' || attr.indexOf('_ac') != -1) {
+			} else if (attr == 'ac' || attr.indexOf('_ac') != -1) {
 				$(this).attr("data-ac", JSON.stringify(getACArr(monster, attr)));
 				refreshAc($(this));
-			} else if(attr == 'grapple') {
+			} else if (attr == 'grapple') {
 				var $this = $(this);
-				$("#"+uid+"_mfeat_table .loaded").livequery(function() {
+				$("#" + uid + "_mfeat_table .loaded").livequery(function () {
 					var grapple = parseInt(val);
-					if(hasFeat(uid, "Racial Grapple Bonus"))
+					if (hasFeat(uid, "Racial Grapple Bonus"))
 						grapple += 4;
-					if(hasFeat(uid, "Improved Grapple"))
+					if (hasFeat(uid, "Improved Grapple"))
 						grapple += 4;
 					$this.text(grapple);
 				});
 			} else
 				$(this).text(val);
-			$(this).attr('data-base-value',$(this).text());
+			$(this).attr('data-base-value', $(this).text());
 			determineRoll($(this));
 		}
 	});
 
-	$parent.find(".stats tr").each(function() {
+	$parent.find(".stats tr").each(function () {
 		var stat = $(this).children("td").eq(1).text();
 		var num = get_bonus(stat);
-		$(this).children("td").eq(1).text(stat + (stat != '--' ? " ("+(num < 0 ? num : "+"+num) + ")" : ''));
-		$(this).attr('data-roll', JSON.stringify({Base: "1d20", Bonus:num}));
+		$(this).children("td").eq(1).text(stat + (stat != '--' ? " (" + (num < 0 ? num : "+" + num) + ")" : ''));
+		$(this).attr('data-roll', JSON.stringify({ Base: "1d20", Bonus: num }));
 		$(this).attr('data-roll-for', $(this).children("td").eq(0).text());
 	});
 
-	$parent.find(".cstats tr").each(function() {
+	$parent.find(".cstats tr").each(function () {
 		var num = parseInt($(this).children("td").eq(1).text());
-		$(this).attr('data-roll', JSON.stringify({Base: "1d20", Bonus:num}));
+		$(this).attr('data-roll', JSON.stringify({ Base: "1d20", Bonus: num }));
 		$(this).attr('data-roll-for', $(this).children("td").eq(0).text().trim());
 	});
 
-	for(var prop in monster) {
-		if(prop!='data' && isNaN(parseInt(prop))) {
-			var $table = $("#"+uid+"_"+prop+"_table");
-			if($table.length == 0 || monster[prop].length == 0) continue;
+	for (var prop in monster) {
+		if (prop != 'data' && isNaN(parseInt(prop))) {
+			var $table = $("#" + uid + "_" + prop + "_table");
+			if ($table.length == 0 || monster[prop].length == 0) continue;
 			appendToTable($table, root.name, prop, monster[prop]);
 			$table.append("<tr class='loaded' style='display: none;'></tr>");
 		}
 	}
 
 	var nameTooltip = root.size + " " + root.category;
-	if(monster.msubcat.length > 0) {
+	if (monster.msubcat.length > 0) {
 		var subcats = [];
-		$.each(monster.msubcat, function(i, e) {
+		$.each(monster.msubcat, function (i, e) {
 			subcats.push(e.subcategory);
 		});
-		if(subcats.length > 0)
-			nameTooltip += " ("+subcats.join(', ')+")";
+		if (subcats.length > 0)
+			nameTooltip += " (" + subcats.join(', ') + ")";
 	}
-	$("#"+uid+"_name").attr('title', nameTooltip).tooltip();
+	$("#" + uid + "_name").attr('title', nameTooltip).tooltip();
 
 	setUpHp($parent, uid);
-	rollInit($("#"+uid+"_init"));
+	rollInit($("#" + uid + "_init"));
 }
 
 function setUpHp(uid) {
 	var popover = $("#dummyModifiable").html();
 	popover = popover.split("1A").join(uid);
-	$("#health_"+uid).popover({
+	$("#health_" + uid).popover({
 		html: true,
 		placement: 'bottom',
 		content: popover,
 		title: "Modify HP"
 	}).click(function () {
-		$(".modify-hp").click(function() {
-			var modHp = parseInt($$(uid+"_hp_mod").val());
-			if($(this).hasClass('subtract')) {
+		$(".modify-hp").click(function () {
+			var modHp = parseInt($$(uid + "_hp_mod").val());
+			if ($(this).hasClass('subtract')) {
 				modifyHp(uid, -modHp);
 			} else {
 				modifyHp(uid, modHp);
@@ -1442,18 +1444,18 @@ function setUpHp(uid) {
 }
 
 function appendToTable($table, monsterName, attr, arr) {
-	if(attr!='mmove')
+	if (attr != 'mmove')
 		$table.empty();
 
 	var uid = $table.attr('data-uid');
 
-	$.each(arr, function(i, obj) {
-		if(obj.name == 'Racial Grapple Bonus') return;
-		if( ((attr=='mskill' || attr=='mfeat' || attr=='mqualit') && obj.name.indexOf('No ')!=-1) || (attr=='mattack' && obj.aname.indexOf('No ')!=-1)) {
+	$.each(arr, function (i, obj) {
+		if (obj.name == 'Racial Grapple Bonus') return;
+		if (((attr == 'mskill' || attr == 'mfeat' || attr == 'mqualit') && obj.name.indexOf('No ') != -1) || (attr == 'mattack' && obj.aname.indexOf('No ') != -1)) {
 			$table.append('<tr class="no-data"><td>None</td></tr>');
 			return;
 		}
-		if(obj.hasOwnProperty("is_melee") && obj.hasOwnProperty("is_ranged") && obj.hasOwnProperty("wname") && obj.is_melee == "1" && obj.is_ranged != "0") {
+		if (obj.hasOwnProperty("is_melee") && obj.hasOwnProperty("is_ranged") && obj.hasOwnProperty("wname") && obj.is_melee == "1" && obj.is_ranged != "0") {
 
 			var oldName = obj.wname.trim();
 			var range = obj.is_ranged;
@@ -1464,50 +1466,50 @@ function appendToTable($table, monsterName, attr, arr) {
 
 			obj.is_ranged = range;
 			obj.is_melee = "0";
-			obj.wname =  oldName + " (Ranged)";
+			obj.wname = oldName + " (Ranged)";
 			_createRow($table, monsterName, attr, arr, i, obj, uid);
-		} else if(obj.hasOwnProperty("is_multi_handed") && obj.is_multi_handed == "1") {
+		} else if (obj.hasOwnProperty("is_multi_handed") && obj.is_multi_handed == "1") {
 			var oldName = obj.wname.trim();
 
 			obj.is_one_handed = "1";
 			obj.wname = oldName + " (1H)";
 			_createRow($table, monsterName, attr, arr, i, obj, uid);
-			
+
 			var newObject = jQuery.extend(true, {}, obj);
 
 			newObject.is_one_handed = "0";
-			newObject.wname =  oldName + " (2H)";
+			newObject.wname = oldName + " (2H)";
 			_createRow($table, monsterName, attr, arr, i, newObject, uid);
 		} else {
 			_createRow($table, monsterName, attr, arr, i, obj, uid);
 		}
 	});
 
-	$table.find("td.has-tooltip").each(function() {
+	$table.find("td.has-tooltip").each(function () {
 		var text = $(this).text().trim();
 		$(this).text('');
-		$(this).prepend('<i class="icon-bookmark"></i><a href="#" rel="tooltip" title="'+$(this).attr('data-desc')+'">'+text+"</a>");
+		$(this).prepend('<i class="icon-bookmark"></i><a href="#" rel="tooltip" title="' + $(this).attr('data-desc') + '">' + text + "</a>");
 		manualTooltip($(this).find('a'));
 	});
 
 }
 
 function manualTooltip($tt) {
-	$tt.tooltip({html: true, placement: 'bottom', trigger: 'manual'});
+	$tt.tooltip({ html: true, placement: 'bottom', trigger: 'manual' });
 
-	$tt.click(function() {
+	$tt.click(function () {
 
 		var $me = $(this);
 		var doShow = true;
 
-		$(".in").each(function() {
-			if($(this).siblings("a").is($me)) {
+		$(".in").each(function () {
+			if ($(this).siblings("a").is($me)) {
 				doShow = false;
 			}
 			$(this).siblings("a").tooltip('hide');
 
 		});
-		if(doShow)
+		if (doShow)
 			$(this).tooltip('show');
 	});
 }
@@ -1516,33 +1518,33 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 
 	var $tr = $("<tr/>");
 	$tr.appendTo($table);
-	if(attr == 'mfeat') {
-		$tr.attr('data-times-taken',obj.feat_level);
-		$tr.attr('data-full-name',obj.name);
+	if (attr == 'mfeat') {
+		$tr.attr('data-times-taken', obj.feat_level);
+		$tr.attr('data-full-name', obj.name);
 	}
 
 	var range = '';
 	var melee = '';
 
 	var toHitRoll = rollable.hasOwnProperty(attr) ? rollable[attr](obj, uid, range, melee) : null;
-	var attackRoll = attackRolls.hasOwnProperty(attr) ? attackRolls[attr](obj, uid, range) : null; 
-	
-	if(toHitRoll)  {
+	var attackRoll = attackRolls.hasOwnProperty(attr) ? attackRolls[attr](obj, uid, range) : null;
+
+	if (toHitRoll) {
 
 		$tr.attr('data-roll', '0');
 
-		$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
-			if(toHitRoll != '{}')
+		$("#" + uid + "_" + attr + "_table .loaded").livequery(function () {
+			if (toHitRoll != '{}')
 				$tr.attr('data-roll', toHitRoll);
 			else
 				$tr.unbind();
 		});
 
 		var rollFor = mainStat[attr](obj);
-		if(rollFor.indexOf(monsterName) != -1) rollFor = rollFor.substring(monsterName.length).trim();
+		if (rollFor.indexOf(monsterName) != -1) rollFor = rollFor.substring(monsterName.length).trim();
 		$tr.attr('data-roll-for', rollFor);
-		if(attr == 'mweapon' || attr == 'mattack' || attr == 'mspatk') {
-			if(obj.spatk != null && obj.spatk.indexOf(monsterName) != -1) obj.spatk = obj.spatk.substring(monsterName.length+1);
+		if (attr == 'mweapon' || attr == 'mattack' || attr == 'mspatk') {
+			if (obj.spatk != null && obj.spatk.indexOf(monsterName) != -1) obj.spatk = obj.spatk.substring(monsterName.length + 1);
 			$tr.attr('data-spatk', obj.spatk);
 			range = obj.is_ranged;
 			melee = obj.is_melee;
@@ -1550,24 +1552,24 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 
 			var minCrit = 0;
 
-			if(obj.hasOwnProperty('critical')) {
-				if(obj.critical.indexOf('-') != -1) {
+			if (obj.hasOwnProperty('critical')) {
+				if (obj.critical.indexOf('-') != -1) {
 					var critArr = obj.critical.split("-");
 					$tr.attr('data-crit-mult', critArr[1].split("x")[1]);
 					minCrit = parseInt(critArr[0]);
-				} else if(obj.critical == '0'){
+				} else if (obj.critical == '0') {
 					minCrit = 20;
 					$tr.attr('data-crit-mult', 2);
-				} else if(obj.critical.indexOf("x") != -1) {
+				} else if (obj.critical.indexOf("x") != -1) {
 					minCrit = 20;
 					$tr.attr('data-crit-mult', obj.critical.substring(1));
 				} else {
-					console.error("critical wasn't parseable: "+obj.critical + " " + obj.name);
+					console.error("critical wasn't parseable: " + obj.critical + " " + obj.name);
 				}
 			}
 
-			$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
-				if(hasFeat(uid, "Improved Critical")) {
+			$("#" + uid + "_" + attr + "_table .loaded").livequery(function () {
+				if (hasFeat(uid, "Improved Critical")) {
 					minCrit = 21 - ((20 - minCrit + 1) * 2);
 				}
 				$tr.attr('data-min-crit', minCrit);
@@ -1575,24 +1577,24 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 		}
 	}
 
-	if(attackRoll && (obj.class_mult != null || attr == 'mspatk' || attr == 'mfatk')) {
+	if (attackRoll && (obj.class_mult != null || attr == 'mspatk' || attr == 'mfatk')) {
 		$tr.attr('data-attack-roll', '0');
-		$("#"+uid+"_"+attr+"_table .loaded").livequery(function() {
+		$("#" + uid + "_" + attr + "_table .loaded").livequery(function () {
 			$tr.attr('data-attack-roll', attackRoll);
 		});
 	}
 
-	$tr.attr('data-how-many','1');
-	if(attackRolls.hasOwnProperty(attr) && obj.how_many != null) {
+	$tr.attr('data-how-many', '1');
+	if (attackRolls.hasOwnProperty(attr) && obj.how_many != null) {
 		$tr.attr('data-how-many', obj.how_many);
 	}
 
-	if(attr == 'mfatk') {
+	if (attr == 'mfatk') {
 		var spatkA = [], rangeA = [], critMultA = [], minCritA = [], howManyA = [],
 			babUseA = [], secA = [], rollsA = [], nameA = [], atkCtA = [];
-		$.each(obj, function(ind, e) {
+		$.each(obj, function (ind, e) {
 
-			if(e.spatkname != null && e.spatkname.indexOf(monsterName) != -1) e.spatkname = e.spatkname.substring(monsterName.length+1);
+			if (e.spatkname != null && e.spatkname.indexOf(monsterName) != -1) e.spatkname = e.spatkname.substring(monsterName.length + 1);
 
 			babUseA.push(parseInt(e.is_uses_bab));
 
@@ -1600,7 +1602,7 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 
 			secA.push(e.mfa_class_mult == "0.50" ? 1 : 0);
 
-			if(e.wir) 
+			if (e.wir)
 				rangeA.push(e.wir);
 			else
 				rangeA.push(e.mfa_range);
@@ -1608,69 +1610,69 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 			var minCrit = 0;
 
 			e.critical = e.atkct || e.wct;
-			if(!e.critical) e.critical = '0';
+			if (!e.critical) e.critical = '0';
 
 			e.how_many = e.atkhm || e.whm;
-			if(!e.how_many) e.how_many = '1';
+			if (!e.how_many) e.how_many = '1';
 
 			nameA.push(e.wname || e.aname);
 
 			howManyA.push(e.how_many);
 
-			if(e.hasOwnProperty('critical')) {
-				if(e.critical.indexOf('-') != -1) {
+			if (e.hasOwnProperty('critical')) {
+				if (e.critical.indexOf('-') != -1) {
 					var critArr = e.critical.split("-");
 					critMultA.push(critArr[1].split("x")[1]);
 					minCrit = parseInt(critArr[0]);
-				} else if(e.critical == '0'){
+				} else if (e.critical == '0') {
 					minCrit = 20;
 					critMultA.push(2);
-				} else if(e.critical.indexOf("x") != -1) {
+				} else if (e.critical.indexOf("x") != -1) {
 					minCrit = 20;
 					critMultA.push(e.critical.substring(1));
 				} else {
-					console.error("critical wasn't parseable: "+obj.critical + " " + obj.name);
+					console.error("critical wasn't parseable: " + obj.critical + " " + obj.name);
 				}
 			}
 
-			$("#"+uid+"_mfeat_table .loaded").livequery(function() {
+			$("#" + uid + "_mfeat_table .loaded").livequery(function () {
 
 				//critical
-				if(hasFeat(uid, "Improved Critical")) {
+				if (hasFeat(uid, "Improved Critical")) {
 					minCrit = 21 - ((20 - minCrit + 1) * 2);
 				}
 				minCritA.push(minCrit);
 				$tr.attr('data-min-crit', JSON.stringify(minCritA));
 			});
-			
-			if(e.is_uses_bab == "1") {
-				var creatureBab = parseInt($("#"+uid+"_bab").text());
-				var div = creatureBab/5;
-				var mod = creatureBab%5;
-				var attacks = Math.max(Math.floor(div)+(mod!=0 ? 1 : 0), 1);
+
+			if (e.is_uses_bab == "1") {
+				var creatureBab = parseInt($("#" + uid + "_bab").text());
+				var div = creatureBab / 5;
+				var mod = creatureBab % 5;
+				var attacks = Math.max(Math.floor(div) + (mod != 0 ? 1 : 0), 1);
 
 				var bonusAttacks = 1;
 
-				for(var i=0; i<attacks; i++) {
+				for (var i = 0; i < attacks; i++) {
 
-					var roll = {damage: $.parseJSON(attackRoll)[ind], tohit: $.parseJSON(toHitRoll)[ind], refIndex: ind};
+					var roll = { damage: $.parseJSON(attackRoll)[ind], tohit: $.parseJSON(toHitRoll)[ind], refIndex: ind };
 
 					//I tried renaming these variables and rearranging everything and it refused to work
 					//this is actually taking away from the rolls to-hit
-					if(bonusAttacks > 1) 
-						roll["damage"]["Attack "+(bonusAttacks)]=-(bonusAttacks-1)*5;
+					if (bonusAttacks > 1)
+						roll["damage"]["Attack " + (bonusAttacks)] = -(bonusAttacks - 1) * 5;
 
-					if(secA[ind]) {
-						if(i == 0) 
+					if (secA[ind]) {
+						if (i == 0)
 							rollsA.push(roll);
 
-						else if((hasFeat(uid, "Greater Two-Weapon Fighting") || 
+						else if ((hasFeat(uid, "Greater Two-Weapon Fighting") ||
 							hasFeat(uid, "Greater Multiweapon Fighting")) && bonusAttacks == 2) {
 
 							rollsA.push(roll);
 							bonusAttacks++;
-							
-						} else if((hasFeat(uid, "Improved Two-Weapon Fighting") || 
+
+						} else if ((hasFeat(uid, "Improved Two-Weapon Fighting") ||
 							hasFeat(uid, "Improved Multiweapon Fighting")) && bonusAttacks == 1) {
 
 							rollsA.push(roll);
@@ -1679,42 +1681,44 @@ function _createRow($table, monsterName, attr, arr, i, obj, uid) {
 					} else {
 						rollsA.push(roll);
 						bonusAttacks++;
-					}	
+					}
 				}
 				atkCtA.push(bonusAttacks);
 			} else {
-				var roll = {damage: $.parseJSON(attackRoll)[ind], tohit: $.parseJSON(toHitRoll)[ind], refIndex: ind};
-				for(var i=0; i<howManyA[ind]; i++)
+				var roll = { damage: $.parseJSON(attackRoll)[ind], tohit: $.parseJSON(toHitRoll)[ind], refIndex: ind };
+				for (var i = 0; i < howManyA[ind]; i++)
 					rollsA.push(roll);
 			}
 		});
 
-		var fatk = {range: rangeA, spatk: spatkA, names: nameA, 
-					critMult: critMultA, howMany: howManyA, atkCt: atkCtA,
-					minCrit: minCritA, secondary: secA, rolls: rollsA};
+		var fatk = {
+			range: rangeA, spatk: spatkA, names: nameA,
+			critMult: critMultA, howMany: howManyA, atkCt: atkCtA,
+			minCrit: minCritA, secondary: secA, rolls: rollsA
+		};
 
 		$tr.attr('data-fatk', JSON.stringify(fatk));
 
-		obj["descript"] = getFullAttackInfo(obj);		
+		obj["descript"] = getFullAttackInfo(obj);
 	}
 
 	var inner = formatting[attr](obj);
-	if(inner.indexOf(monsterName) != -1) inner = inner.substring(monsterName.length+1);
-	$tr.append("<td"+(obj.hasOwnProperty('descript') ? " class='has-tooltip' data-desc='"+obj.descript.split("\n").join("<br>")+"'" : "")+">"+inner+"</td>");
+	if (inner.indexOf(monsterName) != -1) inner = inner.substring(monsterName.length + 1);
+	$tr.append("<td" + (obj.hasOwnProperty('descript') ? " class='has-tooltip' data-desc='" + obj.descript.split("\n").join("<br>") + "'" : "") + ">" + inner + "</td>");
 }
 
 function getFullAttackInfo(obj) {
 	var ret = '';
-	$.each(obj, function(i, e) {
-		ret += (e.wname || e.aname)+": "+(e.whd || e.atkhd) + " x" + (e.how_many)+"<br>";
+	$.each(obj, function (i, e) {
+		ret += (e.wname || e.aname) + ": " + (e.whd || e.atkhd) + " x" + (e.how_many) + "<br>";
 	});
 	return ret;
 }
 ///#source 1 1 /monsters/js/init.ui.js
 
-var defaultPopupSize=500;
-var extendPopupSize	=1200;
-			
+var defaultPopupSize = 500;
+var extendPopupSize = 1200;
+
 var height = 360;
 var heightAdjust = 140;
 
@@ -1770,7 +1774,7 @@ function limitFeatNums(uid) {
 		}
 	});*/
 }
-
+/*
 function incdecACStat(uid, acType, adder, isIncrement, value, canBeNegative) {
 	var $ac = $("#"+uid+"_"+acType);
 	var ac;
@@ -1792,38 +1796,51 @@ function incdecACStat(uid, acType, adder, isIncrement, value, canBeNegative) {
 	refreshAc($ac);
 
 }
-
+*/
 function setupRoller() {
-	$("#roll").keyup(function(e) {
-		if(e.keyCode == 27) {
+	$("#roll").keyup(function (e) {
+		if (e.keyCode == 27) {
 			$("#roll").val('');
 		}
-		if(e.which != 13) return;
+		if (e.which != 13) return;
 		e.preventDefault();
 		var toRoll = $(this).val();
 		var roll = rollDice(toRoll);
-		if(roll === 0) return;
-		addToLog("Custom roll: "+toRoll+" rolled "+roll+".", "customRoll");
+		if (roll === 0) return;
+		addToLog("Custom roll: " + toRoll + " rolled " + roll + ".", "customRoll");
 	});
 
-	$("#dice button").click(function() {
-		var val = $("#roll").val() == '' ? "1"+$(this).text() : "+1"+$(this).text();
+	$("#dice button").click(function () {
+		var val = $("#roll").val() == '' ? "1" + $(this).text() : "+1" + $(this).text();
 		$("#roll").val($("#roll").val() + val);
 	});
 }
 
 function setupRollables($parent) {
 	var uid = $parent.find("[data-uid]").attr('data-uid');
-	$parent.find(".rollable").each(function() {
+
+	$parent.find(".rollable").each(function () {
+
+		var $set = $(this).find("tr:not(.unrollable)");
+		$set.each(function () {
+			if ($(this).find('td.unrollable').size() > 0) return;
+			$(this).click(function () {
+				$set.removeClass('info');
+				if ($(this).hasClass('info'))
+					$(this).removeClass('info');
+				else
+					$(this).addClass('info');
+			});
+		});
 
 		var $roller = $("<i/>").addClass('icon-share-alt');
-		$roller.click(function() {
+		$roller.click(function () {
 			var $rollable = $(this).parent().find('.info');
-			if($rollable.length === 0) {
+			if ($rollable.length === 0) {
 				bootbox.alert("Please select a feature to roll.");
 				return;
 			}
-			
+
 			attack($rollable, $(this), uid);
 		});
 		$(this).append($roller);
@@ -1833,23 +1850,23 @@ function setupRollables($parent) {
 
 function setupGrids(uid) {
 	$(".sortable").sortable({
-		sort: function(e, u) {
+		sort: function (e, u) {
 			setupGrids(uid);
 		}
 	});
 	$(".sortable").disableSelection();
 
-	$(".draggable").not(".invisible").find(".minibox-content").each(function() {
-		var nice = $(this).niceScroll({horizrailenabled: false, zindex: 9});
-		$("#"+nice.id).attr('data-nice-uid', uid);
-		$("#"+nice.id+"-hr").remove();
+	$(".draggable").not(".invisible").find(".minibox-content").each(function () {
+		var nice = $(this).niceScroll({ horizrailenabled: false, zindex: 9 });
+		$("#" + nice.id).attr('data-nice-uid', uid);
+		$("#" + nice.id + "-hr").remove();
 	});
 	resizeGrids();
 }
 
 function resizeGrids() {
-	$(".minibox-content").each(function() {
-		$(this).height($(this).parent().height()-22);
+	$(".minibox-content").each(function () {
+		$(this).height($(this).parent().height() - 22);
 	});
 }
 
@@ -1857,86 +1874,86 @@ function setupGenButton() {
 	$("#seeMoreButton").button('loading');
 	$("#finalAddButton").button('loading');
 
-	$("#finalAddButton").click(function() {
+	$("#finalAddButton").click(function () {
 		_addAllSuggestedMonsters($(this));
 	});
 
-	$("#seeMoreButton").click(function() {
+	$("#seeMoreButton").click(function () {
 		_seeMoreButtonFunctionality($(this))
 	});
-	$("#genButton").click(function() {
+	$("#genButton").click(function () {
 		_genButtonFunctionality($(this))
 	});
 }
 
 function _addAllSuggestedMonsters($button) {
 	$button.button('generating');
-	setTimeout(function() {$button.attr('disabled', 'disabled').addClass('disabled')}, 10);
+	setTimeout(function () { $button.attr('disabled', 'disabled').addClass('disabled') }, 10);
 
 	$("#overlay").fadeIn();
-	$("#advGenFinalContainer tr").each(function() {
+	$("#advGenFinalContainer tr").each(function () {
 		var monster = $(this).data('monster');
 		var count = parseInt($(this).children(":nth-child(2)").text());
 		_hidePopup();
 
-		setTimeout(function() {
-			for(var i=0; i<count; i++) {
-				setTimeout(function() {addNewMonster(monster);}, 100);
+		setTimeout(function () {
+			for (var i = 0; i < count; i++) {
+				setTimeout(function () { addNewMonster(monster); }, 100);
 			}
 		}, 500);
 	});
 	$("#overlay").fadeOut();
 
-	setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
+	setTimeout(function () { $button.removeAttr('disabled').removeClass('disabled') }, 10);
 	$button.button('reset');
 }
 
 function _seeMoreButtonFunctionality($button) {
 
 	$button.button('generating');
-	setTimeout(function() {$button.attr('disabled', 'disabled').addClass('disabled')}, 10);
+	setTimeout(function () { $button.attr('disabled', 'disabled').addClass('disabled') }, 10);
 
 	var ct = 0;
 
-	var advObj = {orgs: [], singles: []};
+	var advObj = { orgs: [], singles: [] };
 	var singlesCt = [];
 
-	$("#advGenMonsters input[type='checkbox']").each(function() {
-		if($(this).is(":checked")) {
+	$("#advGenMonsters input[type='checkbox']").each(function () {
+		if ($(this).is(":checked")) {
 			var $tr = $(this).closest("tr");
 			var baseCt = $tr.find(".only-positive").val() || null;
 			var orgGen = $tr.find("select").val();
-			
-			if((baseCt!=null && baseCt!='0') || orgGen!="null")
+
+			if ((baseCt != null && baseCt != '0') || orgGen != "null")
 				ct++;
 
-			if(baseCt != null && baseCt!='0') {
+			if (baseCt != null && baseCt != '0') {
 				singlesCt[$tr.attr('data-monster-name')] = baseCt;
 				advObj.singles.push($tr.attr('data-monster-id'));
 			}
-			if(orgGen!="null") {
+			if (orgGen != "null") {
 				advObj.orgs.push(orgGen);
 			}
 		}
 	});
 
-	if(ct == 0) {
-		setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
+	if (ct == 0) {
+		setTimeout(function () { $button.removeAttr('disabled').removeClass('disabled') }, 10);
 		$button.button('reset');
 		bootbox.alert("Please select some monsters to create.");
 		return;
 	}
 
-	$.post('ajax.php', {action: "gen", orgs: JSON.stringify(advObj)}, function(monsters) {
+	$.post('ajax.php', { action: "gen", orgs: JSON.stringify(advObj) }, function (monsters) {
 		try {
 			_parseSuggestedMonsters($.parseJSON(monsters), singlesCt);
-		} catch(e) {
-			console.error("an issue parsing suggested monsters has occurred: monsters<"+monsters+"> orgs<" +advObj+">");
+		} catch (e) {
+			console.error("an issue parsing suggested monsters has occurred: monsters<" + monsters + "> orgs<" + advObj + ">");
 		}
 		$("#finalAddButton").button('reset');
 
-	}).always(function() {
-		setTimeout(function() {$button.removeAttr('disabled').removeClass('disabled')}, 10);
+	}).always(function () {
+		setTimeout(function () { $button.removeAttr('disabled').removeClass('disabled') }, 10);
 		$button.button('reset');
 	});
 }
@@ -1948,25 +1965,25 @@ function _parseSuggestedMonsters(monsters, singlesCt) {
 	$container.children().not("#advGenFinal").remove();
 	$monsters.empty();
 
-	if(Object.keys(singlesCt).length) {
+	if (Object.keys(singlesCt).length) {
 		$monsters.show();
 		$monsters.append("<caption>Monsters</caption>");
 	} else
 		$monsters.hide();
 
-	$.each(monsters, function(i, e) {
-		if(e.hasOwnProperty("name")) {
-			var $table = $("<table/>").addClass('table table-condensed table-striped').css('position','relative').appendTo($container);
-			$table.append("<caption>"+e.name+"</caption>");
-			$.each(e.monsters, function(i, e){
+	$.each(monsters, function (i, e) {
+		if (e.hasOwnProperty("name")) {
+			var $table = $("<table/>").addClass('table table-condensed table-striped').css('position', 'relative').appendTo($container);
+			$table.append("<caption>" + e.name + "</caption>");
+			$.each(e.monsters, function (i, e) {
 				var $tr = $("<tr/>").appendTo($table);
 				$tr.attr('data-gen-min', e.minimum).attr('data-gen-max', e.maximum);
-				$tr.append("<td>"+e.monster.data[0].name+"</td><td class='rightalign'></td>");
+				$tr.append("<td>" + e.monster.data[0].name + "</td><td class='rightalign'></td>");
 				$tr.data('monster', e.monster);
 			});
 
 			var $roller = $("<i/>").addClass('icon-share-alt').appendTo($table);
-			$roller.click(function() {
+			$roller.click(function () {
 				_rerollTable($table);
 			});
 			_rerollTable($table);
@@ -1975,20 +1992,20 @@ function _parseSuggestedMonsters(monsters, singlesCt) {
 			var $tr = $("<tr/>");
 			var monName = e.data[0].name;
 			var monCt = singlesCt[monName];
-			$tr.append("<td>"+monName+"</td><td class='rightalign'>"+monCt+"</td>").appendTo($monsters);
+			$tr.append("<td>" + monName + "</td><td class='rightalign'>" + monCt + "</td>").appendTo($monsters);
 			$tr.attr('data-gen-min', monCt).attr('data-gen-max', monCt);
-			$tr.data('monster',e);
+			$tr.data('monster', e);
 		}
 	});
-	$("#advGenFinalContainer").niceScroll({zindex: 14, horizrailenabled: false});
-	$('#advGenFinalContainer').css('overflow','hidden');
+	$("#advGenFinalContainer").niceScroll({ zindex: 14, horizrailenabled: false });
+	$('#advGenFinalContainer').css('overflow', 'hidden');
 }
 
 function _rerollTable($table) {
-	$table.find("tr").each(function() {
+	$table.find("tr").each(function () {
 		var max = parseInt($(this).attr('data-gen-max'));
 		var min = parseInt($(this).attr('data-gen-min'));
-		var num = Math.floor(Math.random() * (max-min+1)) + min;
+		var num = Math.floor(Math.random() * (max - min + 1)) + min;
 		$(this).children(":nth-child(2)").text(num);
 	});
 }
@@ -1999,45 +2016,45 @@ function _genButtonFunctionality($button) {
 
 	//build filters
 	var filterObj = {};
-	$(".inner-filter-container").each(function() {
+	$(".inner-filter-container").each(function () {
 		var attr = $(this).attr('data-attr');
 		filterObj[attr] = [];
 		_gaq.push(['_trackEvent', 'Filter', attr]);
-		$(this).children(".badge").each(function() {
-			filterObj[attr].push({sign: $(this).attr('data-sign'), value: $(this).attr('data-value')});
+		$(this).children(".badge").each(function () {
+			filterObj[attr].push({ sign: $(this).attr('data-sign'), value: $(this).attr('data-value') });
 		});
 	});
 
 	var advMode = $("#extra").is(":visible");
 
 	//POST filters
-	$.post('ajax.php', {action: "gen", data: JSON.stringify(filterObj), adv: advMode}, function(monster) {
-		$button.button('reset');	
-		if(monster==='') {
+	$.post('ajax.php', { action: "gen", data: JSON.stringify(filterObj), adv: advMode }, function (monster) {
+		$button.button('reset');
+		if (monster === '') {
 			bootbox.alert("No results were found with your filters. Try broadening your search.");
 			return;
 		}
-		if(!advMode) {
+		if (!advMode) {
 			//try {
-				monster = $.parseJSON(monster);
-				var uid = addNewMonster(monster);
-				setupGrids(uid);
+			monster = $.parseJSON(monster);
+			var uid = addNewMonster(monster);
+			setupGrids(uid);
 			//} catch(e) {
 			//	console.error("error parsing monster: "+e);
 			//}
 			return;
 		}
 		$("#advGenMonsters").empty();
-		$.each($.parseJSON(monster), function(i, e) {
+		$.each($.parseJSON(monster), function (i, e) {
 			addNewSuggestedRow(i, e);
 		});
-		$(".only-positive").change(function() {
+		$(".only-positive").change(function () {
 			var val = parseInt($(this).val());
-			if(val < 0) val = 0;
+			if (val < 0) val = 0;
 			$(this).val(val);
 		});
-		$("tr[data-monster-name] select, tr[data-monster-name] .only-positive").change(function() {
-			$(this).closest("tr").find("input[type='checkbox']").prop('checked',true);
+		$("tr[data-monster-name] select, tr[data-monster-name] .only-positive").change(function () {
+			$(this).closest("tr").find("input[type='checkbox']").prop('checked', true);
 		});
 		$("#seeMoreButton").button('reset');
 	});
@@ -2045,18 +2062,18 @@ function _genButtonFunctionality($button) {
 
 function addNewSuggestedRow(monster, data) {
 	var template = $("#advGenTemplate").html();
-	$("#advGenMonsters").append("<tr data-monster-name='"+monster+"' data-monster-id='"+data.id+"'><td>"+template+"</td></tr>");
+	$("#advGenMonsters").append("<tr data-monster-name='" + monster + "' data-monster-id='" + data.id + "'><td>" + template + "</td></tr>");
 	_makeSelect(monster, data.orgs);
-	$("[data-monster-name='"+monster+"'] .monsterName").attr('title',monster).text(monster).tooltip({delay: 500});
-	$("#advGenContainer").niceScroll({zindex: 14, horizrailenabled: false});
-	$('#advGenContainer').css('overflow','hidden');
+	$("[data-monster-name='" + monster + "'] .monsterName").attr('title', monster).text(monster).tooltip({ delay: 500 });
+	$("#advGenContainer").niceScroll({ zindex: 14, horizrailenabled: false });
+	$('#advGenContainer').css('overflow', 'hidden');
 }
 
 function _makeSelect(monster, data) {
-	var $select = $("[data-monster-name='"+monster+"'] select");
-	$.each(data, function(i, e) {
-		if(e.organization.indexOf(monster) != -1) e.organization = e.organization.substring(monster.length+1);
-		$select.append("<option value='"+e.id+"'>"+e.organization+"</option>");
+	var $select = $("[data-monster-name='" + monster + "'] select");
+	$.each(data, function (i, e) {
+		if (e.organization.indexOf(monster) != -1) e.organization = e.organization.substring(monster.length + 1);
+		$select.append("<option value='" + e.id + "'>" + e.organization + "</option>");
 	});
 	$select.append("<option value='null' selected>No Org.</option>");
 }
@@ -2066,10 +2083,10 @@ function _hideAllMiniboxScrollbars() {
 }
 
 function _showScrollbars($a) {
-	$("#"+$a.attr('data-uid')).find(".minibox-content").each(function() {
-		var nice = $(this).niceScroll({horizrailenabled: false, zindex:9});
-		$("#"+nice.id).attr('data-nice-uid', $a.closest('tab-pane').attr('data-for'));
-		$("#"+nice.id).show();
+	$("#" + $a.attr('data-uid')).find(".minibox-content").each(function () {
+		var nice = $(this).niceScroll({ horizrailenabled: false, zindex: 9 });
+		$("#" + nice.id).attr('data-nice-uid', $a.closest('tab-pane').attr('data-for'));
+		$("#" + nice.id).show();
 		//$(this).css('overflow','hidden');
 	});
 }
@@ -2080,7 +2097,7 @@ function tabChangeScrollbars() {
 		_showScrollbars($(this));
 		var uid = $(this).attr('data-uid');
 
-		$("#curMon > div[data-for='"+uid+"']").show().siblings().hide();
+		$("#curMon > div[data-for='" + uid + "']").show().siblings().hide();
 
 		//hide the popup if it's visible
 		_hidePopup();
@@ -2089,7 +2106,7 @@ function tabChangeScrollbars() {
 
 function setupAddButton() {
 	$("#newFilter").click(addNewFilter);
-}	
+}
 
 function initializePopupToggler() {
 	//toggle the sizes between the two popup possibilities
@@ -2097,21 +2114,21 @@ function initializePopupToggler() {
 }
 
 function _togglePopupInsides() {
-	if($("#extra").is(":visible")) {
-		$("#popup").animate({width: defaultPopupSize});
-		$("#popupLeft").animate({width: defaultPopupSize});
-		$("#extra").animate({width: 0}, function() {
+	if ($("#extra").is(":visible")) {
+		$("#popup").animate({ width: defaultPopupSize });
+		$("#popupLeft").animate({ width: defaultPopupSize });
+		$("#extra").animate({ width: 0 }, function () {
 			$("#extra").css('display', 'none');
-			$("#extraToggle").attr('class', 'icon-arrow-right');	
-			$("#medianArrowContainer").attr('title', 'More options');	
+			$("#extraToggle").attr('class', 'icon-arrow-right');
+			$("#medianArrowContainer").attr('title', 'More options');
 		});
 	} else {
-		$("#popup").animate({width: extendPopupSize}, function() {
-			$("#popupLeft").animate({width: defaultPopupSize});
+		$("#popup").animate({ width: extendPopupSize }, function () {
+			$("#popupLeft").animate({ width: defaultPopupSize });
 			$("#extra").css('display', 'block');
-			$("#extra").animate({width: extendPopupSize-defaultPopupSize});
-			$("#extraToggle").attr('class', 'icon-arrow-left');	
-			$("#medianArrowContainer").attr('title', 'Less options');	
+			$("#extra").animate({ width: extendPopupSize - defaultPopupSize });
+			$("#extraToggle").attr('class', 'icon-arrow-left');
+			$("#medianArrowContainer").attr('title', 'Less options');
 		});
 	}
 }
@@ -2122,12 +2139,12 @@ function initializeArrowToggler() {
 }
 
 function _togglePopup() {
-	$("#popup").slideToggle(400, function() {
-		if($(this).is(":visible")) {
-			$("#filterIcon").attr('class', 'icon-arrow-up');	
-			$("#popup").attr('display','inline-block');
-			$("#filterContainer").niceScroll({zindex: 14});
-			$("#filterContainer").css('overflow','hidden');
+	$("#popup").slideToggle(400, function () {
+		if ($(this).is(":visible")) {
+			$("#filterIcon").attr('class', 'icon-arrow-up');
+			$("#popup").attr('display', 'inline-block');
+			$("#filterContainer").niceScroll({ zindex: 14 });
+			$("#filterContainer").css('overflow', 'hidden');
 		} else {
 			$("#filterIcon").attr('class', 'icon-arrow-down');
 		}
@@ -2135,7 +2152,7 @@ function _togglePopup() {
 }
 
 function _hidePopup() {
-	$("#popup").slideUp(400, function() {
+	$("#popup").slideUp(400, function () {
 		$("#filterIcon").attr('class', 'icon-arrow-down');
 	})
 }
@@ -2153,13 +2170,13 @@ function handleResizing() {
 function resizeElements() {
 	height = $(window).height();
 
-	$("#log").css('height', height-80-heightAdjust+'px');
-	$("#monsterListCont").css('height',height-50-heightAdjust+'px');
-	$("#monsterList").css('height',height-50-heightAdjust+'px');
+	$("#log").css('height', height - 80 - heightAdjust + 'px');
+	$("#monsterListCont").css('height', height - 50 - heightAdjust + 'px');
+	$("#monsterList").css('height', height - 50 - heightAdjust + 'px');
 
-	$(".tab-content").css('height', $("#log").height()-38);
+	$(".tab-content").css('height', $("#log").height() - 38);
 
-	$("#log .tab-pane > div").css('height', $("#log").height()-38);
+	$("#log .tab-pane > div").css('height', $("#log").height() - 38);
 
 	$("#monstersContainer > .row-fluid").first().css('height', $("#monsterListCont").height());
 
@@ -2611,7 +2628,7 @@ var logMessages = {
 	}
 };
 ///#source 1 1 /monsters/js/models.js
-var MonsterModel = function(uid, data) {
+var MonsterModel = function (uid, data) {
 	var self = this;
 
 	console.log(data);
@@ -2628,26 +2645,27 @@ var MonsterModel = function(uid, data) {
 
 	//statmodel
 	self.stats = {
-		str:	new StatModel(self.monsterBaseStats['str']),
-		dex:	new StatModel(self.monsterBaseStats['dex']),
-		con:	new StatModel(self.monsterBaseStats['con']),
-		wis:	new StatModel(self.monsterBaseStats['wis']),
-		int:	new StatModel(self.monsterBaseStats['int']),
-		cha:	new StatModel(self.monsterBaseStats['cha']),
-		fort:	new StatModel(self.monsterBaseStats['fort']),
-		ref:	new StatModel(self.monsterBaseStats['ref']),
-		will:	new StatModel(self.monsterBaseStats['will']),
-		grapple:new GrappleModel(self.monsterBaseStats['grapple'],self.feats),
-		bab:	new StatModel(self.monsterBaseStats['base_atk']),
-		cmd:	new StatModel(self.monsterBaseStats['cmd']),
-		cmb:	new StatModel(self.monsterBaseStats['cmb']),
+		str: new StatModel(self.monsterBaseStats['str']),
+		dex: new StatModel(self.monsterBaseStats['dex']),
+		con: new StatModel(self.monsterBaseStats['con']),
+		wis: new StatModel(self.monsterBaseStats['wis']),
+		int: new StatModel(self.monsterBaseStats['int']),
+		cha: new StatModel(self.monsterBaseStats['cha']),
+		fort: new StatModel(self.monsterBaseStats['fort']),
+		ref: new StatModel(self.monsterBaseStats['ref']),
+		will: new StatModel(self.monsterBaseStats['will']),
+		grapple: new GrappleModel(self.monsterBaseStats['grapple'], self.feats),
+		bab: new StatModel(self.monsterBaseStats['base_atk']),
+		cmd: new StatModel(self.monsterBaseStats['cmd']),
+		cmb: new StatModel(self.monsterBaseStats['cmb']),
 
-		reach:	  self.monsterBaseStats['reach'],
-		space:	  self.monsterBaseStats['space_taken'],
+		reach: self.monsterBaseStats['reach'],
+		space: self.monsterBaseStats['space_taken'],
 		treasure: self.monsterBaseStats['treasure'],
 
-		size:	ko.observable(self.monsterBaseStats.size),
-		category: ko.observable(self.monsterBaseStats.category)
+		size: ko.observable(self.monsterBaseStats.size),
+		category: ko.observable(self.monsterBaseStats.category),
+		name: ko.observable(self.monsterBaseStats.name)
 	};
 
 	self.skills = new SkillModel(data.mskill);
@@ -2670,14 +2688,16 @@ var MonsterModel = function(uid, data) {
 
 	self.speeds = new SpeedModel(data.mmove);
 
-	self.fatks = new FullAttackModel(data.mfatk);
-	
+	self.fatks = new FullAttackModel(data.mfatk, self.monsterBaseStats.name);
+
 	self.ac = new ACModel(self, {
 		"Natural AC": parseInt(self.monsterBaseStats.natural_ac),
 		"Base": 10,
 		"DEX Bonus": self.stats.dex.bonus(),
 		"Size Mod": _getSizeModifier(self.stats.size())
 	});
+
+	self.roller = new RollerHandler(self);
 
 	self.formatCR = function (cr) {
 		switch (cr) {
@@ -2722,9 +2742,9 @@ function ACModel(monsterModel, props) {
 
 	self.arrayProps = ko.observable(props);
 
-	self.flatfoot = new ArrayValueCountModel(monsterModel.uid + "_flatfoot_ac", self, ["Dodge","Combat Expertise"]);
-	self.touch =	new ArrayValueCountModel(monsterModel.uid + "_touch_ac", self, ["Natural AC"]);
-	self.total =	new ArrayValueCountModel(monsterModel.uid + "_ac", self, []);
+	self.flatfoot = new ArrayValueCountModel(monsterModel.uid + "_flatfoot_ac", self, ["Dodge", "Combat Expertise"]);
+	self.touch = new ArrayValueCountModel(monsterModel.uid + "_touch_ac", self, ["Natural AC"]);
+	self.total = new ArrayValueCountModel(monsterModel.uid + "_ac", self, []);
 }
 
 function HPModel(hpRoll, conModel, featModel, uid) {
@@ -2775,17 +2795,20 @@ function HPModel(hpRoll, conModel, featModel, uid) {
 	});
 }
 
-function FullAttackModel(fatks) {
+function FullAttackModel(fatks, mname) {
 	var self = this;
 
-	if (fatks.length == 0) fatks.push({ "0": { aname: "None" }});
+	if (fatks.length == 1 && fatks[0].length == 0) fatks.pop();
 
+	if (fatks.length == 0) fatks.push({ "0": { aname: "None" } });
+
+	self.mname = mname;
 	self.fatks = ko.observableArray(fatks);
 
 	self.formatName = function (fatk) {
 		var retStr = [];
 		$.each(fatk, function (i, e) {
-			retStr.push(e.aname || e.wname);
+			retStr.push(self.formatNameStr(e.aname || e.wname));
 		});
 		return retStr.join(", ");
 	};
@@ -2793,7 +2816,7 @@ function FullAttackModel(fatks) {
 	self.toolTip = function (fatk) {
 		var retStr = '';
 		$.each(fatk, function (i, e) {
-			var atkStr = e.aname || e.wname;
+			var atkStr = self.formatNameStr(e.aname || e.wname);
 			atkStr += ': ';
 			var rollStr = e.hitdc;
 			var eleStr = (rollStr == '0' ? '' : '+') + e.dmgred_hd + ' ' + e.dmgname;
@@ -2805,6 +2828,206 @@ function FullAttackModel(fatks) {
 			retStr += atkStr;
 		});
 		return retStr;
+	};
+
+	self.formatNameStr = function (name) {
+		if (name == undefined) return "ERROR";
+		if (name.indexOf(mname) != -1) return name.substring(mname.length).trim();
+		return name;
+	};
+
+	self.primaryRoll = function (obj, monsterName, hasImpCrit, creatureBab, hasGreaterTwoWeapFighting, hasImpTwoWeapFighting, toHitRoll, attackRoll) {
+		var spatkA = [], rangeA = [], critMultA = [], minCritA = [], howManyA = [],
+			babUseA = [], secA = [], rollsA = [], nameA = [], atkCtA = [];
+		$.each(obj, function (ind, e) {
+
+			if (e.spatkname != null && e.spatkname.indexOf(monsterName) != -1) e.spatkname = e.spatkname.substring(monsterName.length + 1);
+
+			babUseA.push(parseInt(e.is_uses_bab));
+
+			spatkA.push(e.spatkname);
+
+			secA.push(e.mfa_class_mult == "0.50" ? 1 : 0);
+
+			if (e.wir)
+				rangeA.push(e.wir);
+			else
+				rangeA.push(e.mfa_range);
+
+			var minCrit = 0;
+
+			e.critical = e.atkct || e.wct;
+			if (!e.critical) e.critical = '0';
+
+			e.how_many = e.atkhm || e.whm;
+			if (!e.how_many) e.how_many = '1';
+
+			nameA.push(e.wname || e.aname);
+
+			howManyA.push(e.how_many);
+
+			if (e.hasOwnProperty('critical')) {
+				if (e.critical.indexOf('-') != -1) {
+					var critArr = e.critical.split("-");
+					critMultA.push(critArr[1].split("x")[1]);
+					minCrit = parseInt(critArr[0]);
+				} else if (e.critical == '0') {
+					minCrit = 20;
+					critMultA.push(2);
+				} else if (e.critical.indexOf("x") != -1) {
+					minCrit = 20;
+					critMultA.push(e.critical.substring(1));
+				} else {
+					console.error("critical wasn't parseable: " + obj.critical + " " + obj.name);
+				}
+			}
+
+			if (hasImpCrit) {
+				minCrit = 21 - ((20 - minCrit + 1) * 2);
+			}
+			minCritA.push(minCrit);
+
+			if (e.is_uses_bab == "1") {
+				var div = creatureBab / 5;
+				var mod = creatureBab % 5;
+				var attacks = Math.max(Math.floor(div) + (mod != 0 ? 1 : 0), 1);
+
+				var bonusAttacks = 1;
+
+				for (var i = 0; i < attacks; i++) {
+
+					var roll = { damage: $.extend(true, {}, attackRoll[ind]), tohit: $.extend(true, {}, toHitRoll[ind]), refIndex: ind };
+
+					//I tried renaming these variables and rearranging everything and it refused to work
+					//this is actually taking away from the rolls to-hit
+					if (bonusAttacks > 1)
+						roll["damage"]["Attack " + (bonusAttacks)] = -(bonusAttacks - 1) * 5;
+
+					if (secA[ind]) {
+						if (i == 0)
+							rollsA.push(roll);
+
+						else if (hasGreaterTwoWeapFighting && bonusAttacks == 2) {
+
+							rollsA.push(roll);
+							bonusAttacks++;
+
+						} else if (hasImpTwoWeapFighting && bonusAttacks == 1) {
+
+							rollsA.push(roll);
+							bonusAttacks++;
+						}
+					} else {
+						rollsA.push(roll);
+						bonusAttacks++;
+					}
+				}
+				atkCtA.push(bonusAttacks);
+			} else {
+				var roll = { damage: $.extend(true, {}, attackRoll[ind]), tohit: $.extend(true, {}, toHitRoll[ind]), refIndex: ind };
+				for (var i = 0; i < howManyA[ind]; i++)
+					rollsA.push(roll);
+			}
+		});
+
+		var fatk = {
+			range: rangeA, spatk: spatkA, names: nameA,
+			critMult: critMultA, howMany: howManyA, atkCt: atkCtA,
+			minCrit: minCritA, secondary: secA, rolls: rollsA
+		};
+
+		return fatk;
+	};
+
+	self.damageRoll = function (obj, attackModel, strBonus) {
+		var ret = [];
+
+		$.each(obj, function (i, e) {
+			var retO = {};
+
+			//attack
+			if (e.atkhd) {
+				var parsed = attackModel.attackDamageRoll(e, strBonus);
+				retO = collect(retO, parsed);
+			}
+
+			//weapon
+			if (e.wname) {
+				e.mfa_strict = e.mfa_strict == "0" ? "1" : "0";
+				var parsed = attackModel.weaponDamageRoll(e, strBonus, e.wir || e.mfa_range, e.mfa_strict);
+				retO = collect(retO, parsed);
+			}
+
+			ret.push(retO);
+		});
+
+		return ret;
+	};
+
+	self.toHitRoll = function (obj, attackModel, bab, size, dexBonus, strBonus, hasWeaponFocus, hasWeaponFinesse, hasTwoWeapons, hasMultiAttack) {
+		var ret = [];
+
+		var weaponCount = [];
+
+		$.each(obj, function (i, e) {
+
+			var retO = {};
+			//attack
+			if (e.atkhd) {
+				var parsed = attackModel.attackToHitRoll(e, bab, size, dexBonus, strBonus, hasWeaponFocus, hasWeaponFinesse);
+				retO = collect(retO, parsed);
+				if (parseFloat(e.mfa_class_mult) == 0.5 && !hasTwoWeapons) {
+					if (hasMultiAttack)
+						retO["Secondary Penalty"] = -2;
+					else
+						retO["Secondary Penalty"] = -5;
+				}
+				e.wlight = "1";
+				e.mfa_class_mult = "0.50";
+			}
+
+			//weapon
+			if (e.wname) {
+				var parsed = attackModel.weaponToHitRoll(e, hasWeaponFocus, bab, size, hasWeaponFinesse, dexBonus, strBonus);
+				retO = collect(retO, parsed);
+			}
+			weaponCount.push(e);
+
+			ret.push(retO);
+		});
+
+		if (weaponCount.length > 1) {
+
+			var minusTwo = false;
+
+			$.each(weaponCount, function (i, e) {
+				if ((e.aname != null && e.wlight == "1") || e.wlight == "1" && e.mfa_class_mult == "0.50") {
+					minusTwo = true;
+				}
+			});
+
+			var has2W = hasTwoWeapons;
+			if (has2W)
+				$.each(weaponCount, function (i, e) {
+					var minus = 0;
+					if (e.mfa_class_mult == "1.00") {
+						minus = -6;
+						if (has2W)
+							minus += 2;
+						if (minusTwo)
+							minus += 2;
+						ret[i]["Multiweapon Penalty (Primary)"] = minus;
+					} else {
+						minus = -10;
+						if (has2W)
+							minus += 6;
+						if (minusTwo)
+							minus += 2;
+						ret[i]["Multiweapon Penalty (Secondary)"] = minus;
+					}
+				});
+		}
+		return ret;
 	};
 }
 
@@ -2823,9 +3046,9 @@ function InitiativeModel(dexModel, featModel, uid) {
 	});
 
 	self.toolTip = ko.computed(function () {
-		var retStr = "Base (1d20): "+self.init.num().val();
+		var retStr = "Base (1d20): " + self.init.num().val();
 		if (self.dex != 0) retStr += ("<br>DEX: " + self.dex());
-		if (self.countImprovedInitiative() != 0) retStr += ("<br>Improved Initiative: "+(4 * self.countImprovedInitiative()));
+		if (self.countImprovedInitiative() != 0) retStr += ("<br>Improved Initiative: " + (4 * self.countImprovedInitiative()));
 		$$(uid + "_init").attr('data-original-title', retStr);
 		return retStr;
 	});
@@ -2839,7 +3062,7 @@ function InitiativeModel(dexModel, featModel, uid) {
 	});
 
 	self.totalInit = ko.computed(function () {
-		return self.init.num().val()+self.dex()+(4 * self.countImprovedInitiative());
+		return self.init.num().val() + self.dex() + (4 * self.countImprovedInitiative());
 	});
 }
 
@@ -2904,9 +3127,109 @@ function WeaponAttackModel(damagers, mname) {
 	};
 
 	self.formatName = function (name) {
-		if (name == undefined) return "ERROR";
-		if (name.indexOf(mname) != -1) return name.substring(mname.length);
+		if (name == undefined) return;
+		if (name.indexOf(mname) != -1) return name.substring(mname.length).trim();
 		return name;
+	};
+
+	self.attackToHitRoll = function (obj, bab, size, dexBonus, strBonus, hasWeaponFocus, hasWeaponFinesse) {
+		var ret = {};
+		ret["Base"] = "1d20";
+
+		if (hasWeaponFocus)
+			ret["Weapon Focus"] = 1;
+
+		ret["BAB"] = bab;
+
+		ret["Size (" + size + ")"] = sizeModifier(size);
+
+		if (obj.is_strictly_melee == "0")
+			if (hasWeaponFinesse)
+				ret["DEX Mod"] = dexBonus;
+			else
+				ret["STR Mod"] = strBonus;
+		else
+			ret["DEX Mod"] = dexBonus;
+
+		return ret;
+	};
+
+	self.attackDamageRoll = function (obj, strBonus) {
+		var ret = {};
+		ret["Base"] = obj.hitdc;
+
+		if (obj.dmgname != null)
+			ret[obj.dmgname + " (" + obj.dmgred_hd + ")"] = obj.dmgred_hd;
+
+		ret["STR Mod"] = Math.floor(strBonus * parseFloat(obj.max_str_mod));
+
+		return ret;
+	}
+
+	self.weaponToHitRoll = function (obj, hasWeaponFocus, bab, size, hasWeaponFinesse, dexBonus, strBonus) {
+		var ret = {};
+		ret["Base"] = "1d20";
+
+		if (hasWeaponFocus)
+			ret["Weapon Focus"] = 1;
+
+		ret["BAB"] = bab;
+
+		ret["Size (" + size + ")"] = sizeModifier(size);
+
+		if (obj.is_ranged == "0") {
+
+			if (hasWeaponFinesse)
+				ret["DEX Mod"] = dexBonus;
+			else
+				ret["STR Mod"] = strBonus;
+			
+			if (obj.wname.indexOf('Javelin') != -1)
+				ret["Javelin"] = -4;
+
+		} else {
+			if (obj.wname && obj.wname.toLowerCase().indexOf('composite') != -1) {
+				var strMod = parseFloat(obj.max_str_mod) || 0;
+				if (strBonus < strMod) {
+					ret["Composite Proficiency"] = -2;
+				}
+			}
+			ret["DEX Mod"] = dexBonus;
+		}
+
+		ret["Enchantment"] = parseInt(obj.enchantment_bonus);
+		return ret;
+	};
+
+	self.weaponDamageRoll = function (obj, strBonus, range, melee) {
+		var ret = {};
+		ret["Base"] = obj.hitdc;
+		if (obj.dmgname != null)
+			ret[obj.dmgname + " (" + obj.dmgred_hd + ")"] = obj.dmgred_hd;
+
+		var strMod = parseFloat(obj.max_str_mod) || 0;
+
+		ret["STR Mod"] = strBonus;
+
+		if (melee == "1") {
+			if (obj.is_uses_str_mod == "1") {
+				if (obj.is_one_handed == "0") {
+					ret["STR Mod"] = strBonus * 1.5;
+				}
+			}
+		} else {
+
+			if (obj.wname && obj.wname.toLowerCase().indexOf('composite') != -1) {
+				ret["STR Mod"] = clamp(0, strMod, strBonus);
+			}
+
+			if (strBonus < 0 && obj.wname.toLowerCase().indexOf('crossbow') == -1)
+				ret["STR Mod"] = strBonus;
+		}
+
+		ret["Enchantment"] = parseInt(obj.enchantment_bonus);
+
+		return ret;
 	};
 }
 
@@ -2918,7 +3241,7 @@ function SpeedModel(speeds) {
 function SpecialAttackModel(spatks, mname) {
 	var self = this;
 
-	if (spatks.length == 0) spatks.push({ name: "None", descript: "", hit_dice:'0' });
+	if (spatks.length == 0) spatks.push({ name: "None", descript: "", hit_dice: '0' });
 
 	self.mname = mname;
 	self.spatks = ko.observableArray(spatks);
@@ -2930,17 +3253,49 @@ function SpecialAttackModel(spatks, mname) {
 		return cols;
 	};
 
-	self.formatElemental = function(spatk) {
+	self.formatElemental = function (spatk) {
 		var retStr = '';
-		if(spatk.hit_dice != '0') retStr='+';
+		if (spatk.hit_dice != '0') retStr = '+';
 		retStr += spatk.dmgred_hd + " ";
 		retStr += spatk.dmgred_nm;
 		return retStr;
 	};
 
 	self.formatName = function (name) {
+		if (!name) return;
 		if (name.indexOf(mname) != -1) return name.substring(mname.length);
 		return name;
+	};
+
+	self.isRollable = function (spatk) {
+		return spatk.hit_dice != '0' || spatk.dmgred_nm != null;
+	};
+
+	self.decideRollable = function (spatk) {
+		return self.isRollable(spatk) ? '' : 'unrollable';
+	}
+
+	self.toHitRoll = function (spatk, dexBonus, strBonus) {
+		var ret = {};
+		ret["Base"] = "1d20";
+		if (spatk.range == "0") 
+			ret["STR Mod"] = strBonus;
+		else 
+			ret["DEX Mod"] = dexBonus;
+
+		return ret;
+	};
+
+	self.damageRoll = function (obj, strBonus) {
+		var ret = {};
+		if (obj.hit_dice != '0')
+			ret["Base ("+obj.hit_dice+")"] = obj.hit_dice;
+
+		if (obj.dmgred_hd != '0')
+			ret[obj.dmgred_nm] = obj.dmgred_hd;
+
+		ret["STR Mod"] = strBonus;
+		return ret;
 	};
 }
 
@@ -2970,28 +3325,39 @@ function GrappleModel(base, featModel) {
 	self.calc = ko.computed(function () {
 		return self.base.val() + self.grappleBonus();
 	});
+
+	self.nonBasicPrimaryRoll = function () {
+		return { "Base": "1d20", "Bonus": self.calc() };
+	};
 }
 
 function StatModel(base) {
 	if (typeof base !== "number") base = parseInt(base);
 	var self = this;
 	self.base = new ModifiableNumberModel(base);
-	self.bonus = ko.computed(function() {
+	self.bonus = ko.computed(function () {
 		return getBonus(self.base.val());
 	});
 	self.format = ko.computed(function () {
 		if (self.base.val() == 0) return "--";
 		var bonus = self.bonus();
-		if (bonus == 0) return self.base.val();
 
 		if (bonus > 0) bonus = "+" + bonus;
 		return self.base.val() + " " + "(" + bonus + ")";
 	});
+
+	self.primaryRoll = function () {
+		return { "Base": "1d20", "Bonus": self.bonus() };
+	};
+
+	self.nonBasicPrimaryRoll = function () {
+		return { "Base": "1d20", "Bonus": self.base.val() };
+	};
 }
 
 function ArrayValueCountModel(tag, model, filterProps) {
 	var self = this;
-	
+
 	self.tag = tag;
 	self.ignored = filterProps;
 	self.kvs = ko.observable(model.arrayProps);
@@ -3014,7 +3380,7 @@ function ArrayValueCountModel(tag, model, filterProps) {
 		var retStr = '';
 		$.each(self.kvs()(), function (i, e) {
 			if ($.inArray(i, self.ignored) == -1 && e != 0)
-				retStr += i + ": " + e+"<br>";
+				retStr += i + ": " + e + "<br>";
 		});
 
 		$$(tag).attr('data-original-title', retStr);
@@ -3041,6 +3407,10 @@ function SkillModel(skills) {
 		if (skill.skill_level > 0) return "+" + skill.skill_level;
 		return skill.skill_level;
 	};
+
+	self.primaryRoll = function (skill) {
+		return { "Base": "1d20", "Bonus": skill.skill_level };
+	};
 }
 
 function FeatModel(feats, uid) {
@@ -3053,7 +3423,38 @@ function FeatModel(feats, uid) {
 	self.uid = uid;
 	self.feats = ko.observableArray(feats);
 	self.checkboxFeats = ["Dodge", "Point Blank Shot", "Awesome Blow", "Frenzy", "Rage"];
-	self.numberFeats   = ["Power Attack", "Combat Expertise", "Cleave"];
+	self.numberFeats = ["Power Attack", "Combat Expertise", "Cleave"];
+
+	self.countFeat = function (featName) {
+		var ret = 0;
+
+		$.each(self.feats(), function (i, e) {
+			if (e.name && e.name.indexOf(featName) != -1) ret = parseInt(e.feat_level);
+		});
+
+		return ret;
+	};
+
+	self.hasWeaponFocus = function (wname) {
+		if (!wname) return false;
+		if (!self.hasFeat('Weapon Focus')) return false;
+
+		var ret = false;
+
+		$.each(self.feats(), function (i, e) {
+			if (e.name.indexOf('Weapon Focus') != -1) return;
+			var atk = name.substring(e.name.indexOf("(") + 1, e.name.indexOf(")"));
+			if (!atk) return;
+			if (wname.toLowerCase().indexOf(atk.toLowerCase()) != -1)
+				ret = true;
+		});
+
+		return ret;
+	};
+
+	self.hasFeat = function (nameToFind) {
+		return self.countFeat(nameToFind) != 0;
+	};
 
 	self.format = function (feat) {
 		return feat.name + (feat.feat_level > 1 ? " (x" + feat.feat_level + ")" : "");
@@ -3075,9 +3476,9 @@ function FeatModel(feats, uid) {
 		if (self.hasCheckbox(name) || self.hasNumber(name)) return 1;
 		return 2;
 	};
-	
+
 	self.formatSpName = function (name) {
-		return self.uid+"_calc_"+formatSpecialFeatName(name);
+		return self.uid + "_calc_" + formatSpecialFeatName(name);
 	};
 }
 
@@ -3091,7 +3492,7 @@ function QualityModel(qualities, mname) {
 	self.mname = mname;
 	self.qualities = ko.observableArray(qualities);
 
-	self.isMeasurable = function(name) {
+	self.isMeasurable = function (name) {
 		return name != 'Spell Resistance' && name != "Regeneration" && name != "Turn Resistance";
 	};
 	self.format = function (qual) {
@@ -3109,7 +3510,7 @@ function DRModel(reductions) {
 	if (reductions.length == 0) reductions.push({ name: "None", reduction_amount: -1 });
 
 	self.dr = ko.observableArray(reductions);
-	self.format = function(val) {
+	self.format = function (val) {
 		return val == '0' || val == 0 ? "Immune" : (val == -1 ? '' : val);
 	};
 }
@@ -3144,17 +3545,157 @@ function ModifiableNumberModel(baseVal) {
 	};
 
 	self.increment = function () {
-		self.val(self.val()+1);
+		self.val(self.val() + 1);
 	};
 	self.decrement = function () {
-		self.val(self.val()-1);
+		self.val(self.val() - 1);
 	};
 	self.relative = function (num) {
-		self.val(self.val()+num);
+		self.val(self.val() + num);
 	}
 	self.absolute = function (num) {
 		self.val(num);
 	}
+}
+
+function RollerHandler(monModel) {
+	var self = this;
+
+	self.monster = monModel;
+
+	self.rollStat = function (stat) {
+		var roll = self.monster.stats[stat];
+		return JSON.stringify({ 'for': stat.toUpperCase(), 'primary': roll.primaryRoll(), 'howMany': 1 });
+	};
+
+	self.rollNonBasicStat = function (stat, name) {
+		var roll = self.monster.stats[stat];
+		return JSON.stringify({ 'for': name, 'primary': roll.nonBasicPrimaryRoll(), 'howMany': 1 });
+	};
+
+	self.rollSkill = function (skill) {
+		var roll = self.monster.skills.primaryRoll(skill);
+		return JSON.stringify({ 'for': skill.name, 'primary': roll, 'howMany': 1 });
+	};
+
+	self.rollAttack = function (attack) {
+		if (attack.name == "None") return;
+		var primary = self.monster.attacks.attackToHitRoll(attack,
+						self.monster.stats.bab.base.val(),
+						self.monster.stats.size(),
+						self.monster.stats.dex.bonus(),
+						self.monster.stats.str.bonus(),
+						self.monster.feats.hasWeaponFocus(attack.aname),
+						self.monster.feats.hasFeat('Weapon Finesse'));
+		var secondary = self.monster.attacks.attackDamageRoll(attack, self.monster.stats.str.bonus());
+		var critical = self.determineCritical(attack, self.monster.feats.hasFeat('Improved Critical'));
+		return JSON.stringify({
+			'for': self.formatName(attack.aname), 'primary': secondary, 'secondary': primary, 'howMany': parseInt(attack.how_many),
+			'minCrit': critical.min, 'critMult': critical.mult, 'range': parseInt(attack.range), 'spatk': self.monster.spatks.formatName(attack.spatk)
+		});
+	};
+
+	self.rollWeapon = function (weapon) {
+		if (weapon.name == "None") return;
+		var primary = self.monster.weapons.weaponToHitRoll(weapon,
+			self.monster.feats.hasWeaponFocus(weapon.wname),
+			self.monster.stats.bab.base.val(),
+			self.monster.stats.size(),
+			self.hasFeat('Weapon Finesse'),
+			self.monster.stats.dex.bonus(),
+			self.monster.stats.str.bonus());
+		var secondary = self.monster.weapons.weaponDamageRoll(weapon, self.monster.stats.str.bonus(), weapon.is_ranged);
+		var critical = self.determineCritical(weapon, self.hasFeat('Improved Critical'));
+		return JSON.stringify({
+			'for': self.formatName(weapon.wname), 'primary': secondary, 'secondary': primary, 'howMany': parseInt(weapon.how_many) || 1,
+			'minCrit': critical.min, 'critMult': critical.mult, 'range': parseInt(weapon.is_ranged), 'spatk': self.monster.spatks.formatName(weapon.spatk)
+		});
+	};
+
+	self.rollSpatk = function (spatk) {
+		if (!self.monster.spatks.isRollable(spatk)) return;
+		var primary = self.monster.spatks.toHitRoll(spatk, self.monster.stats.dex.bonus(), self.monster.stats.str.bonus());
+		var secondary = self.monster.spatks.damageRoll(spatk, self.monster.stats.str.bonus());
+		var critical = self.determineCritical(spatk);
+
+		return JSON.stringify({
+			'for': self.formatName(spatk.name), 'primary': secondary, 'secondary': primary, 'howMany': 1,
+			'minCrit': critical.min, 'critMult': critical.mult, 'range': parseInt(spatk.range)
+		});
+	};
+
+	self.rollFatk = function (fatk) {
+		var toHit = self.monster.fatks.toHitRoll(fatk, self.monster.attacks,
+						self.monster.stats.bab.base.val(),
+						self.monster.stats.size(),
+						self.monster.stats.dex.bonus(),
+						self.monster.stats.str.bonus(),
+						self.monster.feats.hasWeaponFocus(attack.aname),
+						self.hasFeat('Weapon Finesse'),
+						self.hasTwoWeapons(),
+						self.hasFeat('Multiattack'));
+		var damage = self.monster.fatks.damageRoll(fatk, self.monster.attacks, self.monster.stats.str.bonus());
+		var primary = self.monster.fatks.primaryRoll(fatk,
+			self.monster.stats.name,
+			self.hasFeat('Improved Critical'),
+			self.monster.stats.bab.base.val(),
+			self.hasGreaterMultiFighting(),
+			self.hasImprovedMultiFighting(),
+			damage,
+			toHit);
+
+		return JSON.stringify({
+			'for': "a fatk", 'primary': primary, isFatk: true, range: 0
+		});
+
+	};
+
+	self.hasFeat = function (feat) {
+		return self.monster.feats.hasFeat(feat);
+	}
+
+	self.hasTwoWeapons = function () {
+		return self.hasFeat("Two-Weapon Fighting") || self.hasFeat("Multiweapon Fighting")
+	};
+
+	self.hasGreaterMultiFighting = function () {
+		return self.hasFeat("Greater Two-Weapon Fighting") || self.hasFeat("Greater Multiweapon Fighting");
+	};
+
+	self.hasImprovedMultiFighting = function () {
+		self.hasFeat("Improved Two-Weapon Fighting") || self.hasFeat("Improved Multiweapon Fighting");
+	};
+
+	self.determineCritical = function(obj, hasImpCrit) {
+		var minCrit = 20;
+		var critMult = 2;
+
+		if (obj.hasOwnProperty('critical')) {
+			if (obj.critical.indexOf('-') != -1) {
+				var critArr = obj.critical.split("-");
+				critMult = parseInt(critArr[1].split("x")[1]);
+				minCrit = parseInt(critArr[0]);
+			} else if (obj.critical == '0') {
+				minCrit = 20;
+			} else if (obj.critical.indexOf("x") != -1) {
+				minCrit = 20;
+				critMult = parseInt(obj.critical.substring(1));
+			} else {
+				console.error("critical wasn't parseable: " + obj.critical + " " + obj.name);
+			}
+		}
+
+		if (hasImpCrit)
+			minCrit = 21 - ((20 - minCrit + 1) * 2);
+
+		return { min: minCrit, mult: critMult };
+	}
+
+	self.formatName = function (name) {
+		if (name == undefined) return;
+		if (name.indexOf(self.monster.stats.name()) != -1) return name.substring(self.monster.stats.name().length+1).trim();
+		return name;
+	};
 }
 
 ko.bindingHandlers.bootstrapTooltip = {

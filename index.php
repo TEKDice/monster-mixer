@@ -215,26 +215,10 @@ function is_dev() {
 								<hr />
 								<div class="minibox-content">
 									<table class="table table-striped table-condensed" data-bind="with: $parent.stats">
-										<tbody>
-											<tr>
-												<td>STR</td><td data-bind="text: $data.str.format()" id="1A_str" class="dashable"></td>
+										<tbody data-bind="foreach: ['str','dex','con','int','wis','cha']">
+											<tr data-bind="attr: {'data-roll': $root.roller.rollStat($data)}">
+												<td data-bind="text: $data.toUpperCase()"></td><td data-bind="text: $parent[$data].format()"></td>
 											</tr>
-											<tr>
-												<td>DEX</td><td data-bind="text: $data.dex.format()" id="1A_dex" class="dashable"></td>
-											</tr>
-											<tr>
-												<td>CON</td><td data-bind="text: $data.con.format()" id="1A_con" class="dashable"></td>
-											</tr>
-											<tr>
-												<td>INT</td><td data-bind="text: $data.int.format()" id="1A_int" class="dashable"></td>
-											</tr>
-											<tr>
-												<td>WIS</td><td data-bind="text: $data.wis.format()" id="1A_wis" class="dashable"></td>
-											</tr>
-											<tr>
-												<td>CHA</td><td data-bind="text: $data.cha.format()" id="1A_cha" class="dashable"></td>
-											</tr>
-											<tr class="loaded" style="display: none"><td></td></tr>
 										</tbody>
 									</table>
 								</div>
@@ -245,7 +229,7 @@ function is_dev() {
 								<div class="minibox-content">
 									<table class="table table-striped table-condensed" data-bind="with: $parent.skills">
 										<tbody class="mskill" id="1A_mskill_table" data-bind="foreach: skills">
-											<tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollSkill($data)}">
 												<td>
 													<!-- ko if: descript !== "" -->
 													<i class="icon-bookmark"></i>
@@ -267,28 +251,20 @@ function is_dev() {
 								<div class="minibox-content">
 									<table class="table table-striped table-condensed" data-bind="with: $parent.stats">
 										<tbody>
-											<tr>
-												<td>Fortitude</td><td data-bind="text: $data.fort.base.val()"  id="1A_fort"></td>
+											<!-- ko foreach: [{l:'fort',f:'Fortitude'},{l:'ref',f:'Reflex'},{l:'will',f:'Will'},{l:'cmb',f:'CMB'}] -->
+											<tr data-bind="attr: {'data-roll': $root.roller.rollNonBasicStat($data.l, $data.f)}">
+												<td data-bind="text: $data.f"></td><td data-bind="text: $parent[$data.l].base.val()"></td>
 											</tr>
-											<tr>
-												<td>Reflex</td><td data-bind="text: $data.ref.base.val()"  id="1A_ref"></td>
+											<!-- /ko -->
+											<tr class="unrollable">
+												<td>CMD</td><td data-bind="text: $data.cmd.base.val()"></td>
 											</tr>
-											<tr>
-												<td>Will</td><td data-bind="text: $data.will.base.val()"  id="1A_will"></td>
-											</tr>
-											<tr>
-												<td>Grapple</td><td data-bind="text: $data.grapple.calc()"  id="1A_grapple"></td>
-											</tr>
-											<tr>
-												<td>CMB</td><td data-bind="text: $data.cmb.base.val()"  id="1A_cmb"></td>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollNonBasicStat('grapple', 'Grapple')}">
+												<td>Grapple</td><td data-bind="text: $data.grapple.calc()"></td>
 											</tr>
 											<tr class="unrollable">
-												<td>CMD</td><td data-bind="text: $data.cmd.base.val()"  id="1A_cmd"></td>
+												<td>Base Attack Bonus</td><td data-bind="text: $data.bab.base.val()"></td>
 											</tr>
-											<tr class="unrollable">
-												<td>Base Attack Bonus</td><td data-bind="text: $data.bab.base.val()"  id="1A_bab"></td>
-											</tr>
-											<tr class="loaded" style="display: none"><td></td></tr>
 										</tbody>
 									</table>
 								</div>
@@ -300,16 +276,16 @@ function is_dev() {
 									<table class="table table-striped table-condensed" data-bind="with: $parent.weapons">
 										<caption>Weapons</caption>
 										<tbody class="mweapon" id="1A_mweapon_table" data-bind="foreach: damagers">
-											<tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollWeapon($data)}">
+												<!-- ko if: descript !== "" -->
 												<td data-bind="attr: {colspan: $parent.countColumns($data)}">
-													<!-- ko if: descript !== "" -->
 													<i class="icon-bookmark"></i>
 													<a href="#" rel="tooltip" data-bind="text: $parent.formatName($data.wname), bootstrapTooltip: {title: $data.descript, html: true, placement: 'bottom', trigger: 'manual'}" ></a>
-													<!-- /ko -->
-													<!-- ko if: descript === "" -->
-													None
-													<!-- /ko -->
 												</td>
+												<!-- /ko -->
+												<!-- ko if: descript === "" -->
+												<td class='unrollable'>None</td>
+												<!-- /ko -->
 												<!-- ko if: $data.hitdc != '0' -->
 												<td data-bind="text: $data.hitdc">
 												</td>
@@ -324,16 +300,16 @@ function is_dev() {
 									<table class="table table-striped table-condensed" data-bind="with: $parent.attacks">
 										<caption>Attacks</caption>
 										<tbody class="mattack" id="1A_mattack_table" data-bind="foreach: damagers">
-											<tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollAttack($data)}">
+												<!-- ko if: descript !== "" -->
 												<td data-bind="attr: {colspan: $parent.countColumns($data)}">
-													<!-- ko if: descript !== "" -->
 													<i class="icon-bookmark"></i>
 													<a href="#" rel="tooltip" data-bind="text: $parent.formatName($data.aname), bootstrapTooltip: {title: $data.descript, html: true, placement: 'bottom', trigger: 'manual'}" ></a>
-													<!-- /ko -->
-													<!-- ko if: descript === "" -->
-													None
-													<!-- /ko -->
 												</td>
+												<!-- /ko -->
+												<!-- ko if: descript === "" -->
+												<td class='unrollable'>None</td>
+												<!-- /ko -->
 												<!-- ko if: $data.hitdc != '0' -->
 												<td data-bind="text: $data.hitdc">
 												</td>
@@ -348,11 +324,16 @@ function is_dev() {
 									<table class="table table-striped table-condensed" data-bind="with: $parent.fatks">
 										<caption>Full Attacks</caption>
 										<tbody class="mfatk" id="1A_mfatk_table" data-bind="foreach: fatks">
-											<tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollFatk($data)}">
+												<!-- ko if: $data[0].hasOwnProperty('aname') && $data[0].aname != 'None' -->
 												<td>
 													<i class="icon-bookmark"></i>
 													<a href="#" rel="tooltip" data-bind="text: $parent.formatName($data), bootstrapTooltip: {title: $parent.toolTip($data), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
 												</td>
+												<!-- /ko -->
+												<!-- ko if: $data[0].hasOwnProperty('aname') && $data[0].aname == 'None' -->
+												<td class='unrollable'>None</td>
+												<!-- /ko -->
 											</tr>
 										</tbody>
 									</table>
@@ -553,7 +534,7 @@ function is_dev() {
 								<div class="minibox-content">
 									<table class="table table-striped table-condensed" data-bind="with: $parent.spatks">
 										<tbody class="mspatk" id="1A_mspatk_table" data-bind="foreach: spatks">
-											<tr>
+											<tr data-bind="attr: {class: $parent.decideRollable($data),'data-roll': $root.roller.rollSpatk($data)}">
 												<td data-bind="attr: {colspan: $parent.countColumns($data)}">
 													<!-- ko if: descript !== "" -->
 													<i class="icon-bookmark"></i>

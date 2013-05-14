@@ -5,7 +5,7 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 	if(exprFor) exprFor = exprFor.trim();
 
 	var nameFor = $("a[href='#"+idFor+"']").html();
-	var is2h = expr.indexOf("(2h)") != -1;
+	var is2h = expr.indexOf("(2H)") != -1;
 	var iters = 1;
 
 	var totalAttacks = atkCtOverride != null ? atkCtOverride : howManyAttacks;
@@ -93,28 +93,30 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 }
 
 function attack($rollable, $roller, uid) {
-	var isFullAttack = typeof $rollable.attr('data-fatk') !== 'undefined';
 
-	var expr = $rollable.attr('data-roll');
+	var data = $.parseJSON($rollable.attr('data-roll'));
 
-	var spatkFor = $rollable.attr('data-spatk');
-	var exprFor = $rollable.attr('data-roll-for');
+	var isFullAttack = data.isFatk;
+
+	var expr = JSON.stringify(data.primary);
+
+	var spatkFor = data.spatk;
+	var exprFor = data.for;
 	var idFor = $roller.closest('div[data-for]').attr('id');
 
-	var isAttack = $rollable.attr('data-attack-roll');
-	isAttack = typeof isAttack !== 'undefined' && isAttack !== false;
-	var howManyAttacks = parseInt($rollable.attr('data-how-many')) || 1;
-	var isRanged = $rollable.attr('data-range') != "0";
-	var threatRange = parseInt($rollable.attr('data-min-crit'));
-	var attackRollString = $rollable.attr('data-attack-roll');
-	var crits = parseInt($rollable.attr('data-crit-mult'));
+	var isAttack = typeof data.secondary !== 'undefined' && data.secondary !== false;
+	var howManyAttacks = data.howMany || 1;
+	var isRanged = data.range;
+	var threatRange = data.minCrit;
+	var attackRollString = JSON.stringify(data.secondary);
+	var crits = data.critMult;
 
-	var cleaveVal = $("#"+uid+"_calc_cleave").children().val();
+	var cleaveVal = $$(uid+"_calc_cleave").children().val();
 
 	if(isFullAttack) {
-		var fatk = $.parseJSON($rollable.attr('data-fatk'));
+		var fatk = data.primary;
 
-		isRanged = fatk.range != "0";
+		isRanged = fatk.range != 0;
 
 		$.each(fatk.rolls, function(i, ee) {
 			var index = ee.refIndex;

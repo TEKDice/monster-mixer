@@ -1,4 +1,4 @@
-var MonsterModel = function(uid, data) {
+var MonsterModel = function (uid, data) {
 	var self = this;
 
 	console.log(data);
@@ -15,26 +15,27 @@ var MonsterModel = function(uid, data) {
 
 	//statmodel
 	self.stats = {
-		str:	new StatModel(self.monsterBaseStats['str']),
-		dex:	new StatModel(self.monsterBaseStats['dex']),
-		con:	new StatModel(self.monsterBaseStats['con']),
-		wis:	new StatModel(self.monsterBaseStats['wis']),
-		int:	new StatModel(self.monsterBaseStats['int']),
-		cha:	new StatModel(self.monsterBaseStats['cha']),
-		fort:	new StatModel(self.monsterBaseStats['fort']),
-		ref:	new StatModel(self.monsterBaseStats['ref']),
-		will:	new StatModel(self.monsterBaseStats['will']),
-		grapple:new GrappleModel(self.monsterBaseStats['grapple'],self.feats),
-		bab:	new StatModel(self.monsterBaseStats['base_atk']),
-		cmd:	new StatModel(self.monsterBaseStats['cmd']),
-		cmb:	new StatModel(self.monsterBaseStats['cmb']),
+		str: new StatModel(self.monsterBaseStats['str']),
+		dex: new StatModel(self.monsterBaseStats['dex']),
+		con: new StatModel(self.monsterBaseStats['con']),
+		wis: new StatModel(self.monsterBaseStats['wis']),
+		int: new StatModel(self.monsterBaseStats['int']),
+		cha: new StatModel(self.monsterBaseStats['cha']),
+		fort: new StatModel(self.monsterBaseStats['fort']),
+		ref: new StatModel(self.monsterBaseStats['ref']),
+		will: new StatModel(self.monsterBaseStats['will']),
+		grapple: new GrappleModel(self.monsterBaseStats['grapple'], self.feats),
+		bab: new StatModel(self.monsterBaseStats['base_atk']),
+		cmd: new StatModel(self.monsterBaseStats['cmd']),
+		cmb: new StatModel(self.monsterBaseStats['cmb']),
 
-		reach:	  self.monsterBaseStats['reach'],
-		space:	  self.monsterBaseStats['space_taken'],
+		reach: self.monsterBaseStats['reach'],
+		space: self.monsterBaseStats['space_taken'],
 		treasure: self.monsterBaseStats['treasure'],
 
-		size:	ko.observable(self.monsterBaseStats.size),
-		category: ko.observable(self.monsterBaseStats.category)
+		size: ko.observable(self.monsterBaseStats.size),
+		category: ko.observable(self.monsterBaseStats.category),
+		name: ko.observable(self.monsterBaseStats.name)
 	};
 
 	self.skills = new SkillModel(data.mskill);
@@ -57,14 +58,16 @@ var MonsterModel = function(uid, data) {
 
 	self.speeds = new SpeedModel(data.mmove);
 
-	self.fatks = new FullAttackModel(data.mfatk);
-	
+	self.fatks = new FullAttackModel(data.mfatk, self.monsterBaseStats.name);
+
 	self.ac = new ACModel(self, {
 		"Natural AC": parseInt(self.monsterBaseStats.natural_ac),
 		"Base": 10,
 		"DEX Bonus": self.stats.dex.bonus(),
 		"Size Mod": _getSizeModifier(self.stats.size())
 	});
+
+	self.roller = new RollerHandler(self);
 
 	self.formatCR = function (cr) {
 		switch (cr) {
@@ -109,9 +112,9 @@ function ACModel(monsterModel, props) {
 
 	self.arrayProps = ko.observable(props);
 
-	self.flatfoot = new ArrayValueCountModel(monsterModel.uid + "_flatfoot_ac", self, ["Dodge","Combat Expertise"]);
-	self.touch =	new ArrayValueCountModel(monsterModel.uid + "_touch_ac", self, ["Natural AC"]);
-	self.total =	new ArrayValueCountModel(monsterModel.uid + "_ac", self, []);
+	self.flatfoot = new ArrayValueCountModel(monsterModel.uid + "_flatfoot_ac", self, ["Dodge", "Combat Expertise"]);
+	self.touch = new ArrayValueCountModel(monsterModel.uid + "_touch_ac", self, ["Natural AC"]);
+	self.total = new ArrayValueCountModel(monsterModel.uid + "_ac", self, []);
 }
 
 function HPModel(hpRoll, conModel, featModel, uid) {
@@ -162,17 +165,20 @@ function HPModel(hpRoll, conModel, featModel, uid) {
 	});
 }
 
-function FullAttackModel(fatks) {
+function FullAttackModel(fatks, mname) {
 	var self = this;
 
-	if (fatks.length == 0) fatks.push({ "0": { aname: "None" }});
+	if (fatks.length == 1 && fatks[0].length == 0) fatks.pop();
 
+	if (fatks.length == 0) fatks.push({ "0": { aname: "None" } });
+
+	self.mname = mname;
 	self.fatks = ko.observableArray(fatks);
 
 	self.formatName = function (fatk) {
 		var retStr = [];
 		$.each(fatk, function (i, e) {
-			retStr.push(e.aname || e.wname);
+			retStr.push(self.formatNameStr(e.aname || e.wname));
 		});
 		return retStr.join(", ");
 	};
@@ -180,7 +186,7 @@ function FullAttackModel(fatks) {
 	self.toolTip = function (fatk) {
 		var retStr = '';
 		$.each(fatk, function (i, e) {
-			var atkStr = e.aname || e.wname;
+			var atkStr = self.formatNameStr(e.aname || e.wname);
 			atkStr += ': ';
 			var rollStr = e.hitdc;
 			var eleStr = (rollStr == '0' ? '' : '+') + e.dmgred_hd + ' ' + e.dmgname;
@@ -192,6 +198,206 @@ function FullAttackModel(fatks) {
 			retStr += atkStr;
 		});
 		return retStr;
+	};
+
+	self.formatNameStr = function (name) {
+		if (name == undefined) return "ERROR";
+		if (name.indexOf(mname) != -1) return name.substring(mname.length).trim();
+		return name;
+	};
+
+	self.primaryRoll = function (obj, monsterName, hasImpCrit, creatureBab, hasGreaterTwoWeapFighting, hasImpTwoWeapFighting, toHitRoll, attackRoll) {
+		var spatkA = [], rangeA = [], critMultA = [], minCritA = [], howManyA = [],
+			babUseA = [], secA = [], rollsA = [], nameA = [], atkCtA = [];
+		$.each(obj, function (ind, e) {
+
+			if (e.spatkname != null && e.spatkname.indexOf(monsterName) != -1) e.spatkname = e.spatkname.substring(monsterName.length + 1);
+
+			babUseA.push(parseInt(e.is_uses_bab));
+
+			spatkA.push(e.spatkname);
+
+			secA.push(e.mfa_class_mult == "0.50" ? 1 : 0);
+
+			if (e.wir)
+				rangeA.push(e.wir);
+			else
+				rangeA.push(e.mfa_range);
+
+			var minCrit = 0;
+
+			e.critical = e.atkct || e.wct;
+			if (!e.critical) e.critical = '0';
+
+			e.how_many = e.atkhm || e.whm;
+			if (!e.how_many) e.how_many = '1';
+
+			nameA.push(e.wname || e.aname);
+
+			howManyA.push(e.how_many);
+
+			if (e.hasOwnProperty('critical')) {
+				if (e.critical.indexOf('-') != -1) {
+					var critArr = e.critical.split("-");
+					critMultA.push(critArr[1].split("x")[1]);
+					minCrit = parseInt(critArr[0]);
+				} else if (e.critical == '0') {
+					minCrit = 20;
+					critMultA.push(2);
+				} else if (e.critical.indexOf("x") != -1) {
+					minCrit = 20;
+					critMultA.push(e.critical.substring(1));
+				} else {
+					console.error("critical wasn't parseable: " + obj.critical + " " + obj.name);
+				}
+			}
+
+			if (hasImpCrit) {
+				minCrit = 21 - ((20 - minCrit + 1) * 2);
+			}
+			minCritA.push(minCrit);
+
+			if (e.is_uses_bab == "1") {
+				var div = creatureBab / 5;
+				var mod = creatureBab % 5;
+				var attacks = Math.max(Math.floor(div) + (mod != 0 ? 1 : 0), 1);
+
+				var bonusAttacks = 1;
+
+				for (var i = 0; i < attacks; i++) {
+
+					var roll = { damage: $.extend(true, {}, attackRoll[ind]), tohit: $.extend(true, {}, toHitRoll[ind]), refIndex: ind };
+
+					//I tried renaming these variables and rearranging everything and it refused to work
+					//this is actually taking away from the rolls to-hit
+					if (bonusAttacks > 1)
+						roll["damage"]["Attack " + (bonusAttacks)] = -(bonusAttacks - 1) * 5;
+
+					if (secA[ind]) {
+						if (i == 0)
+							rollsA.push(roll);
+
+						else if (hasGreaterTwoWeapFighting && bonusAttacks == 2) {
+
+							rollsA.push(roll);
+							bonusAttacks++;
+
+						} else if (hasImpTwoWeapFighting && bonusAttacks == 1) {
+
+							rollsA.push(roll);
+							bonusAttacks++;
+						}
+					} else {
+						rollsA.push(roll);
+						bonusAttacks++;
+					}
+				}
+				atkCtA.push(bonusAttacks);
+			} else {
+				var roll = { damage: $.extend(true, {}, attackRoll[ind]), tohit: $.extend(true, {}, toHitRoll[ind]), refIndex: ind };
+				for (var i = 0; i < howManyA[ind]; i++)
+					rollsA.push(roll);
+			}
+		});
+
+		var fatk = {
+			range: rangeA, spatk: spatkA, names: nameA,
+			critMult: critMultA, howMany: howManyA, atkCt: atkCtA,
+			minCrit: minCritA, secondary: secA, rolls: rollsA
+		};
+
+		return fatk;
+	};
+
+	self.damageRoll = function (obj, attackModel, strBonus) {
+		var ret = [];
+
+		$.each(obj, function (i, e) {
+			var retO = {};
+
+			//attack
+			if (e.atkhd) {
+				var parsed = attackModel.attackDamageRoll(e, strBonus);
+				retO = collect(retO, parsed);
+			}
+
+			//weapon
+			if (e.wname) {
+				e.mfa_strict = e.mfa_strict == "0" ? "1" : "0";
+				var parsed = attackModel.weaponDamageRoll(e, strBonus, e.wir || e.mfa_range, e.mfa_strict);
+				retO = collect(retO, parsed);
+			}
+
+			ret.push(retO);
+		});
+
+		return ret;
+	};
+
+	self.toHitRoll = function (obj, attackModel, bab, size, dexBonus, strBonus, hasWeaponFocus, hasWeaponFinesse, hasTwoWeapons, hasMultiAttack) {
+		var ret = [];
+
+		var weaponCount = [];
+
+		$.each(obj, function (i, e) {
+
+			var retO = {};
+			//attack
+			if (e.atkhd) {
+				var parsed = attackModel.attackToHitRoll(e, bab, size, dexBonus, strBonus, hasWeaponFocus, hasWeaponFinesse);
+				retO = collect(retO, parsed);
+				if (parseFloat(e.mfa_class_mult) == 0.5 && !hasTwoWeapons) {
+					if (hasMultiAttack)
+						retO["Secondary Penalty"] = -2;
+					else
+						retO["Secondary Penalty"] = -5;
+				}
+				e.wlight = "1";
+				e.mfa_class_mult = "0.50";
+			}
+
+			//weapon
+			if (e.wname) {
+				var parsed = attackModel.weaponToHitRoll(e, hasWeaponFocus, bab, size, hasWeaponFinesse, dexBonus, strBonus);
+				retO = collect(retO, parsed);
+			}
+			weaponCount.push(e);
+
+			ret.push(retO);
+		});
+
+		if (weaponCount.length > 1) {
+
+			var minusTwo = false;
+
+			$.each(weaponCount, function (i, e) {
+				if ((e.aname != null && e.wlight == "1") || e.wlight == "1" && e.mfa_class_mult == "0.50") {
+					minusTwo = true;
+				}
+			});
+
+			var has2W = hasTwoWeapons;
+			if (has2W)
+				$.each(weaponCount, function (i, e) {
+					var minus = 0;
+					if (e.mfa_class_mult == "1.00") {
+						minus = -6;
+						if (has2W)
+							minus += 2;
+						if (minusTwo)
+							minus += 2;
+						ret[i]["Multiweapon Penalty (Primary)"] = minus;
+					} else {
+						minus = -10;
+						if (has2W)
+							minus += 6;
+						if (minusTwo)
+							minus += 2;
+						ret[i]["Multiweapon Penalty (Secondary)"] = minus;
+					}
+				});
+		}
+		return ret;
 	};
 }
 
@@ -210,9 +416,9 @@ function InitiativeModel(dexModel, featModel, uid) {
 	});
 
 	self.toolTip = ko.computed(function () {
-		var retStr = "Base (1d20): "+self.init.num().val();
+		var retStr = "Base (1d20): " + self.init.num().val();
 		if (self.dex != 0) retStr += ("<br>DEX: " + self.dex());
-		if (self.countImprovedInitiative() != 0) retStr += ("<br>Improved Initiative: "+(4 * self.countImprovedInitiative()));
+		if (self.countImprovedInitiative() != 0) retStr += ("<br>Improved Initiative: " + (4 * self.countImprovedInitiative()));
 		$$(uid + "_init").attr('data-original-title', retStr);
 		return retStr;
 	});
@@ -226,7 +432,7 @@ function InitiativeModel(dexModel, featModel, uid) {
 	});
 
 	self.totalInit = ko.computed(function () {
-		return self.init.num().val()+self.dex()+(4 * self.countImprovedInitiative());
+		return self.init.num().val() + self.dex() + (4 * self.countImprovedInitiative());
 	});
 }
 
@@ -291,9 +497,109 @@ function WeaponAttackModel(damagers, mname) {
 	};
 
 	self.formatName = function (name) {
-		if (name == undefined) return "ERROR";
-		if (name.indexOf(mname) != -1) return name.substring(mname.length);
+		if (name == undefined) return;
+		if (name.indexOf(mname) != -1) return name.substring(mname.length).trim();
 		return name;
+	};
+
+	self.attackToHitRoll = function (obj, bab, size, dexBonus, strBonus, hasWeaponFocus, hasWeaponFinesse) {
+		var ret = {};
+		ret["Base"] = "1d20";
+
+		if (hasWeaponFocus)
+			ret["Weapon Focus"] = 1;
+
+		ret["BAB"] = bab;
+
+		ret["Size (" + size + ")"] = sizeModifier(size);
+
+		if (obj.is_strictly_melee == "0")
+			if (hasWeaponFinesse)
+				ret["DEX Mod"] = dexBonus;
+			else
+				ret["STR Mod"] = strBonus;
+		else
+			ret["DEX Mod"] = dexBonus;
+
+		return ret;
+	};
+
+	self.attackDamageRoll = function (obj, strBonus) {
+		var ret = {};
+		ret["Base"] = obj.hitdc;
+
+		if (obj.dmgname != null)
+			ret[obj.dmgname + " (" + obj.dmgred_hd + ")"] = obj.dmgred_hd;
+
+		ret["STR Mod"] = Math.floor(strBonus * parseFloat(obj.max_str_mod));
+
+		return ret;
+	}
+
+	self.weaponToHitRoll = function (obj, hasWeaponFocus, bab, size, hasWeaponFinesse, dexBonus, strBonus) {
+		var ret = {};
+		ret["Base"] = "1d20";
+
+		if (hasWeaponFocus)
+			ret["Weapon Focus"] = 1;
+
+		ret["BAB"] = bab;
+
+		ret["Size (" + size + ")"] = sizeModifier(size);
+
+		if (obj.is_ranged == "0") {
+
+			if (hasWeaponFinesse)
+				ret["DEX Mod"] = dexBonus;
+			else
+				ret["STR Mod"] = strBonus;
+			
+			if (obj.wname.indexOf('Javelin') != -1)
+				ret["Javelin"] = -4;
+
+		} else {
+			if (obj.wname && obj.wname.toLowerCase().indexOf('composite') != -1) {
+				var strMod = parseFloat(obj.max_str_mod) || 0;
+				if (strBonus < strMod) {
+					ret["Composite Proficiency"] = -2;
+				}
+			}
+			ret["DEX Mod"] = dexBonus;
+		}
+
+		ret["Enchantment"] = parseInt(obj.enchantment_bonus);
+		return ret;
+	};
+
+	self.weaponDamageRoll = function (obj, strBonus, range, melee) {
+		var ret = {};
+		ret["Base"] = obj.hitdc;
+		if (obj.dmgname != null)
+			ret[obj.dmgname + " (" + obj.dmgred_hd + ")"] = obj.dmgred_hd;
+
+		var strMod = parseFloat(obj.max_str_mod) || 0;
+
+		ret["STR Mod"] = strBonus;
+
+		if (melee == "1") {
+			if (obj.is_uses_str_mod == "1") {
+				if (obj.is_one_handed == "0") {
+					ret["STR Mod"] = strBonus * 1.5;
+				}
+			}
+		} else {
+
+			if (obj.wname && obj.wname.toLowerCase().indexOf('composite') != -1) {
+				ret["STR Mod"] = clamp(0, strMod, strBonus);
+			}
+
+			if (strBonus < 0 && obj.wname.toLowerCase().indexOf('crossbow') == -1)
+				ret["STR Mod"] = strBonus;
+		}
+
+		ret["Enchantment"] = parseInt(obj.enchantment_bonus);
+
+		return ret;
 	};
 }
 
@@ -305,7 +611,7 @@ function SpeedModel(speeds) {
 function SpecialAttackModel(spatks, mname) {
 	var self = this;
 
-	if (spatks.length == 0) spatks.push({ name: "None", descript: "", hit_dice:'0' });
+	if (spatks.length == 0) spatks.push({ name: "None", descript: "", hit_dice: '0' });
 
 	self.mname = mname;
 	self.spatks = ko.observableArray(spatks);
@@ -317,17 +623,49 @@ function SpecialAttackModel(spatks, mname) {
 		return cols;
 	};
 
-	self.formatElemental = function(spatk) {
+	self.formatElemental = function (spatk) {
 		var retStr = '';
-		if(spatk.hit_dice != '0') retStr='+';
+		if (spatk.hit_dice != '0') retStr = '+';
 		retStr += spatk.dmgred_hd + " ";
 		retStr += spatk.dmgred_nm;
 		return retStr;
 	};
 
 	self.formatName = function (name) {
+		if (!name) return;
 		if (name.indexOf(mname) != -1) return name.substring(mname.length);
 		return name;
+	};
+
+	self.isRollable = function (spatk) {
+		return spatk.hit_dice != '0' || spatk.dmgred_nm != null;
+	};
+
+	self.decideRollable = function (spatk) {
+		return self.isRollable(spatk) ? '' : 'unrollable';
+	}
+
+	self.toHitRoll = function (spatk, dexBonus, strBonus) {
+		var ret = {};
+		ret["Base"] = "1d20";
+		if (spatk.range == "0") 
+			ret["STR Mod"] = strBonus;
+		else 
+			ret["DEX Mod"] = dexBonus;
+
+		return ret;
+	};
+
+	self.damageRoll = function (obj, strBonus) {
+		var ret = {};
+		if (obj.hit_dice != '0')
+			ret["Base ("+obj.hit_dice+")"] = obj.hit_dice;
+
+		if (obj.dmgred_hd != '0')
+			ret[obj.dmgred_nm] = obj.dmgred_hd;
+
+		ret["STR Mod"] = strBonus;
+		return ret;
 	};
 }
 
@@ -357,28 +695,39 @@ function GrappleModel(base, featModel) {
 	self.calc = ko.computed(function () {
 		return self.base.val() + self.grappleBonus();
 	});
+
+	self.nonBasicPrimaryRoll = function () {
+		return { "Base": "1d20", "Bonus": self.calc() };
+	};
 }
 
 function StatModel(base) {
 	if (typeof base !== "number") base = parseInt(base);
 	var self = this;
 	self.base = new ModifiableNumberModel(base);
-	self.bonus = ko.computed(function() {
+	self.bonus = ko.computed(function () {
 		return getBonus(self.base.val());
 	});
 	self.format = ko.computed(function () {
 		if (self.base.val() == 0) return "--";
 		var bonus = self.bonus();
-		if (bonus == 0) return self.base.val();
 
 		if (bonus > 0) bonus = "+" + bonus;
 		return self.base.val() + " " + "(" + bonus + ")";
 	});
+
+	self.primaryRoll = function () {
+		return { "Base": "1d20", "Bonus": self.bonus() };
+	};
+
+	self.nonBasicPrimaryRoll = function () {
+		return { "Base": "1d20", "Bonus": self.base.val() };
+	};
 }
 
 function ArrayValueCountModel(tag, model, filterProps) {
 	var self = this;
-	
+
 	self.tag = tag;
 	self.ignored = filterProps;
 	self.kvs = ko.observable(model.arrayProps);
@@ -401,7 +750,7 @@ function ArrayValueCountModel(tag, model, filterProps) {
 		var retStr = '';
 		$.each(self.kvs()(), function (i, e) {
 			if ($.inArray(i, self.ignored) == -1 && e != 0)
-				retStr += i + ": " + e+"<br>";
+				retStr += i + ": " + e + "<br>";
 		});
 
 		$$(tag).attr('data-original-title', retStr);
@@ -428,6 +777,10 @@ function SkillModel(skills) {
 		if (skill.skill_level > 0) return "+" + skill.skill_level;
 		return skill.skill_level;
 	};
+
+	self.primaryRoll = function (skill) {
+		return { "Base": "1d20", "Bonus": skill.skill_level };
+	};
 }
 
 function FeatModel(feats, uid) {
@@ -440,7 +793,38 @@ function FeatModel(feats, uid) {
 	self.uid = uid;
 	self.feats = ko.observableArray(feats);
 	self.checkboxFeats = ["Dodge", "Point Blank Shot", "Awesome Blow", "Frenzy", "Rage"];
-	self.numberFeats   = ["Power Attack", "Combat Expertise", "Cleave"];
+	self.numberFeats = ["Power Attack", "Combat Expertise", "Cleave"];
+
+	self.countFeat = function (featName) {
+		var ret = 0;
+
+		$.each(self.feats(), function (i, e) {
+			if (e.name && e.name.indexOf(featName) != -1) ret = parseInt(e.feat_level);
+		});
+
+		return ret;
+	};
+
+	self.hasWeaponFocus = function (wname) {
+		if (!wname) return false;
+		if (!self.hasFeat('Weapon Focus')) return false;
+
+		var ret = false;
+
+		$.each(self.feats(), function (i, e) {
+			if (e.name.indexOf('Weapon Focus') != -1) return;
+			var atk = name.substring(e.name.indexOf("(") + 1, e.name.indexOf(")"));
+			if (!atk) return;
+			if (wname.toLowerCase().indexOf(atk.toLowerCase()) != -1)
+				ret = true;
+		});
+
+		return ret;
+	};
+
+	self.hasFeat = function (nameToFind) {
+		return self.countFeat(nameToFind) != 0;
+	};
 
 	self.format = function (feat) {
 		return feat.name + (feat.feat_level > 1 ? " (x" + feat.feat_level + ")" : "");
@@ -462,9 +846,9 @@ function FeatModel(feats, uid) {
 		if (self.hasCheckbox(name) || self.hasNumber(name)) return 1;
 		return 2;
 	};
-	
+
 	self.formatSpName = function (name) {
-		return self.uid+"_calc_"+formatSpecialFeatName(name);
+		return self.uid + "_calc_" + formatSpecialFeatName(name);
 	};
 }
 
@@ -478,7 +862,7 @@ function QualityModel(qualities, mname) {
 	self.mname = mname;
 	self.qualities = ko.observableArray(qualities);
 
-	self.isMeasurable = function(name) {
+	self.isMeasurable = function (name) {
 		return name != 'Spell Resistance' && name != "Regeneration" && name != "Turn Resistance";
 	};
 	self.format = function (qual) {
@@ -496,7 +880,7 @@ function DRModel(reductions) {
 	if (reductions.length == 0) reductions.push({ name: "None", reduction_amount: -1 });
 
 	self.dr = ko.observableArray(reductions);
-	self.format = function(val) {
+	self.format = function (val) {
 		return val == '0' || val == 0 ? "Immune" : (val == -1 ? '' : val);
 	};
 }
@@ -531,17 +915,157 @@ function ModifiableNumberModel(baseVal) {
 	};
 
 	self.increment = function () {
-		self.val(self.val()+1);
+		self.val(self.val() + 1);
 	};
 	self.decrement = function () {
-		self.val(self.val()-1);
+		self.val(self.val() - 1);
 	};
 	self.relative = function (num) {
-		self.val(self.val()+num);
+		self.val(self.val() + num);
 	}
 	self.absolute = function (num) {
 		self.val(num);
 	}
+}
+
+function RollerHandler(monModel) {
+	var self = this;
+
+	self.monster = monModel;
+
+	self.rollStat = function (stat) {
+		var roll = self.monster.stats[stat];
+		return JSON.stringify({ 'for': stat.toUpperCase(), 'primary': roll.primaryRoll(), 'howMany': 1 });
+	};
+
+	self.rollNonBasicStat = function (stat, name) {
+		var roll = self.monster.stats[stat];
+		return JSON.stringify({ 'for': name, 'primary': roll.nonBasicPrimaryRoll(), 'howMany': 1 });
+	};
+
+	self.rollSkill = function (skill) {
+		var roll = self.monster.skills.primaryRoll(skill);
+		return JSON.stringify({ 'for': skill.name, 'primary': roll, 'howMany': 1 });
+	};
+
+	self.rollAttack = function (attack) {
+		if (attack.name == "None") return;
+		var primary = self.monster.attacks.attackToHitRoll(attack,
+						self.monster.stats.bab.base.val(),
+						self.monster.stats.size(),
+						self.monster.stats.dex.bonus(),
+						self.monster.stats.str.bonus(),
+						self.monster.feats.hasWeaponFocus(attack.aname),
+						self.monster.feats.hasFeat('Weapon Finesse'));
+		var secondary = self.monster.attacks.attackDamageRoll(attack, self.monster.stats.str.bonus());
+		var critical = self.determineCritical(attack, self.monster.feats.hasFeat('Improved Critical'));
+		return JSON.stringify({
+			'for': self.formatName(attack.aname), 'primary': secondary, 'secondary': primary, 'howMany': parseInt(attack.how_many),
+			'minCrit': critical.min, 'critMult': critical.mult, 'range': parseInt(attack.range), 'spatk': self.monster.spatks.formatName(attack.spatk)
+		});
+	};
+
+	self.rollWeapon = function (weapon) {
+		if (weapon.name == "None") return;
+		var primary = self.monster.weapons.weaponToHitRoll(weapon,
+			self.monster.feats.hasWeaponFocus(weapon.wname),
+			self.monster.stats.bab.base.val(),
+			self.monster.stats.size(),
+			self.hasFeat('Weapon Finesse'),
+			self.monster.stats.dex.bonus(),
+			self.monster.stats.str.bonus());
+		var secondary = self.monster.weapons.weaponDamageRoll(weapon, self.monster.stats.str.bonus(), weapon.is_ranged);
+		var critical = self.determineCritical(weapon, self.hasFeat('Improved Critical'));
+		return JSON.stringify({
+			'for': self.formatName(weapon.wname), 'primary': secondary, 'secondary': primary, 'howMany': parseInt(weapon.how_many) || 1,
+			'minCrit': critical.min, 'critMult': critical.mult, 'range': parseInt(weapon.is_ranged), 'spatk': self.monster.spatks.formatName(weapon.spatk)
+		});
+	};
+
+	self.rollSpatk = function (spatk) {
+		if (!self.monster.spatks.isRollable(spatk)) return;
+		var primary = self.monster.spatks.toHitRoll(spatk, self.monster.stats.dex.bonus(), self.monster.stats.str.bonus());
+		var secondary = self.monster.spatks.damageRoll(spatk, self.monster.stats.str.bonus());
+		var critical = self.determineCritical(spatk);
+
+		return JSON.stringify({
+			'for': self.formatName(spatk.name), 'primary': secondary, 'secondary': primary, 'howMany': 1,
+			'minCrit': critical.min, 'critMult': critical.mult, 'range': parseInt(spatk.range)
+		});
+	};
+
+	self.rollFatk = function (fatk) {
+		var toHit = self.monster.fatks.toHitRoll(fatk, self.monster.attacks,
+						self.monster.stats.bab.base.val(),
+						self.monster.stats.size(),
+						self.monster.stats.dex.bonus(),
+						self.monster.stats.str.bonus(),
+						self.monster.feats.hasWeaponFocus(attack.aname),
+						self.hasFeat('Weapon Finesse'),
+						self.hasTwoWeapons(),
+						self.hasFeat('Multiattack'));
+		var damage = self.monster.fatks.damageRoll(fatk, self.monster.attacks, self.monster.stats.str.bonus());
+		var primary = self.monster.fatks.primaryRoll(fatk,
+			self.monster.stats.name,
+			self.hasFeat('Improved Critical'),
+			self.monster.stats.bab.base.val(),
+			self.hasGreaterMultiFighting(),
+			self.hasImprovedMultiFighting(),
+			damage,
+			toHit);
+
+		return JSON.stringify({
+			'for': "a fatk", 'primary': primary, isFatk: true, range: 0
+		});
+
+	};
+
+	self.hasFeat = function (feat) {
+		return self.monster.feats.hasFeat(feat);
+	}
+
+	self.hasTwoWeapons = function () {
+		return self.hasFeat("Two-Weapon Fighting") || self.hasFeat("Multiweapon Fighting")
+	};
+
+	self.hasGreaterMultiFighting = function () {
+		return self.hasFeat("Greater Two-Weapon Fighting") || self.hasFeat("Greater Multiweapon Fighting");
+	};
+
+	self.hasImprovedMultiFighting = function () {
+		self.hasFeat("Improved Two-Weapon Fighting") || self.hasFeat("Improved Multiweapon Fighting");
+	};
+
+	self.determineCritical = function(obj, hasImpCrit) {
+		var minCrit = 20;
+		var critMult = 2;
+
+		if (obj.hasOwnProperty('critical')) {
+			if (obj.critical.indexOf('-') != -1) {
+				var critArr = obj.critical.split("-");
+				critMult = parseInt(critArr[1].split("x")[1]);
+				minCrit = parseInt(critArr[0]);
+			} else if (obj.critical == '0') {
+				minCrit = 20;
+			} else if (obj.critical.indexOf("x") != -1) {
+				minCrit = 20;
+				critMult = parseInt(obj.critical.substring(1));
+			} else {
+				console.error("critical wasn't parseable: " + obj.critical + " " + obj.name);
+			}
+		}
+
+		if (hasImpCrit)
+			minCrit = 21 - ((20 - minCrit + 1) * 2);
+
+		return { min: minCrit, mult: critMult };
+	}
+
+	self.formatName = function (name) {
+		if (name == undefined) return;
+		if (name.indexOf(self.monster.stats.name()) != -1) return name.substring(self.monster.stats.name().length+1).trim();
+		return name;
+	};
 }
 
 ko.bindingHandlers.bootstrapTooltip = {
