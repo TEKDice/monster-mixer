@@ -1,49 +1,121 @@
-function hasFeat(id, feat) {
-	return hasNeedle(id, "mfeat", feat, "times-taken");
+
+var monsterCount = 0;
+
+var monsters = {};
+
+function addNewMonster(monster) {
+
+	$(".alert").hide();
+	$("#monsterList").show();
+
+	var uid = new Date().getTime();
+
+	_addNewMonster(monster, uid);
+
+	_hidePopup();
+
+	sortMonsters();
+
+	saveMonsters();
+
+	return uid;
+
 }
 
-function fullFeatName(id, feat) {
-	return hasNeedle(id, "mfeat", feat, "full-name");
-}
+function _addNewMonster(monster, uid, name) {
 
-function hasSkill(id, skill) {
-	return hasNeedle(id, "mskill", skill);
-}
+	var $li = $("<li/>");
 
-function hasQuality(id, quality) {
-	return hasNeedle(id, "mqualit", quality);
-}
+	var realName = monster == null ? name : monster.data[0].name;
 
-function hasNeedle(id, table, needle, returnVal) {
-	var $table = $("#"+id+"_"+table+"_table");
+	var $a = $("<a/>", {
+		href: "#" + uid
+	}).html("[<span class='logCount'>" + (++monsterCount) + "</span>] " + realName).attr('data-toggle', 'tab').attr('data-uid', uid);
 
-	var hasNeedle = false;
-	$table.find("td a").each(function() {
-		if($(this).text().indexOf(needle) != -1) {
-			if(returnVal != null) {
-				hasNeedle = $(this).closest("tr").attr('data-'+returnVal);
-			} else 
-				hasNeedle = true;
-			return;
-		}
+	$a.appendTo($li);
+
+	var newHtml = $("#dummyData").html();
+	$("#monsterData").append(newHtml);
+
+	var $parent = $(".tab-pane[data-for='none']").not("#dummyData > [data-for='none']");
+
+	$parent.attr('id', uid);
+	$parent.attr('data-for', uid);
+
+	$parent.find("*[id*='1A']").each(function () {
+		$(this).attr('id', $(this).attr('id').replace('1A', uid));
 	});
 
-	return hasNeedle;
+	$parent.find("*[data-uid*='1A']").each(function () {
+		$(this).attr('data-uid', $(this).attr('data-uid').replace('1A', uid));
+	});
+
+	if (!(uid in monsters)) {
+		monsters[uid] = new MonsterModel(uid, monster);
+	}
+
+	ko.applyBindings(monsters[uid], $$(uid)[0]);
+
+	var popover = $("#dummyModifiable").html();
+	popover = popover.split("1A").join(uid);
+	$("#health_" + uid).popover({
+		html: true,
+		placement: 'bottom',
+		content: popover,
+		title: "Modify HP"
+	}).click(function () {
+		$(".modify-hp").click(function () {
+			var modHp = parseInt($$(uid + "_hp_mod").val());
+			if ($(this).hasClass('subtract')) {
+				modifyHp(uid, -modHp);
+			} else {
+				modifyHp(uid, modHp);
+			}
+		});
+	});
+
+	var nice = $('#monsterList').niceScroll({ horizrailenabled: false, zindex: 9, railoffset: { left: -118 } });
+	$('#monsterList').css('overflow', 'hidden');
+
+	tabChangeScrollbars();
+
+	setupRollables($parent);
+
+	var newLog = $("#dummyLog").html();
+	$("#curMon").append(newLog);
+
+	var $pLog = $(".log[data-for='none']").not("#dummyLog > [data-for='none']");
+	$pLog.attr('id', uid + "_log").attr('data-for', uid);
+
+	$li.appendTo($("#monsterList"));
+
+	$a.tab('show');
+}
+
+function sortMonsters() {
+	var mylist = $('#monsterList');
+	var listitems = mylist.children('li').get();
+	listitems.sort(function (a, b) {
+		var left = parseInt($("#" + $(a).children("a").attr('data-uid') + "_init").text());
+		var right = parseInt($("#" + $(b).children("a").attr('data-uid') + "_init").text());
+		return right - left;
+	});
+	$.each(listitems, function (idx, itm) { mylist.append(itm); });
 }
 
 function modifyHp(uid, mod, notLog) {
-	if (isNaN(mod) || mod == 0) return;
+	if (isNaN(mod)) return;
 	monsters[uid].hp.mod().relative(mod);
 
 	var curHp = monsters[uid].hp.total();
-	var maxHp = monsters[uid].hp.initTotal();
+	var maxHp = monsters[uid].hp.max();
 	var $monsterNode = $("[href=#" + uid + "]");
 	var monsterName = $monsterNode.html();
 
 	var hpPerc = Math.round((curHp/maxHp)*100);
-	if(hpPerc < 15)		 $monsterNode.attr('class','hp-critical');
-	else if(hpPerc < 50) $monsterNode.attr('class','hp-warning');
-	else 				 $monsterNode.attr('class','hp-good');
+	if(hpPerc <= 15)	  $monsterNode.attr('class','hp-critical');
+	else if(hpPerc <= 50) $monsterNode.attr('class','hp-warning');
+	else 				  $monsterNode.attr('class','hp-good');
 
 	if(!notLog)
 		addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp. ("+curHp+"/"+maxHp+") ["+hpPerc+"%]");
@@ -56,76 +128,6 @@ function modifyHp(uid, mod, notLog) {
 				remove(uid, true);
 		});
 	}
-}
-
-function rollHp(uid, $rootNod, newHp, force) {
-
-	var $rootNode = $("#"+uid+"_hp");
-
-	var title = '';
-
-	newHp = parseInt(newHp);
-
-	if(newHp == 0) newHp = 1;
-	title += $rootNode.attr('data-base-value')+": "+newHp+"<br>";
-
-	var num;
-	if(num = hasFeat(uid, "Toughness")) {
-		num = 3*parseInt(num);
-		title += "Toughness: "+num+"<br>";
-	}
-
-	var con = get_bonus(parseInt($("#"+uid+"_con").text())) * parseInt($rootNode.attr('data-base-value').split('d')[0]);
-	if(con != 0)
-		title += "CON Modifier: "+con+"<br>";
-
-	title = title.slice(0, -4);
-
-	$rootNode.attr('data-initial-roll', newHp);
-	newHp += con;
-	newHp += num;
-	$rootNode.attr('data-mod-value', con+num);
-	$("#"+uid+"_hp").children(".hp_val").text(newHp);
-
-	var attr = $("#"+uid+"_hp").children(".hp_val").attr('data-original-title');
-	if (force || (typeof attr !== 'undefined' && attr !== false)) {
-		$("#"+uid+"_hp").children(".hp_val").attr('data-original-title',title);
-	} else {
-		$("#"+uid+"_hp").children(".hp_val").attr('rel','tooltip').attr('title',title);
-	}
-
-	$("#"+uid+"_hp").children(".hp_val").tooltip({html: true, placement: 'bottom'});
-}
-
-function rollInit($node) {
-	var roll = parseInt(rollExpression('1d20'));
-	var uid = $node.attr('data-uid');
-	_rollInit(uid, roll);
-	
-	sortMonsters();
-}
-
-function _rollInit(uid, roll) {
-
-	var $node = $("#"+uid+"_init");
-	var title = '';
-
-	title += "1d20: "+roll+"<br>";
-
-	var base = get_bonus(parseInt($("#"+uid+"_dex").attr('data-base-value')));
-	title += "Modifier: "+base+"<br>";
-
-	var num=0;
-
-	if(num = hasFeat($node.attr('data-uid'), "Improved Initiative")) {
-		num = 4*parseInt(num);
-		title += "Improved Initiative: "+num+"<br>";
-	}
-
-	$node.attr('data-initial-value', roll);
-	$node.text(base+roll+num);
-	$node.attr('rel','tooltip').attr('title',title).attr('data-original-title', title);
-	$node.tooltip({html: true, placement: 'bottom'});
 }
 
 function remove(uid, killed) {

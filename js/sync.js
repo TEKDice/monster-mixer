@@ -61,10 +61,11 @@ function loadMonsters(monsterSet) {
 					
 					var oldMonData = monsterSet[i];
 
-					monsters[uid].hp.mod().val(oldMonData.modHp);
 					monsters[uid].hp.hp().num().val(oldMonData.maxHp);
+					modifyHp(uid, oldMonData.modHp, true);
 					monsters[uid].initiative.init.num().val(oldMonData.init);
 
+					sortMonsters();
 					saveMonsters();
 				}, 1);
 			},
@@ -210,7 +211,7 @@ function changeStatus(status) {
 	switch(status) {
 		case "ok": 				updateTextIcon("icon-ok", "Ready"); return;
 		case "syncing": 		updateTextIcon("icon-refresh", "Syncing..."); return;
- 		case "noconnection": 	updateTextIcon("icon-warning-sign", "No connection"); return;
+		case "noconnection": 	updateTextIcon("icon-warning-sign", "No connection"); return;
 	}
 }
 

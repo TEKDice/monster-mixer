@@ -1,3 +1,4 @@
+
 var MonsterModel = function (uid, data) {
 	var self = this;
 
@@ -94,6 +95,147 @@ var MonsterModel = function (uid, data) {
 	});
 }
 
+function RollerHandler(monModel) {
+	var self = this;
+
+	self.monster = monModel;
+
+	self.rollStat = function (stat) {
+		var roll = self.monster.stats[stat];
+		return JSON.stringify({ 'for': stat.toUpperCase(), 'primary': roll.primaryRoll(), 'howMany': 1 });
+	};
+
+	self.rollNonBasicStat = function (stat, name) {
+		var roll = self.monster.stats[stat];
+		return JSON.stringify({ 'for': name, 'primary': roll.nonBasicPrimaryRoll(), 'howMany': 1 });
+	};
+
+	self.rollSkill = function (skill) {
+		var roll = self.monster.skills.primaryRoll(skill);
+		return JSON.stringify({ 'for': skill.name, 'primary': roll, 'howMany': 1 });
+	};
+
+	self.rollAttack = function (attack) {
+		if (attack.name == "None") return;
+		var primary = self.monster.attacks.attackToHitRoll(attack,
+						self.monster.stats.bab.base.val(),
+						self.monster.stats.size(),
+						self.monster.stats.dex.bonus(),
+						self.monster.stats.str.bonus(),
+						self.monster.feats.hasWeaponFocus(attack.aname),
+						self.monster.feats.hasFeat('Weapon Finesse'));
+		var secondary = self.monster.attacks.attackDamageRoll(attack, self.monster.stats.str.bonus());
+		var critical = self.determineCritical(attack, self.monster.feats.hasFeat('Improved Critical'));
+		return JSON.stringify({
+			'for': self.formatName(attack.aname), 'primary': secondary, 'secondary': primary, 'howMany': parseInt(attack.how_many),
+			'minCrit': critical.min, 'critMult': critical.mult, 'range': parseInt(attack.range), 'spatk': self.monster.spatks.formatName(attack.spatk)
+		});
+	};
+
+	self.rollWeapon = function (weapon) {
+		if (weapon.name == "None") return;
+		var primary = self.monster.weapons.weaponToHitRoll(weapon,
+			self.monster.feats.hasWeaponFocus(weapon.wname),
+			self.monster.stats.bab.base.val(),
+			self.monster.stats.size(),
+			self.hasFeat('Weapon Finesse'),
+			self.monster.stats.dex.bonus(),
+			self.monster.stats.str.bonus());
+		var secondary = self.monster.weapons.weaponDamageRoll(weapon, self.monster.stats.str.bonus(), weapon.is_ranged);
+		var critical = self.determineCritical(weapon, self.hasFeat('Improved Critical'));
+		return JSON.stringify({
+			'for': self.formatName(weapon.wname), 'primary': secondary, 'secondary': primary, 'howMany': parseInt(weapon.how_many) || 1,
+			'minCrit': critical.min, 'critMult': critical.mult, 'range': parseInt(weapon.is_ranged), 'spatk': self.monster.spatks.formatName(weapon.spatk)
+		});
+	};
+
+	self.rollSpatk = function (spatk) {
+		if (!self.monster.spatks.isRollable(spatk)) return;
+		var primary = self.monster.spatks.toHitRoll(spatk, self.monster.stats.dex.bonus(), self.monster.stats.str.bonus());
+		var secondary = self.monster.spatks.damageRoll(spatk, self.monster.stats.str.bonus());
+		var critical = self.determineCritical(spatk);
+
+		return JSON.stringify({
+			'for': self.formatName(spatk.name), 'primary': secondary, 'secondary': primary, 'howMany': 1,
+			'minCrit': critical.min, 'critMult': critical.mult, 'range': parseInt(spatk.range)
+		});
+	};
+
+	self.rollFatk = function (fatk) {
+		var toHit = self.monster.fatks.toHitRoll(fatk, self.monster.attacks,
+						self.monster.stats.bab.base.val(),
+						self.monster.stats.size(),
+						self.monster.stats.dex.bonus(),
+						self.monster.stats.str.bonus(),
+						self.monster.feats.hasWeaponFocus(attack.aname),
+						self.hasFeat('Weapon Finesse'),
+						self.hasTwoWeapons(),
+						self.hasFeat('Multiattack'));
+		var damage = self.monster.fatks.damageRoll(fatk, self.monster.attacks, self.monster.stats.str.bonus());
+		var primary = self.monster.fatks.primaryRoll(fatk,
+			self.monster.stats.name,
+			self.hasFeat('Improved Critical'),
+			self.monster.stats.bab.base.val(),
+			self.hasGreaterMultiFighting(),
+			self.hasImprovedMultiFighting(),
+			damage,
+			toHit);
+
+		return JSON.stringify({
+			'for': "a fatk", 'primary': primary, isFatk: true, range: 0
+		});
+
+	};
+
+	self.hasFeat = function (feat) {
+		return self.monster.feats.hasFeat(feat);
+	}
+
+	self.hasTwoWeapons = function () {
+		return self.hasFeat("Two-Weapon Fighting") || self.hasFeat("Multiweapon Fighting")
+	};
+
+	self.hasGreaterMultiFighting = function () {
+		return self.hasFeat("Greater Two-Weapon Fighting") || self.hasFeat("Greater Multiweapon Fighting");
+	};
+
+	self.hasImprovedMultiFighting = function () {
+		self.hasFeat("Improved Two-Weapon Fighting") || self.hasFeat("Improved Multiweapon Fighting");
+	};
+
+	self.determineCritical = function(obj, hasImpCrit) {
+		var minCrit = 20;
+		var critMult = 2;
+
+		if (obj.hasOwnProperty('critical')) {
+			if (obj.critical.indexOf('-') != -1) {
+				var critArr = obj.critical.split("-");
+				critMult = parseInt(critArr[1].split("x")[1]);
+				minCrit = parseInt(critArr[0]);
+			} else if (obj.critical == '0') {
+				minCrit = 20;
+			} else if (obj.critical.indexOf("x") != -1) {
+				minCrit = 20;
+				critMult = parseInt(obj.critical.substring(1));
+			} else {
+				console.error("critical wasn't parseable: " + obj.critical + " " + obj.name);
+			}
+		}
+
+		if (hasImpCrit)
+			minCrit = 21 - ((20 - minCrit + 1) * 2);
+
+		return { min: minCrit, mult: critMult };
+	}
+
+	self.formatName = function (name) {
+		if (name == undefined) return;
+		if (name.indexOf(self.monster.stats.name()) != -1) return name.substring(self.monster.stats.name().length+1).trim();
+		return name;
+	};
+}
+
+//#region AC-related Models
 function ACModel(monsterModel, props) {
 	var self = this;
 
@@ -117,54 +259,50 @@ function ACModel(monsterModel, props) {
 	self.total = new ArrayValueCountModel(monsterModel.uid + "_ac", self, []);
 }
 
-function HPModel(hpRoll, conModel, featModel, uid) {
+function ArmorModel(armors) {
 	var self = this;
 
-	self.hp = ko.observable(new RollableNumberModel(hpRoll));
-	self.con = ko.observable(conModel.bonus());
-	self.mod = ko.observable(new ModifiableNumberModel(0));
-	self.feats = ko.observable(featModel.feats);
-	self.uid = uid;
+	if (armors.length == 0) armors.push({ name: "None", descript: "" });
 
-	self.countToughness = ko.computed(function () {
-		var ret = 0;
-		$.each(self.feats()(), function (i, e) {
-			if (e.name == 'Toughness') ret = parseInt(e.feat_level);
+	this.armors = ko.observableArray(armors);
+}
+
+function ArrayValueCountModel(tag, model, filterProps) {
+	var self = this;
+
+	self.tag = tag;
+	self.ignored = filterProps;
+	self.kvs = ko.observable(model.arrayProps);
+
+	self.sum = ko.computed(function () {
+		var sum = 0;
+
+		$.each(self.kvs()(), function (k, v) {
+			if ($.inArray(k, self.ignored) == -1) {
+				if (typeof v !== 'number') sum += v();
+				else sum += v;
+			}
 		});
-		return ret;
-	});
 
-	conModel.bonus.subscribe(function (newValue) {
-		self.con(newValue);
-	});
-
-	self.initTotal = ko.computed(function () {
-		return self.hp().num().val();
-	});
-
-	self.calcConBonus = ko.computed(function () {
-		return self.con() * parseInt(hpRoll.split('d')[0]);
-	});
-
-	self.total = ko.computed(function () {
-		return self.initTotal() + self.mod().val() + (3 * self.countToughness()) + self.calcConBonus();
+		return sum;
 	});
 
 	self.toolTip = ko.computed(function () {
-		var curHp = self.hp().num().val();
-		var modHp = self.mod().val();
-		var retStr = "Base (" + hpRoll + "): " + curHp;
-		if (modHp != 0) retStr += "<br>Modification: " + modHp;
-		if (self.calcConBonus() != 0) retStr += "<br>CON Bonus: " + self.calcConBonus();
-		if (self.countToughness() != 0) retStr += "<br>Toughness: " + (3 * self.countToughness());
 
+		var retStr = '';
+		$.each(self.kvs()(), function (i, e) {
+			if ($.inArray(i, self.ignored) == -1 && e != 0)
+				retStr += i + ": " + e + "<br>";
+		});
 
-		//hack for dynamic tooltip text
-		$$(uid + "_hp").attr('data-original-title', retStr);
+		$$(tag).attr('data-original-title', retStr);
 		return retStr;
+
 	});
 }
+//#endregion
 
+//#region Attack-related Models
 function FullAttackModel(fatks, mname) {
 	var self = this;
 
@@ -401,39 +539,65 @@ function FullAttackModel(fatks, mname) {
 	};
 }
 
-function InitiativeModel(dexModel, featModel, uid) {
+function SpecialAttackModel(spatks, mname) {
 	var self = this;
-	self.init = new RollableNumberModel('1d20');
-	self.dex = ko.observable(dexModel.bonus());
-	self.feats = ko.observable(featModel.feats);
 
-	self.countImprovedInitiative = ko.computed(function () {
-		var ret = 0;
-		$.each(self.feats()(), function (i, e) {
-			if (e.name == 'Improved Initiative') ret = parseInt(e.feat_level);
-		});
-		return ret;
-	});
+	if (spatks.length == 0) spatks.push({ name: "None", descript: "", hit_dice: '0' });
 
-	self.toolTip = ko.computed(function () {
-		var retStr = "Base (1d20): " + self.init.num().val();
-		if (self.dex != 0) retStr += ("<br>DEX: " + self.dex());
-		if (self.countImprovedInitiative() != 0) retStr += ("<br>Improved Initiative: " + (4 * self.countImprovedInitiative()));
-		$$(uid + "_init").attr('data-original-title', retStr);
+	self.mname = mname;
+	self.spatks = ko.observableArray(spatks);
+
+	self.countColumns = function (spatk) {
+		var cols = 3;
+		if (spatk.hit_dice != '0') cols--;
+		if (spatk.dmgred_nm != null) cols--;
+		return cols;
+	};
+
+	self.formatElemental = function (spatk) {
+		var retStr = '';
+		if (spatk.hit_dice != '0') retStr = '+';
+		retStr += spatk.dmgred_hd + " ";
+		retStr += spatk.dmgred_nm;
 		return retStr;
-	});
+	};
 
-	featModel.feats.subscribe(function (newValue) {
-		self.feats(newValue);
-	});
+	self.formatName = function (name) {
+		if (!name) return;
+		if (name.indexOf(mname) != -1) return name.substring(mname.length);
+		return name;
+	};
 
-	dexModel.bonus.subscribe(function (newValue) {
-		self.dex(newValue);
-	});
+	self.isRollable = function (spatk) {
+		return spatk.hit_dice != '0' || spatk.dmgred_nm != null;
+	};
 
-	self.totalInit = ko.computed(function () {
-		return self.init.num().val() + self.dex() + (4 * self.countImprovedInitiative());
-	});
+	self.decideRollable = function (spatk) {
+		return self.isRollable(spatk) ? '' : 'unrollable';
+	}
+
+	self.toHitRoll = function (spatk, dexBonus, strBonus) {
+		var ret = {};
+		ret["Base"] = "1d20";
+		if (spatk.range == "0")
+			ret["STR Mod"] = strBonus;
+		else
+			ret["DEX Mod"] = dexBonus;
+
+		return ret;
+	};
+
+	self.damageRoll = function (obj, strBonus) {
+		var ret = {};
+		if (obj.hit_dice != '0')
+			ret["Base (" + obj.hit_dice + ")"] = obj.hit_dice;
+
+		if (obj.dmgred_hd != '0')
+			ret[obj.dmgred_nm] = obj.dmgred_hd;
+
+		ret["STR Mod"] = strBonus;
+		return ret;
+	};
 }
 
 function WeaponAttackModel(damagers, mname) {
@@ -553,7 +717,7 @@ function WeaponAttackModel(damagers, mname) {
 				ret["DEX Mod"] = dexBonus;
 			else
 				ret["STR Mod"] = strBonus;
-			
+
 			if (obj.wname.indexOf('Javelin') != -1)
 				ret["Javelin"] = -4;
 
@@ -602,79 +766,42 @@ function WeaponAttackModel(damagers, mname) {
 		return ret;
 	};
 }
+//#endregion
 
-function SpeedModel(speeds) {
+//#region Basic Statistic Models
+function InitiativeModel(dexModel, featModel, uid) {
 	var self = this;
-	this.speeds = ko.observableArray(speeds);
-}
+	self.init = new RollableNumberModel('1d20');
+	self.dex = ko.observable(dexModel.bonus());
+	self.feats = ko.observable(featModel.feats);
 
-function SpecialAttackModel(spatks, mname) {
-	var self = this;
+	self.countImprovedInitiative = ko.computed(function () {
+		var ret = 0;
+		$.each(self.feats()(), function (i, e) {
+			if (e.name == 'Improved Initiative') ret = parseInt(e.feat_level);
+		});
+		return ret;
+	});
 
-	if (spatks.length == 0) spatks.push({ name: "None", descript: "", hit_dice: '0' });
-
-	self.mname = mname;
-	self.spatks = ko.observableArray(spatks);
-
-	self.countColumns = function (spatk) {
-		var cols = 3;
-		if (spatk.hit_dice != '0') cols--;
-		if (spatk.dmgred_nm != null) cols--;
-		return cols;
-	};
-
-	self.formatElemental = function (spatk) {
-		var retStr = '';
-		if (spatk.hit_dice != '0') retStr = '+';
-		retStr += spatk.dmgred_hd + " ";
-		retStr += spatk.dmgred_nm;
+	self.toolTip = ko.computed(function () {
+		var retStr = "Base (1d20): " + self.init.num().val();
+		if (self.dex != 0) retStr += ("<br>DEX: " + self.dex());
+		if (self.countImprovedInitiative() != 0) retStr += ("<br>Improved Initiative: " + (4 * self.countImprovedInitiative()));
+		$$(uid + "_init").attr('data-original-title', retStr);
 		return retStr;
-	};
+	});
 
-	self.formatName = function (name) {
-		if (!name) return;
-		if (name.indexOf(mname) != -1) return name.substring(mname.length);
-		return name;
-	};
+	featModel.feats.subscribe(function (newValue) {
+		self.feats(newValue);
+	});
 
-	self.isRollable = function (spatk) {
-		return spatk.hit_dice != '0' || spatk.dmgred_nm != null;
-	};
+	dexModel.bonus.subscribe(function (newValue) {
+		self.dex(newValue);
+	});
 
-	self.decideRollable = function (spatk) {
-		return self.isRollable(spatk) ? '' : 'unrollable';
-	}
-
-	self.toHitRoll = function (spatk, dexBonus, strBonus) {
-		var ret = {};
-		ret["Base"] = "1d20";
-		if (spatk.range == "0") 
-			ret["STR Mod"] = strBonus;
-		else 
-			ret["DEX Mod"] = dexBonus;
-
-		return ret;
-	};
-
-	self.damageRoll = function (obj, strBonus) {
-		var ret = {};
-		if (obj.hit_dice != '0')
-			ret["Base ("+obj.hit_dice+")"] = obj.hit_dice;
-
-		if (obj.dmgred_hd != '0')
-			ret[obj.dmgred_nm] = obj.dmgred_hd;
-
-		ret["STR Mod"] = strBonus;
-		return ret;
-	};
-}
-
-function ArmorModel(armors) {
-	var self = this;
-
-	if (armors.length == 0) armors.push({ name: "None", descript: "" });
-
-	this.armors = ko.observableArray(armors);
+	self.totalInit = ko.computed(function () {
+		return self.init.num().val() + self.dex() + (4 * self.countImprovedInitiative());
+	});
 }
 
 function GrappleModel(base, featModel) {
@@ -724,62 +851,109 @@ function StatModel(base) {
 		return { "Base": "1d20", "Bonus": self.base.val() };
 	};
 }
+//#endregion
 
-function ArrayValueCountModel(tag, model, filterProps) {
+//#region HP-related Models
+function HPModel(hpRoll, conModel, featModel, uid) {
 	var self = this;
 
-	self.tag = tag;
-	self.ignored = filterProps;
-	self.kvs = ko.observable(model.arrayProps);
+	self.hp = ko.observable(new RollableNumberModel(hpRoll));
+	self.con = ko.observable(conModel.bonus());
+	self.mod = ko.observable(new ModifiableNumberModel(0));
+	self.feats = ko.observable(featModel.feats);
+	self.uid = uid;
 
-	self.sum = ko.computed(function () {
-		var sum = 0;
-
-		$.each(self.kvs()(), function (k, v) {
-			if ($.inArray(k, self.ignored) == -1) {
-				if (typeof v !== 'number') sum += v();
-				else sum += v;
-			}
+	self.countToughness = ko.computed(function () {
+		var ret = 0;
+		$.each(self.feats()(), function (i, e) {
+			if (e.name == 'Toughness') ret = parseInt(e.feat_level);
 		});
+		return ret;
+	});
 
-		return sum;
+	conModel.bonus.subscribe(function (newValue) {
+		self.con(newValue);
+	});
+
+	self.initTotal = ko.computed(function () {
+		return self.hp().num().val();
+	});
+
+	self.calcConBonus = ko.computed(function () {
+		return self.con() * parseInt(hpRoll.split('d')[0]);
+	});
+
+	self.max = ko.computed(function () {
+		return self.initTotal() + (3 * self.countToughness()) + self.calcConBonus();
+	});
+
+	self.total = ko.computed(function () {
+		return self.initTotal() + self.mod().val() + (3 * self.countToughness()) + self.calcConBonus();
 	});
 
 	self.toolTip = ko.computed(function () {
+		var curHp = self.hp().num().val();
+		var modHp = self.mod().val();
+		var retStr = "Base (" + hpRoll + "): " + curHp;
+		if (modHp != 0) retStr += "<br>Modification: " + modHp;
+		if (self.calcConBonus() != 0) retStr += "<br>CON Bonus: " + self.calcConBonus();
+		if (self.countToughness() != 0) retStr += "<br>Toughness: " + (3 * self.countToughness());
 
-		var retStr = '';
-		$.each(self.kvs()(), function (i, e) {
-			if ($.inArray(i, self.ignored) == -1 && e != 0)
-				retStr += i + ": " + e + "<br>";
-		});
 
-		$$(tag).attr('data-original-title', retStr);
+		//hack for dynamic tooltip text
+		$$(uid + "_hp").attr('data-original-title', retStr);
 		return retStr;
-
 	});
 }
 
-function SkillModel(skills) {
+function RollableNumberModel(baseRoll) {
+	var self = this;
+	self.rollStr = baseRoll;
+	self.num = ko.observable(new ModifiableNumberModel(roll(self.rollStr)));
+
+	self.reroll = function () {
+		self.num(new ModifiableNumberModel(roll(self.rollStr)));
+	};
+}
+
+function ModifiableNumberModel(baseVal) {
+	var self = this;
+	self.init = baseVal;
+	self.val = ko.observable(baseVal);
+
+	self.reset = function () {
+		self.val(self.init);
+	};
+
+	self.resetToVal = function (offset) {
+		self.val(self.init);
+		self.relative(offset);
+	};
+
+	self.increment = function () {
+		self.val(self.val() + 1);
+	};
+	self.decrement = function () {
+		self.val(self.val() - 1);
+	};
+	self.relative = function (num) {
+		self.val(self.val() + num);
+	}
+	self.absolute = function (num) {
+		self.val(num);
+	}
+}
+//#endregion
+
+//#region List-backed Stat Models
+function DRModel(reductions) {
 	var self = this;
 
-	if (skills.length == 1) if (skills[0].name == 'No Skills') skills.pop();
+	if (reductions.length == 0) reductions.push({ name: "None", reduction_amount: -1 });
 
-	if (skills.length == 0) skills.push({ name: "None", sub_skill: "", descript: "", skill_level: 0 });
-
-	self.skills = ko.observableArray(skills);
-
-	self.formatName = function (skill) {
-		if (skill.sub_skill != "" && skill.sub_skill != null) return skill.name + " (" + skill.sub_skill + ")";
-		return skill.name;
-	};
-	self.formatNum = function (skill) {
-		if (skill.skill_level == 0) return "";
-		if (skill.skill_level > 0) return "+" + skill.skill_level;
-		return skill.skill_level;
-	};
-
-	self.primaryRoll = function (skill) {
-		return { "Base": "1d20", "Bonus": skill.skill_level };
+	self.dr = ko.observableArray(reductions);
+	self.format = function (val) {
+		return val == '0' || val == 0 ? "Immune" : (val == -1 ? '' : val);
 	};
 }
 
@@ -874,221 +1048,32 @@ function QualityModel(qualities, mname) {
 	};
 }
 
-function DRModel(reductions) {
+function SkillModel(skills) {
 	var self = this;
 
-	if (reductions.length == 0) reductions.push({ name: "None", reduction_amount: -1 });
+	if (skills.length == 1) if (skills[0].name == 'No Skills') skills.pop();
 
-	self.dr = ko.observableArray(reductions);
-	self.format = function (val) {
-		return val == '0' || val == 0 ? "Immune" : (val == -1 ? '' : val);
+	if (skills.length == 0) skills.push({ name: "None", sub_skill: "", descript: "", skill_level: 0 });
+
+	self.skills = ko.observableArray(skills);
+
+	self.formatName = function (skill) {
+		if (skill.sub_skill != "" && skill.sub_skill != null) return skill.name + " (" + skill.sub_skill + ")";
+		return skill.name;
+	};
+	self.formatNum = function (skill) {
+		if (skill.skill_level == 0) return "";
+		if (skill.skill_level > 0) return "+" + skill.skill_level;
+		return skill.skill_level;
+	};
+
+	self.primaryRoll = function (skill) {
+		return { "Base": "1d20", "Bonus": skill.skill_level };
 	};
 }
 
-function KVModel(kv) {
+function SpeedModel(speeds) {
 	var self = this;
-	self.array = ko.observableArray(kv);
+	this.speeds = ko.observableArray(speeds);
 }
-
-function RollableNumberModel(baseRoll) {
-	var self = this;
-	self.rollStr = baseRoll;
-	self.num = ko.observable(new ModifiableNumberModel(roll(self.rollStr)));
-
-	self.reroll = function () {
-		self.num(new ModifiableNumberModel(roll(self.rollStr)));
-	};
-}
-
-function ModifiableNumberModel(baseVal) {
-	var self = this;
-	self.init = baseVal;
-	self.val = ko.observable(baseVal);
-
-	self.reset = function () {
-		self.val(self.init);
-	};
-
-	self.resetToVal = function (offset) {
-		self.val(self.init);
-		self.relative(offset);
-	};
-
-	self.increment = function () {
-		self.val(self.val() + 1);
-	};
-	self.decrement = function () {
-		self.val(self.val() - 1);
-	};
-	self.relative = function (num) {
-		self.val(self.val() + num);
-	}
-	self.absolute = function (num) {
-		self.val(num);
-	}
-}
-
-function RollerHandler(monModel) {
-	var self = this;
-
-	self.monster = monModel;
-
-	self.rollStat = function (stat) {
-		var roll = self.monster.stats[stat];
-		return JSON.stringify({ 'for': stat.toUpperCase(), 'primary': roll.primaryRoll(), 'howMany': 1 });
-	};
-
-	self.rollNonBasicStat = function (stat, name) {
-		var roll = self.monster.stats[stat];
-		return JSON.stringify({ 'for': name, 'primary': roll.nonBasicPrimaryRoll(), 'howMany': 1 });
-	};
-
-	self.rollSkill = function (skill) {
-		var roll = self.monster.skills.primaryRoll(skill);
-		return JSON.stringify({ 'for': skill.name, 'primary': roll, 'howMany': 1 });
-	};
-
-	self.rollAttack = function (attack) {
-		if (attack.name == "None") return;
-		var primary = self.monster.attacks.attackToHitRoll(attack,
-						self.monster.stats.bab.base.val(),
-						self.monster.stats.size(),
-						self.monster.stats.dex.bonus(),
-						self.monster.stats.str.bonus(),
-						self.monster.feats.hasWeaponFocus(attack.aname),
-						self.monster.feats.hasFeat('Weapon Finesse'));
-		var secondary = self.monster.attacks.attackDamageRoll(attack, self.monster.stats.str.bonus());
-		var critical = self.determineCritical(attack, self.monster.feats.hasFeat('Improved Critical'));
-		return JSON.stringify({
-			'for': self.formatName(attack.aname), 'primary': secondary, 'secondary': primary, 'howMany': parseInt(attack.how_many),
-			'minCrit': critical.min, 'critMult': critical.mult, 'range': parseInt(attack.range), 'spatk': self.monster.spatks.formatName(attack.spatk)
-		});
-	};
-
-	self.rollWeapon = function (weapon) {
-		if (weapon.name == "None") return;
-		var primary = self.monster.weapons.weaponToHitRoll(weapon,
-			self.monster.feats.hasWeaponFocus(weapon.wname),
-			self.monster.stats.bab.base.val(),
-			self.monster.stats.size(),
-			self.hasFeat('Weapon Finesse'),
-			self.monster.stats.dex.bonus(),
-			self.monster.stats.str.bonus());
-		var secondary = self.monster.weapons.weaponDamageRoll(weapon, self.monster.stats.str.bonus(), weapon.is_ranged);
-		var critical = self.determineCritical(weapon, self.hasFeat('Improved Critical'));
-		return JSON.stringify({
-			'for': self.formatName(weapon.wname), 'primary': secondary, 'secondary': primary, 'howMany': parseInt(weapon.how_many) || 1,
-			'minCrit': critical.min, 'critMult': critical.mult, 'range': parseInt(weapon.is_ranged), 'spatk': self.monster.spatks.formatName(weapon.spatk)
-		});
-	};
-
-	self.rollSpatk = function (spatk) {
-		if (!self.monster.spatks.isRollable(spatk)) return;
-		var primary = self.monster.spatks.toHitRoll(spatk, self.monster.stats.dex.bonus(), self.monster.stats.str.bonus());
-		var secondary = self.monster.spatks.damageRoll(spatk, self.monster.stats.str.bonus());
-		var critical = self.determineCritical(spatk);
-
-		return JSON.stringify({
-			'for': self.formatName(spatk.name), 'primary': secondary, 'secondary': primary, 'howMany': 1,
-			'minCrit': critical.min, 'critMult': critical.mult, 'range': parseInt(spatk.range)
-		});
-	};
-
-	self.rollFatk = function (fatk) {
-		var toHit = self.monster.fatks.toHitRoll(fatk, self.monster.attacks,
-						self.monster.stats.bab.base.val(),
-						self.monster.stats.size(),
-						self.monster.stats.dex.bonus(),
-						self.monster.stats.str.bonus(),
-						self.monster.feats.hasWeaponFocus(attack.aname),
-						self.hasFeat('Weapon Finesse'),
-						self.hasTwoWeapons(),
-						self.hasFeat('Multiattack'));
-		var damage = self.monster.fatks.damageRoll(fatk, self.monster.attacks, self.monster.stats.str.bonus());
-		var primary = self.monster.fatks.primaryRoll(fatk,
-			self.monster.stats.name,
-			self.hasFeat('Improved Critical'),
-			self.monster.stats.bab.base.val(),
-			self.hasGreaterMultiFighting(),
-			self.hasImprovedMultiFighting(),
-			damage,
-			toHit);
-
-		return JSON.stringify({
-			'for': "a fatk", 'primary': primary, isFatk: true, range: 0
-		});
-
-	};
-
-	self.hasFeat = function (feat) {
-		return self.monster.feats.hasFeat(feat);
-	}
-
-	self.hasTwoWeapons = function () {
-		return self.hasFeat("Two-Weapon Fighting") || self.hasFeat("Multiweapon Fighting")
-	};
-
-	self.hasGreaterMultiFighting = function () {
-		return self.hasFeat("Greater Two-Weapon Fighting") || self.hasFeat("Greater Multiweapon Fighting");
-	};
-
-	self.hasImprovedMultiFighting = function () {
-		self.hasFeat("Improved Two-Weapon Fighting") || self.hasFeat("Improved Multiweapon Fighting");
-	};
-
-	self.determineCritical = function(obj, hasImpCrit) {
-		var minCrit = 20;
-		var critMult = 2;
-
-		if (obj.hasOwnProperty('critical')) {
-			if (obj.critical.indexOf('-') != -1) {
-				var critArr = obj.critical.split("-");
-				critMult = parseInt(critArr[1].split("x")[1]);
-				minCrit = parseInt(critArr[0]);
-			} else if (obj.critical == '0') {
-				minCrit = 20;
-			} else if (obj.critical.indexOf("x") != -1) {
-				minCrit = 20;
-				critMult = parseInt(obj.critical.substring(1));
-			} else {
-				console.error("critical wasn't parseable: " + obj.critical + " " + obj.name);
-			}
-		}
-
-		if (hasImpCrit)
-			minCrit = 21 - ((20 - minCrit + 1) * 2);
-
-		return { min: minCrit, mult: critMult };
-	}
-
-	self.formatName = function (name) {
-		if (name == undefined) return;
-		if (name.indexOf(self.monster.stats.name()) != -1) return name.substring(self.monster.stats.name().length+1).trim();
-		return name;
-	};
-}
-
-ko.bindingHandlers.bootstrapTooltip = {
-	init: function (element, valueAccessor, allBindingAccessor, viewModel) {
-		var options = ko.utils.unwrapObservable(valueAccessor());
-		var defaultOptions = {};
-		options = $.extend(true, {}, defaultOptions, options);
-		$(element).tooltip(options);
-
-		$(element).click(function () {
-
-			var $me = $(this);
-			var doShow = true;
-
-			$(".in").each(function () {
-				if ($(this).siblings("a").is($me)) {
-					doShow = false;
-				}
-				$(this).siblings("a").tooltip('hide');
-
-			});
-			if (doShow)
-				$(this).tooltip('show');
-		});
-	}
-};
+//#endregion
