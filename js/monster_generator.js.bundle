@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <bundle minify="true" runOnBuild="true" output="monster_generator.js">
-	<!--The order of the <file> elements determines the order of them when bundled.-->
-	<file>/monsters/js/lib/bootbox.min.js</file>
-	<file>/monsters/js/lib/dateformat.js</file>
-	<file>/monsters/js/lib/jquery.async.loops.js</file>
-	<file>/monsters/js/lib/jquery.boxshadow.min.js</file>
-	<file>/monsters/js/lib/jquery.cookie.js</file>
-	<file>/monsters/js/lib/jquery.livequery.min.js</file>
-	<file>/monsters/js/lib/jquery.nicescroll.min.js</file>
-	<file>/monsters/js/lib/knockout.js</file>
-	<file>/monsters/js/lib/roll.js</file>
-	<file>/monsters/js/lib/storage.js</file>
-	<file>/monsters/js/functions.ac.js</file>
-	<file>/monsters/js/functions.attack.js</file>
-	<file>/monsters/js/functions.feats.js</file>
-	<file>/monsters/js/functions.global.js</file>
-	<file>/monsters/js/init.js</file>
-	<file>/monsters/js/models.js</file>
-	<file>/monsters/js/monster.js</file>
-	<file>/monsters/js/sync.js</file>
-	<file>/monsters/js/ui.log.js</file>
-	<file>/monsters/js/ui.filters.js</file>
-	<file>/monsters/js/ui.general.js</file>
-	<file>/monsters/js/ui.generator.js</file>
+  <!--The order of the <file> elements determines the order of them when bundled.-->
+  <file>/monsters/js/lib/bootbox.min.js</file>
+  <file>/monsters/js/lib/dateformat.js</file>
+  <file>/monsters/js/lib/jquery.async.loops.js</file>
+  <file>/monsters/js/lib/jquery.boxshadow.min.js</file>
+  <file>/monsters/js/lib/jquery.cookie.js</file>
+  <file>/monsters/js/lib/jquery.livequery.min.js</file>
+  <file>/monsters/js/lib/jquery.nicescroll.min.js</file>
+  <file>/monsters/js/lib/knockout.js</file>
+  <file>/monsters/js/lib/roll.js</file>
+  <file>/monsters/js/lib/storage.js</file>
+  <file>/monsters/js/functions.ac.js</file>
+  <file>/monsters/js/functions.attack.js</file>
+  <file>/monsters/js/functions.feats.js</file>
+  <file>/monsters/js/functions.global.js</file>
+  <file>/monsters/js/init.js</file>
+  <file>/monsters/js/models.js</file>
+  <file>/monsters/js/monster.js</file>
+  <file>/monsters/js/sync.js</file>
+  <file>/monsters/js/ui.filters.js</file>
+  <file>/monsters/js/ui.general.js</file>
+  <file>/monsters/js/ui.generator.js</file>
+  <file>/monsters/js/ui.log.js</file>
 </bundle>
