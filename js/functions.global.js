@@ -1,4 +1,8 @@
 
+function $$(str) {
+	return $("#" + str);
+}
+
 function rollDice(str) {
 	var result;
 	try {

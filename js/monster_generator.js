@@ -1074,6 +1074,10 @@ function addFeatFunctions() {
 }
 ///#source 1 1 /monsters/js/functions.global.js
 
+function $$(str) {
+	return $("#" + str);
+}
+
 function rollDice(str) {
 	var result;
 	try {
