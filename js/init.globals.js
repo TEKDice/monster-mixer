@@ -2,15 +2,6 @@ function $$(str) {
 	return $("#" + str);
 }
 
-function _arrToTooltip(arr) {
-	var ret = '';
-	for (var i in arr) {
-		if (arr[i] == 0) continue;
-		ret += i + ": " + arr[i] + "<br>";
-	}
-	return ret;
-}
-
 function overlayLoadingGif() {
 	$t = $("#monsterListCont");
 	if (!$t.length) return;
@@ -50,13 +41,6 @@ function rollDice(str) {
 		return null;
 	}
 	return result;
-}
-
-function determineRoll($node) {
-	if ($node.hasClass('roll_me')) {
-		var hp = rollExpression($node.attr('data-base-value'));
-		$node.attr('data-initial-roll', hp);
-	}
 }
 
 function getBonus(num) {
@@ -101,20 +85,6 @@ function bodyBinding() {
 		}
 		$newtab.children("a").tab('show');
 	});
-
-	/*
-	$(".loaded").livequery(function() {
-		var $set = $(this).closest('.minibox-content').find("tr:not(.unrollable)");
-		$set.each(function() {
-			$(this).click(function() {
-				$set.removeClass('info');
-				if($(this).hasClass('info'))
-					$(this).removeClass('info');
-				else
-					$(this).addClass('info');
-			});
-		});
-	});*/
 
 	$(".delete").livequery(function () {
 		$(this).click(function () {

@@ -7,79 +7,6 @@ var heightAdjust = 140;
 
 var resizeTimer;
 
-function limitFeatNums(uid) {
-	/*$("#"+uid+"_mfeat_table .applyNum").each(function() {
-		var cbName = $(this).closest("td").prev().text();
-		var isPowerAttack = cbName == 'Power Attack';
-		var isCleave = cbName == 'Cleave';
-		$(this).change(function() {
-			var val = parseInt($(this).val());
-
-			var paMax = parseInt($("#"+uid+"_bab").text());
-			var cleaveMax = 4;
-			var expertMax = 5;
-			var finMax = isPowerAttack ? paMax : (isCleave ? cleaveMax : expertMax);
-			var max = clamp(0, finMax, parseInt($("#"+uid+"_bab").attr('data-base-value')));
-			val = clamp(0, max, val);
-
-			$(this).val(val);
-
-			if(cbName == 'Combat Expertise') {
-				incdecACStat(uid, "ac", "Combat Expertise", null, val);
-				incdecACStat(uid, "touch_ac", "Combat Expertise", null, val);
-			}
-		});
-		$(this).closest("td").attr('id', uid+'_calc_'+(isPowerAttack ? "pa" : isCleave ? "cleave": "ce"));
-	});
-
-	$(".inline-checkbox").each(function() {
-		var cbName = checkboxName($(this).closest("td").prev().text());
-		$(this).attr('id', uid+'_calc_'+(cbName));
-
-		if(cbName == 'dodge') {
-			var $this = $(this);
-			$(this).click(function() {
-
-				if($this.is(':checked')) {
-					incdecACStat(uid, "ac", "Dodge", true);
-					incdecACStat(uid, "touch_ac", "Dodge", true);
-				} else {
-					incdecACStat(uid, "ac", "Dodge", false);
-					incdecACStat(uid, "touch_ac", "Dodge", false);
-				}
-			});
-		}
-
-		if(cbName == 'frenzy' || cbName == 'rage') {
-			var $this = $(this);
-			$(this).click(function() {
-			});
-		}
-	});*/
-}
-/*
-function incdecACStat(uid, acType, adder, isIncrement, value, canBeNegative) {
-	var $ac = $("#"+uid+"_"+acType);
-	var ac;
-	try {
-		ac = $.parseJSON($ac.attr('data-ac'));
-	} catch(e) {
-		console.error("an error happened when trying to inc or dec an ac stat "+e+ " "+arguments);
-	}
-
-	if(ac[adder] == undefined) ac[adder] = 0;
-	else ac[adder] = parseInt(ac[adder]);
-
-	if(value!=null) {ac[adder] = value; }
-	else 	  		{ac[adder] = isIncrement ? ac[adder]+1 : ac[adder]-1; }
-
-	if(!canBeNegative && ac[adder] < 0) ac[adder] = 0;
-
-	$ac.attr('data-ac',JSON.stringify(ac));
-	refreshAc($ac);
-
-}
-*/
 function setupRoller() {
 	$("#roll").keyup(function (e) {
 		if (e.keyCode == 27) {
@@ -318,13 +245,9 @@ function _genButtonFunctionality($button) {
 			return;
 		}
 		if (!advMode) {
-			//try {
 			monster = $.parseJSON(monster);
 			var uid = addNewMonster(monster);
 			setupGrids(uid);
-			//} catch(e) {
-			//	console.error("error parsing monster: "+e);
-			//}
 			return;
 		}
 		$("#advGenMonsters").empty();
@@ -370,7 +293,6 @@ function _showScrollbars($a) {
 		var nice = $(this).niceScroll({ horizrailenabled: false, zindex: 9 });
 		$("#" + nice.id).attr('data-nice-uid', $a.closest('tab-pane').attr('data-for'));
 		$("#" + nice.id).show();
-		//$(this).css('overflow','hidden');
 	});
 }
 
