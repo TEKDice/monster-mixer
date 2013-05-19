@@ -25,8 +25,6 @@ $(function() {
 
 	$("#hasScript").show();
 
-	setupGrids();
-
 	setupRoller();
 
 	bodyBinding();

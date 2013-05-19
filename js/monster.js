@@ -77,7 +77,9 @@ function _addNewMonster(monster, uid, name) {
 	var nice = $('#monsterList').niceScroll({ horizrailenabled: false, zindex: 9, railoffset: { left: -118 } });
 	$('#monsterList').css('overflow', 'hidden');
 
-	tabChangeScrollbars();
+	setupGrids(uid);
+
+	tabChangeScrollbars($a);
 
 	setupRollables($parent);
 
@@ -146,7 +148,6 @@ function remove(uid, killed) {
 	$a.tab('show');
 
 	if (count > 0) {
-		console.log(pos);
 		$a = $("#monsterList li:nth-child("+(pos-1)+")").find("a");
 		_showScrollbars($a);
 		$a.tab('show');

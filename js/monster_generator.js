@@ -1154,8 +1154,6 @@ $(function() {
 
 	$("#hasScript").show();
 
-	setupGrids();
-
 	setupRoller();
 
 	bodyBinding();
@@ -2372,7 +2370,9 @@ function _addNewMonster(monster, uid, name) {
 	var nice = $('#monsterList').niceScroll({ horizrailenabled: false, zindex: 9, railoffset: { left: -118 } });
 	$('#monsterList').css('overflow', 'hidden');
 
-	tabChangeScrollbars();
+	setupGrids(uid);
+
+	tabChangeScrollbars($a);
 
 	setupRollables($parent);
 
@@ -2441,7 +2441,6 @@ function remove(uid, killed) {
 	$a.tab('show');
 
 	if (count > 0) {
-		console.log(pos);
 		$a = $("#monsterList li:nth-child("+(pos-1)+")").find("a");
 		_showScrollbars($a);
 		$a.tab('show');
@@ -2964,24 +2963,18 @@ function setupRollables($parent) {
 }
 
 function setupGrids(uid) {
-	$(".sortable").sortable({
-		sort: function (e, u) {
+	$("div[data-for='" + uid + "'] .sortable").sortable({
+		stop: function (e, u) {
 			setupGrids(uid);
 		}
 	});
-	$(".sortable").disableSelection();
+	$("div[data-for='" + uid + "'].sortable").disableSelection();
 
-	$(".draggable").not(".invisible").find(".minibox-content").each(function () {
-		var nice = $(this).niceScroll({ horizrailenabled: false, zindex: 9 });
-		$("#" + nice.id).attr('data-nice-uid', uid);
-		$("#" + nice.id + "-hr").remove();
-	});
-	resizeGrids();
-}
-
-function resizeGrids() {
-	$(".minibox-content").each(function () {
+	$("div[data-for='" + uid + "'] .draggable").find(".minibox-content").each(function () {
 		$(this).height($(this).parent().height() - 22);
+		var nice = $(this).niceScroll({ horizrailenabled: false, zindex: 9 });
+		$$(nice.id).attr('data-nice-uid', uid);
+		$$(nice.id + "-hr").remove();
 	});
 }
 
@@ -2989,24 +2982,29 @@ function _hideAllMiniboxScrollbars() {
 	$("div[data-nice-uid]").hide();
 }
 
+/*
 function _showScrollbars($a) {
 	$$($a.attr('data-uid')).find(".minibox-content").each(function () {
 		var nice = $(this).niceScroll({ horizrailenabled: false, zindex: 9 });
-		$("#" + nice.id).attr('data-nice-uid', $a.closest('tab-pane').attr('data-for'));
-		$("#" + nice.id).show();
+		$$(nice.id).attr('data-nice-uid', $a.attr('data-uid'));
+		$$(nice.id).show();
 	});
 }
-
-function tabChangeScrollbars() {
-	$('a[data-toggle="tab"]').on('shown', function (e) {
+*/
+function tabChangeScrollbars($a) {
+	$a.on('show', function (e) {
 		_hideAllMiniboxScrollbars();
-		_showScrollbars($(this));
+		//_showScrollbars($a);
 		var uid = $(this).attr('data-uid');
 
 		$("#curMon > div[data-for='" + uid + "']").show().siblings().hide();
 
 		//hide the popup if it's visible
 		_hidePopup();
+
+		$("[data-nice-uid='" + uid + "']").show();
+
+		setupGrids(uid);
 	});
 }
 
@@ -3032,8 +3030,6 @@ function resizeElements() {
 	$("#log .tab-pane > div").css('height', $("#log").height() - 38);
 
 	$("#monstersContainer > .row-fluid").first().css('height', $("#monsterListCont").height());
-
-	resizeGrids();
 
 	changeLogEntrySize();
 }
