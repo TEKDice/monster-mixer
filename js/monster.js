@@ -98,8 +98,23 @@ function sortMonsters() {
 	var mylist = $('#monsterList');
 	var listitems = mylist.children('li').get();
 	listitems.sort(function (a, b) {
-		var left = parseInt($("#" + $(a).children("a").attr('data-uid') + "_init").text());
-		var right = parseInt($("#" + $(b).children("a").attr('data-uid') + "_init").text());
+		var leftId = $(a).children("a").attr('data-uid');
+		var rightId = $(b).children("a").attr('data-uid');
+
+		var left = parseInt($$(leftId + "_init").text());
+		var right = parseInt($$(rightId + "_init").text());
+		//var left = monsters[leftId].initiative.init.num().val();
+		//var right = monsters[rightId].initiative.init.num().val();
+
+		if ((right-left) == 0) {
+			var leftDex = monsters[leftId].stats.dex.bonus();
+			var rightDex = monsters[rightId].stats.dex.bonus();
+
+			//TODO if rightDex-leftDex <0 sort by alpha
+
+			return rightDex - leftDex;
+		}
+
 		return right - left;
 	});
 	$.each(listitems, function (idx, itm) { mylist.append(itm); });

@@ -463,7 +463,8 @@ function FullAttackModel(fatks, mname) {
 			//weapon
 			if (e.wname) {
 				e.mfa_strict = e.mfa_strict == "0" ? "1" : "0";
-				var parsed = attackModel.weaponDamageRoll(e, strBonus, !(parseInt(e.wir) || parseInt(e.mfa_range)), e.mfa_strict);
+				var range = (parseInt(e.wir) || parseInt(e.mfa_range));
+				var parsed = attackModel.weaponDamageRoll(e, strBonus, range, parseInt(e.mfa_strict));
 				retO = collect(retO, parsed);
 			}
 
@@ -712,7 +713,9 @@ function WeaponAttackModel(damagers, mname) {
 
 		ret["Size (" + size + ")"] = sizeModifier(size);
 
-		if (obj.is_ranged == "0" || (obj.hasOwnProperty("mfa_range") && obj.mfa_range == "0")) {
+		console.log(obj);
+
+		if (obj.is_ranged == "0" || (obj.hasOwnProperty("wir") && obj.wir == "0")) {
 
 			if (hasWeaponFinesse)
 				ret["DEX Mod"] = dexBonus;
@@ -749,10 +752,6 @@ function WeaponAttackModel(damagers, mname) {
 		if (melee && obj.is_uses_str_mod == "1" && obj.is_one_handed == "0") {
 			ret["STR Mod"] = (strBonus * 1.5);
 		} else {
-
-			if (obj.wname && obj.wname.toLowerCase().indexOf('composite') != -1) {
-				ret["STR Mod"] = clamp(0, strMod, strBonus);
-			}
 
 			if (strBonus < 0 && obj.wname.toLowerCase().indexOf('crossbow') == -1)
 				ret["STR Mod"] = strBonus;

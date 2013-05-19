@@ -57,19 +57,19 @@ function loadMonsters(monsterSet) {
 				setTimeout(function() {
 					var mon = e;
 					var uid = addNewMonster(mon);
-					setupGrids(uid);
-					
 					var oldMonData = monsterSet[i];
 
 					monsters[uid].hp.hp().num().val(oldMonData.maxHp);
 					modifyHp(uid, oldMonData.modHp, true);
 					monsters[uid].initiative.init.num().val(oldMonData.init);
 
+					setupGrids(uid);
 					sortMonsters();
+
 					saveMonsters();
 				}, 1);
 			},
-			end: function() {
+			end: function () {
 				$("#overlay").fadeOut();
 			}
 		});

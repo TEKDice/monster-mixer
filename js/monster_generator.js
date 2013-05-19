@@ -1676,7 +1676,8 @@ function FullAttackModel(fatks, mname) {
 			//weapon
 			if (e.wname) {
 				e.mfa_strict = e.mfa_strict == "0" ? "1" : "0";
-				var parsed = attackModel.weaponDamageRoll(e, strBonus, !(parseInt(e.wir) || parseInt(e.mfa_range)), e.mfa_strict);
+				var range = (parseInt(e.wir) || parseInt(e.mfa_range));
+				var parsed = attackModel.weaponDamageRoll(e, strBonus, range, parseInt(e.mfa_strict));
 				retO = collect(retO, parsed);
 			}
 
@@ -1925,7 +1926,9 @@ function WeaponAttackModel(damagers, mname) {
 
 		ret["Size (" + size + ")"] = sizeModifier(size);
 
-		if (obj.is_ranged == "0" || (obj.hasOwnProperty("mfa_range") && obj.mfa_range == "0")) {
+		console.log(obj);
+
+		if (obj.is_ranged == "0" || (obj.hasOwnProperty("wir") && obj.wir == "0")) {
 
 			if (hasWeaponFinesse)
 				ret["DEX Mod"] = dexBonus;
@@ -1962,10 +1965,6 @@ function WeaponAttackModel(damagers, mname) {
 		if (melee && obj.is_uses_str_mod == "1" && obj.is_one_handed == "0") {
 			ret["STR Mod"] = (strBonus * 1.5);
 		} else {
-
-			if (obj.wname && obj.wname.toLowerCase().indexOf('composite') != -1) {
-				ret["STR Mod"] = clamp(0, strMod, strBonus);
-			}
 
 			if (strBonus < 0 && obj.wname.toLowerCase().indexOf('crossbow') == -1)
 				ret["STR Mod"] = strBonus;
@@ -2388,8 +2387,23 @@ function sortMonsters() {
 	var mylist = $('#monsterList');
 	var listitems = mylist.children('li').get();
 	listitems.sort(function (a, b) {
-		var left = parseInt($("#" + $(a).children("a").attr('data-uid') + "_init").text());
-		var right = parseInt($("#" + $(b).children("a").attr('data-uid') + "_init").text());
+		var leftId = $(a).children("a").attr('data-uid');
+		var rightId = $(b).children("a").attr('data-uid');
+
+		var left = parseInt($$(leftId + "_init").text());
+		var right = parseInt($$(rightId + "_init").text());
+		//var left = monsters[leftId].initiative.init.num().val();
+		//var right = monsters[rightId].initiative.init.num().val();
+
+		if ((right-left) == 0) {
+			var leftDex = monsters[leftId].stats.dex.bonus();
+			var rightDex = monsters[rightId].stats.dex.bonus();
+
+			//TODO if rightDex-leftDex <0 sort by alpha
+
+			return rightDex - leftDex;
+		}
+
 		return right - left;
 	});
 	$.each(listitems, function (idx, itm) { mylist.append(itm); });
@@ -2535,19 +2549,19 @@ function loadMonsters(monsterSet) {
 				setTimeout(function() {
 					var mon = e;
 					var uid = addNewMonster(mon);
-					setupGrids(uid);
-					
 					var oldMonData = monsterSet[i];
 
 					monsters[uid].hp.hp().num().val(oldMonData.maxHp);
 					modifyHp(uid, oldMonData.modHp, true);
 					monsters[uid].initiative.init.num().val(oldMonData.init);
 
+					setupGrids(uid);
 					sortMonsters();
+
 					saveMonsters();
 				}, 1);
 			},
-			end: function() {
+			end: function () {
 				$("#overlay").fadeOut();
 			}
 		});
