@@ -141,7 +141,8 @@ function RollerHandler(monModel) {
 			self.hasFeat('Weapon Finesse'),
 			self.monster.stats.dex.bonus(),
 			self.monster.stats.str.bonus());
-		var secondary = self.monster.weapons.weaponDamageRoll(weapon, self.monster.stats.str.bonus(), weapon.is_ranged);
+
+		var secondary = self.monster.weapons.weaponDamageRoll(weapon, self.monster.stats.str.bonus(), weapon.is_ranged, parseInt(weapon.is_ranged)==0);
 		var critical = self.determineCritical(weapon, self.hasFeat('Improved Critical'));
 		return JSON.stringify({
 			'for': self.formatName(weapon.wname), 'primary': secondary, 'secondary': primary, 'howMany': parseInt(weapon.how_many) || 1,
@@ -462,7 +463,7 @@ function FullAttackModel(fatks, mname) {
 			//weapon
 			if (e.wname) {
 				e.mfa_strict = e.mfa_strict == "0" ? "1" : "0";
-				var parsed = attackModel.weaponDamageRoll(e, strBonus, e.wir || e.mfa_range, e.mfa_strict);
+				var parsed = attackModel.weaponDamageRoll(e, strBonus, !(parseInt(e.wir) || parseInt(e.mfa_range)), e.mfa_strict);
 				retO = collect(retO, parsed);
 			}
 
@@ -711,7 +712,7 @@ function WeaponAttackModel(damagers, mname) {
 
 		ret["Size (" + size + ")"] = sizeModifier(size);
 
-		if (obj.is_ranged == "0") {
+		if (obj.is_ranged == "0" || (obj.hasOwnProperty("mfa_range") && obj.mfa_range == "0")) {
 
 			if (hasWeaponFinesse)
 				ret["DEX Mod"] = dexBonus;
@@ -745,12 +746,8 @@ function WeaponAttackModel(damagers, mname) {
 
 		ret["STR Mod"] = strBonus;
 
-		if (melee == "1") {
-			if (obj.is_uses_str_mod == "1") {
-				if (obj.is_one_handed == "0") {
-					ret["STR Mod"] = strBonus * 1.5;
-				}
-			}
+		if (melee && obj.is_uses_str_mod == "1" && obj.is_one_handed == "0") {
+			ret["STR Mod"] = (strBonus * 1.5);
 		} else {
 
 			if (obj.wname && obj.wname.toLowerCase().indexOf('composite') != -1) {

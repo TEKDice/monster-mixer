@@ -78,19 +78,10 @@ function _hideAllMiniboxScrollbars() {
 	$("div[data-nice-uid]").hide();
 }
 
-/*
-function _showScrollbars($a) {
-	$$($a.attr('data-uid')).find(".minibox-content").each(function () {
-		var nice = $(this).niceScroll({ horizrailenabled: false, zindex: 9 });
-		$$(nice.id).attr('data-nice-uid', $a.attr('data-uid'));
-		$$(nice.id).show();
-	});
-}
-*/
 function tabChangeScrollbars($a) {
 	$a.on('show', function (e) {
 		_hideAllMiniboxScrollbars();
-		//_showScrollbars($a);
+
 		var uid = $(this).attr('data-uid');
 
 		$("#curMon > div[data-for='" + uid + "']").show().siblings().hide();
