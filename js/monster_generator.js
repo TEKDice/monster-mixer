@@ -1955,9 +1955,7 @@ function WeaponAttackModel(damagers, mname) {
 		ret["Base"] = obj.hitdc;
 		if (obj.dmgname != null)
 			ret[obj.dmgname + " (" + obj.dmgred_hd + ")"] = obj.dmgred_hd;
-
-		console.log(obj);
-
+		
 		var strMod = parseFloat(obj.max_str_mod) || 0;
 
 		ret["STR Mod"] = strBonus;
@@ -2197,8 +2195,8 @@ function FeatModel(feats, uid) {
 		var ret = false;
 
 		$.each(self.feats(), function (i, e) {
-			if (e.name.indexOf('Weapon Focus') != -1) return;
-			var atk = name.substring(e.name.indexOf("(") + 1, e.name.indexOf(")"));
+			if (e.name.indexOf('Weapon Focus') == -1) return;
+			var atk = e.name.substring(e.name.indexOf("(") + 1, e.name.indexOf(")"));
 			if (!atk) return;
 			if (wname.toLowerCase().indexOf(atk.toLowerCase()) != -1)
 				ret = true;
@@ -2450,12 +2448,10 @@ function remove(uid, killed) {
 	
 	var $a = $("#monsterList li a").first();
 
-	_showScrollbars($a);
 	$a.tab('show');
 
 	if (count > 0) {
 		$a = $("#monsterList li:nth-child("+(pos-1)+")").find("a");
-		_showScrollbars($a);
 		$a.tab('show');
 	} else {
 		if(killed) {

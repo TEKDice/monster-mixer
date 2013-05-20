@@ -159,12 +159,10 @@ function remove(uid, killed) {
 	
 	var $a = $("#monsterList li a").first();
 
-	_showScrollbars($a);
 	$a.tab('show');
 
 	if (count > 0) {
 		$a = $("#monsterList li:nth-child("+(pos-1)+")").find("a");
-		_showScrollbars($a);
 		$a.tab('show');
 	} else {
 		if(killed) {
