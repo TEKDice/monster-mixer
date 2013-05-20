@@ -1925,9 +1925,7 @@ function WeaponAttackModel(damagers, mname) {
 		ret["BAB"] = bab;
 
 		ret["Size (" + size + ")"] = sizeModifier(size);
-
-		console.log(obj);
-
+		
 		if (obj.is_ranged == "0" || (obj.hasOwnProperty("wir") && obj.wir == "0")) {
 
 			if (hasWeaponFinesse)
@@ -1958,6 +1956,8 @@ function WeaponAttackModel(damagers, mname) {
 		if (obj.dmgname != null)
 			ret[obj.dmgname + " (" + obj.dmgred_hd + ")"] = obj.dmgred_hd;
 
+		console.log(obj);
+
 		var strMod = parseFloat(obj.max_str_mod) || 0;
 
 		ret["STR Mod"] = strBonus;
@@ -1969,6 +1969,8 @@ function WeaponAttackModel(damagers, mname) {
 			if (strBonus < 0 && obj.wname.toLowerCase().indexOf('crossbow') == -1)
 				ret["STR Mod"] = strBonus;
 		}
+
+		if (obj.is_uses_str_mod == "0") ret["STR Mod"] = 0;
 
 		ret["Enchantment"] = parseInt(obj.enchantment_bonus);
 
