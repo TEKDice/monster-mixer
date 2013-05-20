@@ -168,7 +168,7 @@ function RollerHandler(monModel) {
 						self.monster.stats.size(),
 						self.monster.stats.dex.bonus(),
 						self.monster.stats.str.bonus(),
-						self.monster.feats.hasWeaponFocus(attack.aname),
+						self.monster.feats.hasWeaponFocus(self.monster.fatks.formatName(fatk)),
 						self.hasFeat('Weapon Finesse'),
 						self.hasTwoWeapons(),
 						self.hasFeat('Multiattack'));
