@@ -23,8 +23,9 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 
 		var atkCtText = totalAttacks > 1 ? '('+(curAtk+1)+'/'+totalAttacks+') ' : '';
 
-		if(isAttack) {
-			var attackRoll = _buildRoll(uid, attackRollString, true, isRanged, false);
+		if (isAttack) {
+
+			var attackRoll = _buildRoll(uid, attackRollString, true, isRanged, false, curAtk+1);
 
 			for(var i in attackRoll) {
 				if(attackRoll[i] == 0) continue;
@@ -33,7 +34,7 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 
 				critStatus = _critStatus(attackRoll[i], i, threatRange, true) || critStatus;
 
-				if(critStatus == 'threat' || critStatus == 'success') {
+				if (critStatus == 'threat' || critStatus == 'success') {
 
 					var threatData = _buildRoll(uid, attackRollString, true, isRanged, false);
 						
@@ -148,7 +149,7 @@ function _critStatus(roll, i, threatRange, canThreat) {
 	return critStatus;
 }
 
-function _buildRoll(uid, roll, isAttack, isRanged, isDamage) {
+function _buildRoll(uid, roll, isAttack, isRanged, isDamage, cleaveAtk) {
 	var retRoll = rollDice(roll);
 
 	var featModel = monsters[uid].feats;
@@ -170,6 +171,11 @@ function _buildRoll(uid, roll, isAttack, isRanged, isDamage) {
 			var bonus = parseInt($$(uid+"_calc_pa").val());
 			if(!isNaN(bonus))
 				retRoll["Power Attack"] = -bonus;
+		}
+
+		console.log(cleaveAtk + " " + parseInt($$(uid + "_calc_cleave").val()));
+		if (featModel.hasFeat('Cleave') && parseInt($$(uid + "_calc_cleave").val()) == cleaveAtk) {
+			retRoll["Cleave"] = -(cleaveAtk - 1) * 5;
 		}
 	}
 
