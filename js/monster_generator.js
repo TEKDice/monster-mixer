@@ -1045,6 +1045,56 @@ function addFeatFunctions() {
 			}
 		})
 	});
+	$("[data-spfunc='Rage']").livequery(function () {
+		var $this = $(this);
+		var uid = $this.attr('data-uid');
+		$this.click(function () {
+			var props = monsters[uid].ac.arrayProps();
+			var str = monsters[uid].stats.str.base.val();
+			var con = monsters[uid].stats.con.base.val();
+			if ($this.is(":checked")) {
+				props["Rage"] = -2;
+				monsters[uid].ac.arrayProps(props);
+
+				monsters[uid].stats.str.base.val(str + 4);
+				monsters[uid].stats.con.base.val(con + 4);
+
+			} else {
+				props["Rage"] = 0;
+				monsters[uid].ac.arrayProps(props);
+
+				monsters[uid].stats.str.base.val(str - 4);
+				monsters[uid].stats.con.base.val(con - 4);
+			}
+		})
+	});
+	$("[data-spfunc='Frenzy']").livequery(function () {
+		var $this = $(this);
+		var uid = $this.attr('data-uid');
+		$this.click(function () {
+			var props = monsters[uid].ac.arrayProps();
+			var str = monsters[uid].stats.str.base.val();
+			var con = monsters[uid].stats.con.base.val();
+			var will = monsters[uid].stats.will.base.val();
+
+			if ($this.is(":checked")) {
+				props["Frenzy"] = -2;
+				monsters[uid].ac.arrayProps(props);
+
+				monsters[uid].stats.str.base.val(str + 4);
+				monsters[uid].stats.con.base.val(con + 4);
+				monsters[uid].stats.will.base.val(will + 2);
+
+			} else {
+				props["Frenzy"] = 0;
+				monsters[uid].ac.arrayProps(props);
+
+				monsters[uid].stats.str.base.val(str - 4);
+				monsters[uid].stats.con.base.val(con - 4);
+				monsters[uid].stats.will.base.val(will - 2);
+			}
+		})
+	});
 
 	var applyNumFunc = function (uid, scope) {
 		var bab = monsters[uid].stats.bab.base.val();
