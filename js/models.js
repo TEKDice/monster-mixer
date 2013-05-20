@@ -465,6 +465,8 @@ function FullAttackModel(fatks, mname) {
 				e.mfa_strict = e.mfa_strict == "0" ? "1" : "0";
 				var range = (parseInt(e.wir) || parseInt(e.mfa_range));
 				var parsed = attackModel.weaponDamageRoll(e, strBonus, range, parseInt(e.mfa_strict));
+				var strMod = parseFloat(e.mfa_str_mod);
+				parsed["STR Mod"] *= strMod;
 				retO = collect(retO, parsed);
 			}
 
@@ -697,7 +699,7 @@ function WeaponAttackModel(damagers, mname) {
 		if (obj.dmgname != null)
 			ret[obj.dmgname + " (" + obj.dmgred_hd + ")"] = obj.dmgred_hd;
 
-		ret["STR Mod"] = Math.floor(strBonus * parseFloat(obj.max_str_mod));
+		ret["STR Mod"] = Math.floor(strBonus*parseFloat(obj.max_str_mod));
 
 		return ret;
 	}
