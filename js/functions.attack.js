@@ -1,5 +1,6 @@
 
-function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks, isRanged, threatRange, attackRollString, critMult, isFullAttack, atkCtOverride, atkPosOverride) {
+function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks, isRanged, threatRange,
+	attackRollString, critMult, isFullAttack, atkCtOverride, atkPosOverride) {
 
 	if(spatkFor) spatkFor = spatkFor.trim();
 	if(exprFor) exprFor = exprFor.trim();
@@ -20,7 +21,7 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 		var resultText = '';
 		var critStatus = '';
 
-		var atkCtText = totalAttacks > 1 ? '('+(atkPosOverride+1)+'/'+totalAttacks+') ' : '';
+		var atkCtText = totalAttacks > 1 ? '('+(curAtk+1)+'/'+totalAttacks+') ' : '';
 
 		if(isAttack) {
 			var attackRoll = _buildRoll(uid, attackRollString, true, isRanged, false);
