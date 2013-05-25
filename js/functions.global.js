@@ -7,7 +7,7 @@ function rollDice(str) {
 	var result;
 	try {
 		var rolls = $.parseJSON(str);
-		result = [];
+		result = {};
 		$.each(rolls, function (i, e) {
 			if (i == 'Base') i = 'Base (' + e + ')';
 			if (typeof e == 'string' && e.indexOf('d') != -1)
@@ -49,4 +49,11 @@ function clamp(min, max, num) {
 	num = Math.max(min, num);
 	num = Math.min(max, num);
 	return num;
+}
+
+function arrayToObject(arr) {
+	var rv = {};
+	for (var i = 0; i < arr.length; ++i)
+		rv[i] = arr[i];
+	return rv;
 }
