@@ -1019,7 +1019,7 @@ function displayAttacks(attacks) {
 	for (var atk = 0; atk < attacks.length; atk++) {
 		var curAtk = attacks[atk];
 
-		if (curAtk.isAttack && monsters[curAtk.monUid].feats.hasFeat("Cleave")) {
+		if (!curAtk.isRanged && curAtk.isAttack && monsters[curAtk.monUid].feats.hasFeat("Cleave")) {
 			var newUid = new Date().getTime();
 			curAtk.uid = newUid;
 			cleaveAtks[curAtk.uid] = curAtk;
