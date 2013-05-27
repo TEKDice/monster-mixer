@@ -838,7 +838,6 @@ var atk = function() {
 		},
 
 		display: function () {
-			console.log(this);
 			var bH = _rollArray(rollDice(this.baseHit));
 			var tA = _rollArray(rollDice(this.threatAttack));
 			var tH = _rollArray(rollDice(this.threatHit));
@@ -1021,7 +1020,7 @@ function displayAttacks(attacks) {
 		var curAtk = attacks[atk];
 
 		if (curAtk.isAttack && monsters[curAtk.monUid].feats.hasFeat("Cleave")) {
-			var newUid = new Date().getDate();
+			var newUid = new Date().getTime();
 			curAtk.uid = newUid;
 			cleaveAtks[curAtk.uid] = curAtk;
 		}
