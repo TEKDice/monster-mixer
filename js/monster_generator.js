@@ -1112,6 +1112,7 @@ function formatSpecialFeatName(name) {
 		case 'Frenzy': return 'frenzy';
 		case 'Power Attack': return 'pa';
 		case 'Cleave': return 'cleave';
+		case 'Charge': return 'charge';
 		case 'Combat Expertise': return 'ce';
 	}
 	return searchNameForNamedEntries(name);
@@ -1447,6 +1448,10 @@ var MonsterModel = function (uid, data) {
 			case '0.50': return $("<div/>").html("&frac12;").text();
 		}
 		return parseInt(cr);
+	};
+
+	self.formatSpName = function (name) {
+		return self.uid + "_calc_" + formatSpecialFeatName(name);
 	};
 
 	self.nameTooltip = ko.computed(function () {
@@ -2388,10 +2393,6 @@ function FeatModel(feats, uid) {
 		if (self.hasCheckbox(name) || self.hasNumber(name)) return 1;
 		return 2;
 	};
-
-	self.formatSpName = function (name) {
-		return self.uid + "_calc_" + formatSpecialFeatName(name);
-	};
 }
 
 function QualityModel(qualities, mname) {
@@ -2459,6 +2460,8 @@ function addNewMonster(monster) {
 	var uid = new Date().getTime();
 
 	_addNewMonster(monster, uid);
+
+	modifyHp(uid, 0, true);
 
 	_hidePopup();
 

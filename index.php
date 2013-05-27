@@ -382,28 +382,31 @@ function is_dev() {
 									<table class="table table-striped table-condensed">
 										<tbody>
 											<tr>
-												<td>Bullrush</td>
+												<td>Bullrush</td><td></td>
 											</tr>
 											<tr>
 												<td>Charge</td>
+												<td class='sp'> 
+													<input class="inline-checkbox" data-bind="attr: {'data-spfunc': 'Charge', 'data-uid': $root.uid, id: $root.formatSpName('Charge')}" type="checkbox" />
+												</td>
 											</tr>
 											<tr>
-												<td>Disarm</td>
+												<td>Disarm</td><td></td>
 											</tr>
 											<tr>
-												<td>Feint</td>
+												<td>Feint</td><td></td>
 											</tr>
 											<tr>
-												<td>Grapple</td>
+												<td>Grapple</td><td></td>
 											</tr>
 											<tr>
-												<td>Overrun</td>
+												<td>Overrun</td><td></td>
 											</tr>
 											<tr>
-												<td>Sunder</td>
+												<td>Sunder</td><td></td>
 											</tr>
 											<tr>
-												<td>Trip</td>
+												<td>Trip</td><td></td>
 											</tr>
 											<tr class="loaded" style="display: none"><td></td></tr>
 										</tbody>
@@ -514,12 +517,12 @@ function is_dev() {
 												</td>
 												<!-- ko if: $parent.hasCheckbox($data.name) -->
 												<td class='sp'> 
-													<input class="inline-checkbox" data-bind="attr: {'data-spfunc': $data.name, 'data-uid': $parent.uid, id: $parent.formatSpName($data.name)}" type="checkbox" />
+													<input class="inline-checkbox" data-bind="attr: {'data-spfunc': $data.name, 'data-uid': $parent.uid, id: $root.formatSpName($data.name)}" type="checkbox" />
 												</td>
 												<!-- /ko -->
 												<!-- ko if: $parent.hasNumber($data.name) -->
 												<td class='sp'> 
-													<input class="input-mini-inline applyNum" placeholder="#" data-bind="attr: {'data-spfunc': $data.name, 'data-uid': $parent.uid, id: $parent.formatSpName($data.name)}" type="number" />
+													<input class="input-mini-inline applyNum" placeholder="#" data-bind="attr: {'data-spfunc': $data.name, 'data-uid': $parent.uid, id: $root.formatSpName($data.name)}" type="number" />
 												</td>
 												<!-- /ko -->
 											</tr>

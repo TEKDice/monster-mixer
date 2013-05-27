@@ -8,6 +8,7 @@ function formatSpecialFeatName(name) {
 		case 'Frenzy': return 'frenzy';
 		case 'Power Attack': return 'pa';
 		case 'Cleave': return 'cleave';
+		case 'Charge': return 'charge';
 		case 'Combat Expertise': return 'ce';
 	}
 	return searchNameForNamedEntries(name);

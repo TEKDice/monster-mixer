@@ -77,6 +77,10 @@ var MonsterModel = function (uid, data) {
 		return parseInt(cr);
 	};
 
+	self.formatSpName = function (name) {
+		return self.uid + "_calc_" + formatSpecialFeatName(name);
+	};
+
 	self.nameTooltip = ko.computed(function () {
 		var retStr = self.stats.size() + " " + self.stats.category();
 
@@ -1015,10 +1019,6 @@ function FeatModel(feats, uid) {
 	self.countColumns = function (name) {
 		if (self.hasCheckbox(name) || self.hasNumber(name)) return 1;
 		return 2;
-	};
-
-	self.formatSpName = function (name) {
-		return self.uid + "_calc_" + formatSpecialFeatName(name);
 	};
 }
 

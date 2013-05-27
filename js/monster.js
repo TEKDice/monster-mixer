@@ -12,6 +12,8 @@ function addNewMonster(monster) {
 
 	_addNewMonster(monster, uid);
 
+	modifyHp(uid, 0, true);
+
 	_hidePopup();
 
 	sortMonsters();
