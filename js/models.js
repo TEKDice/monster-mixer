@@ -2,8 +2,6 @@
 var MonsterModel = function (uid, data) {
 	var self = this;
 
-	console.log(data);
-
 	//store the monster data here
 	//self.monsterData = data;
 	self.monsterBaseStats = data.data[0];

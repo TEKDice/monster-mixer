@@ -192,7 +192,7 @@ function attack($rollable, $roller, uid) {
 		$.each(fatk.rolls, function(i, ee) {
 			var index = ee.refIndex;
 			attacks.push(doAttack(uid, JSON.stringify(ee.tohit), true, fatk.spatk[index], fatk.names[index], 
-				idFor, 1, isRanged, fatk.minCrit[index], JSON.stringify(ee.damage), 
+				idFor, 1, parseInt(fatk.range[index])!=0, fatk.minCrit[index], JSON.stringify(ee.damage), 
 				fatk.critMult[index], true, fatk.rolls.length, i));
 		});
 
@@ -213,6 +213,7 @@ function displayAttacks(attacks) {
 			curAtk.uid = newUid;
 			cleaveAtks[curAtk.uid] = curAtk;
 		}
+
 		curAtk.display();
 	}
 }
