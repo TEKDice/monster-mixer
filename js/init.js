@@ -79,5 +79,14 @@ function bodyBinding() {
 		});
 	});
 
+	$("[data-cleave-uid]").livequery(function () {
+		$(this).click(function () {
+			var cleaveAtk = cleaveAtks[$(this).attr('data-cleave-uid')];
+			if (!monsters[cleaveAtk.monUid].feats.hasFeat("Great Cleave"))
+				cleaveAtk.uid = null;
+			cleaveAtk.display();
+		});
+	});
+
 	addFeatFunctions();
 }

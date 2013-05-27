@@ -3,12 +3,12 @@ function $$(str) {
 	return $("#" + str);
 }
 
-function rollDice(str) {
+function rollDice(rolls) {
 	var result;
 	try {
-		var rolls = $.parseJSON(str);
 		result = {};
 		$.each(rolls, function (i, e) {
+			if(e == 0) return;
 			if (i == 'Base') i = 'Base (' + e + ')';
 			if (typeof e == 'string' && e.indexOf('d') != -1)
 				result[i] = parseInt(rollExpression(e));

@@ -1,6 +1,9 @@
 
 var atk = function() {
 	return {
+		monUid: '',
+		uid: null,
+
 		isAttack: false,
 		isRanged: false,
 
@@ -15,12 +18,20 @@ var atk = function() {
 
 		isFor: { name: '', spatk: '', id: '', expr: '' },
 
-		display: function () {
+		rollBaseAtk: function() {
+			var rv = [];
+			$.each(this.baseAttack, function (i, e) {
+				rv.push(rollDice(e));
+			});
+			return arrayToObject([].concat.apply([], rv));
+		},
 
-			var bH = _rollArray(this.baseHit);
-			var tA = _rollArray(this.threatAttack);
-			var tH = _rollArray(this.threatHit);
-			var bA = _rollArray(this.baseAttack);
+		display: function () {
+			console.log(this);
+			var bH = _rollArray(rollDice(this.baseHit));
+			var tA = _rollArray(rollDice(this.threatAttack));
+			var tH = _rollArray(rollDice(this.threatHit));
+			var bA = _rollArray(this.rollBaseAtk());
 
 			if (this.isAttack) {
 				if (this.critStatus == 'threat' || this.critStatus == 'success') {
@@ -36,14 +47,14 @@ var atk = function() {
 
 					addToLog(this.atkPreText + logMessages.critSuccess(this.isFor.name, this.isFor.expr,
 						bA.text, bA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id);
+							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid);
 				} else {
 					addToLog(this.atkPreText + logMessages.initiate(this.isFor.name, this.isFor.expr,
 						bH.text, bH.result), this.critStatus, this.isFor.id);
 
 					addToLog(this.atkPreText + logMessages.hit(this.isFor.name, this.isFor.expr,
 						bA.text, bA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id);
+							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid);
 				}
 			} else 
 				addToLog(this.atkPreText + logMessages.skill(this.isFor.name, this.isFor.expr,
@@ -55,6 +66,8 @@ var atk = function() {
 		}
 	};
 };
+
+var cleaveAtks = {};
 
 function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks, isRanged, threatRange,
 	attackRollString, critMult, isFullAttack, atkCtOverride, atkPosOverride) {
@@ -74,6 +87,7 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 
 		var attackObj = new atk();
 
+		attackObj.monUid = uid;
 		attackObj.isAttack = isAttack;
 		attackObj.isRanged = isRanged;
 		attackObj.isFor.spatk = spatkFor || null;
@@ -101,8 +115,6 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 
 			for(var i in attackRoll) {
 				if(attackRoll[i] == 0) continue;
-				result += attackRoll[i];
-				resultText += i + ": "+attackRoll[i]+"<br>";
 
 				critStatus = _critStatus(attackRoll[i], i, threatRange, true) || critStatus;
 
@@ -116,32 +128,14 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 
 					if(is2h && threatBasicAttack["Power Attack"] !== undefined)
 						threatBasicAttack["Power Attack"] *= 2;
-					for(var i in threatBasicAttack) {
-						if(threatBasicAttack[i] == 0) continue;
-						threatBasicAttackResult += threatBasicAttack[i];
-						threatBasicAttackResultText += i + ": "+threatBasicAttack[i]+"<br>";
-					}
 
 					iters = critMult || 1;
 
 					attackObj.threatAttack = threatBasicAttack;
 					attackObj.threatHit = threatData;
-
-					threatData = _rollArray(threatData);
-					threatBasicAttack = _rollArray(threatBasicAttack);
 				}
 			}
-			if(critStatus == 'threat' || critStatus == 'success') {
-				//addToLog(atkCtText+logMessages.critAttempt(nameFor, exprFor, resultText, result), critStatus, idFor);
-				//addToLog(atkCtText+logMessages.critMiss(nameFor,exprFor,threatBasicAttackResultText,threatBasicAttackResult)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
-				//addToLog(atkCtText+logMessages.critSecond(nameFor,exprFor,threatData.text,threatData.result), critStatus, idFor);
-			} else {
-				//addToLog(atkCtText+logMessages.initiate(nameFor, exprFor, resultText, result), critStatus, idFor);
-			}
 		}
-
-		result = 0;
-		resultText = '';
 
 		attackObj.baseAttack = [];
 
@@ -156,22 +150,12 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 
 			for(var i in roll) {
 				if(roll[i] == 0) continue;
-				result += roll[i];
-				resultText += i + ": "+roll[i]+"<br>";
 
 				critStatus = _critStatus(roll[i], i, 0, false) || critStatus;
 			}
 		}
 
 		attackObj.baseAttack = arrayToObject([].concat.apply([], attackObj.baseAttack));
-
-		if((critStatus == 'threat' || critStatus == 'success') && isAttack) {
-			//addToLog(atkCtText+logMessages.critSuccess(nameFor, exprFor, resultText, result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
-		} else if(isAttack) {
-			//addToLog(atkCtText+logMessages.hit(nameFor, exprFor, resultText, result)+(spatkFor!=null&&spatkFor!='null' ? " ("+spatkFor+" occurs)" : ''), critStatus, idFor);
-		} else {
-			//addToLog(atkCtText+logMessages.skill(nameFor, exprFor, resultText, result), critStatus, idFor);
-		}
 
 		attackObj.critStatus = critStatus;
 
@@ -221,12 +205,16 @@ function attack($rollable, $roller, uid) {
 
 }
 
-var lastAtk;
 function displayAttacks(attacks) {
 	for (var atk = 0; atk < attacks.length; atk++) {
-		lastAtk = attacks[atk];
-		console.log(attacks[atk]);
-		attacks[atk].display();
+		var curAtk = attacks[atk];
+
+		if (curAtk.isAttack && monsters[curAtk.monUid].feats.hasFeat("Cleave")) {
+			var newUid = new Date().getDate();
+			curAtk.uid = newUid;
+			cleaveAtks[curAtk.uid] = curAtk;
+		}
+		curAtk.display();
 	}
 }
 
@@ -247,7 +235,7 @@ function _critStatus(roll, i, threatRange, canThreat) {
 }
 
 function _buildRoll(uid, roll, isAttack, isRanged, isDamage, cleaveAtk) {
-	var retRoll = rollDice(roll);
+	var retRoll = $.parseJSON(roll);
 
 	var featModel = monsters[uid].feats;
 
@@ -290,7 +278,6 @@ function _rollArray(arr) {
 	var ret = {result: 0, text: ''};
 	for(var i in arr) {
 		if (arr[i] == 0 || arr[i] == null) continue;
-		console.log(i + " " + typeof arr[i]);
 		if (typeof arr[i] === 'object') {
 			for (var j in arr[i]) {
 				ret.result += arr[i][j];

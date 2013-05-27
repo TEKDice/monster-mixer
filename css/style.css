@@ -213,6 +213,10 @@ hr {
 	text-align: right!important;
 }
 
+.minibox-content tr > td {
+	vertical-align: middle;
+}
+
 /*
 --------------------------------
 

@@ -964,7 +964,7 @@ function FeatModel(feats, uid) {
 
 	self.uid = uid;
 	self.feats = ko.observableArray(feats);
-	self.checkboxFeats = ["Dodge", "Point Blank Shot", "Awesome Blow", "Frenzy", "Rage", "Rapid Shot"];
+	self.checkboxFeats = ["Dodge", "Point Blank Shot", "Awesome Blow", "Frenzy", "Rage", "Rapid Shot", "Multi Shot"];
 	self.numberFeats = ["Power Attack", "Combat Expertise"];
 
 	self.countFeat = function (featName) {
