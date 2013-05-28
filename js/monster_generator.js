@@ -810,6 +810,17 @@ function maneuverModifier(size) {
 }
 ///#source 1 1 /monsters/js/functions.attack.js
 
+var roll = function (data) {
+	return {
+		rollData: data,
+		_lastRoll: {},
+
+		roll: function () {
+			this._lastRoll = rollDice(rollData);
+		}
+	};
+}
+
 var atk = function() {
 	return {
 		monUid: '',
@@ -823,6 +834,7 @@ var atk = function() {
 
 		threatHit: {},
 		threatAttack: {},
+		threatRange: 0,
 
 		critStatus: '',
 		atkPreText: '',
@@ -837,10 +849,23 @@ var atk = function() {
 			return arrayToObject([].concat.apply([], rv));
 		},
 
+		checkCrit: function (arr) {
+			var cs = '';
+			$.each(arr, function (i, e) {
+				if (typeof e === 'object') {
+					$.each(e, function (j, f) {
+
+					});
+				} else {
+
+				}
+			});
+		},
+
 		display: function () {
-			var bH = _rollArray(rollDice(this.baseHit));
-			var tA = _rollArray(rollDice(this.threatAttack));
-			var tH = _rollArray(rollDice(this.threatHit));
+			var bH = _rollArray(this.baseHit);
+			var tA = _rollArray(this.threatAttack);
+			var tH = _rollArray(this.threatHit);
 			var bA = _rollArray(this.rollBaseAtk());
 
 			if (this.isAttack) {
@@ -866,9 +891,12 @@ var atk = function() {
 						bA.text, bA.result) +
 							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid);
 				}
-			} else 
+			} else {
+				this.critStatus = this.checkCrit(bA.rolls);
+
 				addToLog(this.atkPreText + logMessages.skill(this.isFor.name, this.isFor.expr,
-						bH.text, bH.result), this.critStatus, this.isFor.id);
+						bA.text, bA.result), this.critStatus, this.isFor.id);
+			}
 		},
 
 		hasSpatk: function () {
@@ -900,6 +928,7 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 		attackObj.monUid = uid;
 		attackObj.isAttack = isAttack;
 		attackObj.isRanged = isRanged;
+		attackObj.threatRange = threatRange;
 		attackObj.isFor.spatk = spatkFor || null;
 		attackObj.isFor.expr = exprFor;
 		attackObj.isFor.name = nameFor;
@@ -921,12 +950,14 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 
 			var attackRoll = _buildRoll(uid, attackRollString, true, isRanged, false);
 
-			attackObj.baseHit = attackRoll;
+			attackObj.baseHit = new roll(attackRoll);
+			attackObj.baseHit.roll();
 
-			for(var i in attackRoll) {
-				if(attackRoll[i] == 0) continue;
+			for (var i in attackObj.baseHit._lastRoll) {
+				var val = attackObj.baseHit._lastRoll[i];
+				if (val == 0) continue;
 
-				critStatus = _critStatus(attackRoll[i], i, threatRange, true) || critStatus;
+				critStatus = _critStatus(val, i, threatRange, true) || critStatus;
 
 				if (critStatus == 'threat' || critStatus == 'success') {
 
@@ -1045,7 +1076,7 @@ function _critStatus(roll, i, threatRange, canThreat) {
 	return critStatus;
 }
 
-function _buildRoll(uid, roll, isAttack, isRanged, isDamage, cleaveAtk) {
+function _buildRoll(uid, roll, isAttack, isRanged, isDamage) {
 	var retRoll = $.parseJSON(roll);
 
 	var featModel = monsters[uid].feats;
@@ -1068,6 +1099,9 @@ function _buildRoll(uid, roll, isAttack, isRanged, isDamage, cleaveAtk) {
 			if(!isNaN(bonus))
 				retRoll["Power Attack"] = -bonus;
 		}
+
+		if ($$(uid + "_calc_charge").is(":checked") && !isRanged)
+			retRoll["Charge"] = 2;
 	}
 
 	if(isDamage) {
@@ -1086,17 +1120,22 @@ function _buildRoll(uid, roll, isAttack, isRanged, isDamage, cleaveAtk) {
 }
 
 function _rollArray(arr) {
-	var ret = {result: 0, text: ''};
+	var ret = { result: 0, text: '', rolls: {} };
+	var idx = 0;
 	for(var i in arr) {
 		if (arr[i] == 0 || arr[i] == null) continue;
 		if (typeof arr[i] === 'object') {
+			var newRoll = {};
 			for (var j in arr[i]) {
 				ret.result += arr[i][j];
 				ret.text += j + ": " + arr[i][j] + "<br>";
+				newRoll[j] = arr[i][j];
 			}
+			ret.rolls[idx++] = newRoll;
 		} else {
 			ret.result += arr[i];
 			ret.text += i + ": " + arr[i] + "<br>";
+			ret.rolls[i] = arr[i];
 		}
 	}
 	return ret;
@@ -1186,6 +1225,21 @@ function addFeatFunctions() {
 				monsters[uid].stats.str.base.val(str - 4);
 				monsters[uid].stats.con.base.val(con - 4);
 				monsters[uid].stats.will.base.val(will - 2);
+			}
+		})
+	});
+	$("[data-spfunc='Charge']").livequery(function () {
+		var $this = $(this);
+		var uid = $this.attr('data-uid');
+		$this.click(function () {
+			var props = monsters[uid].ac.arrayProps();
+
+			if ($this.is(":checked")) {
+				props["Charge"] = -2;
+				monsters[uid].ac.arrayProps(props);
+			} else {
+				props["Charge"] = 0;
+				monsters[uid].ac.arrayProps(props);
 			}
 		})
 	});
@@ -1364,6 +1418,7 @@ function bodyBinding() {
 			var cleaveAtk = cleaveAtks[$(this).attr('data-cleave-uid')];
 			if (!monsters[cleaveAtk.monUid].feats.hasFeat("Great Cleave"))
 				cleaveAtk.uid = null;
+			cleaveAtk.critStatus = 'cleave';
 			cleaveAtk.display();
 		});
 	});
@@ -2406,14 +2461,16 @@ function QualityModel(qualities, mname) {
 	self.qualities = ko.observableArray(qualities);
 
 	self.isMeasurable = function (name) {
+		name = self.formatName(name);
+		console.log(name);
 		return name != 'Spell Resistance' && name != "Regeneration" && name != "Turn Resistance";
 	};
 	self.format = function (qual) {
 		return qual.value + (self.isMeasurable(qual.name) ? "ft" : "");
 	};
 	self.formatName = function (name) {
-		if (name.indexOf(mname) != -1) return name.substring(mname.length);
-		return name;
+		if (name.indexOf(mname) != -1) return name.substring(mname.length).trim();
+		return name.trim();
 	};
 }
 

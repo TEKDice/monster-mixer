@@ -83,8 +83,8 @@
 		});
 		$("#sessionDialog").on('shown', function() {
 			var $body = $('#allSessions').closest(".modal-body");
-   			var nice = $body.niceScroll({horizrailenabled: false});
-   			$body.css('overflow','hidden');
+			var nice = $body.niceScroll({horizrailenabled: false});
+			$body.css('overflow','hidden');
 		});
 		//
 		$('#currentSessionDialog').on('show', function () {

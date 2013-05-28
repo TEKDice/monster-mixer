@@ -80,6 +80,10 @@ Log-related
 	color: #468847;
 }
 
+#log div.cleave:after {
+	content: "[CLEAVE]";
+}
+
 html {
 	overflow-x: hidden;
 }

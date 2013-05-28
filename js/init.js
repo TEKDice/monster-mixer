@@ -84,6 +84,7 @@ function bodyBinding() {
 			var cleaveAtk = cleaveAtks[$(this).attr('data-cleave-uid')];
 			if (!monsters[cleaveAtk.monUid].feats.hasFeat("Great Cleave"))
 				cleaveAtk.uid = null;
+			cleaveAtk.critStatus = 'cleave';
 			cleaveAtk.display();
 		});
 	});

@@ -85,6 +85,21 @@ function addFeatFunctions() {
 			}
 		})
 	});
+	$("[data-spfunc='Charge']").livequery(function () {
+		var $this = $(this);
+		var uid = $this.attr('data-uid');
+		$this.click(function () {
+			var props = monsters[uid].ac.arrayProps();
+
+			if ($this.is(":checked")) {
+				props["Charge"] = -2;
+				monsters[uid].ac.arrayProps(props);
+			} else {
+				props["Charge"] = 0;
+				monsters[uid].ac.arrayProps(props);
+			}
+		})
+	});
 
 	var applyNumFunc = function (uid, scope) {
 		var bab = monsters[uid].stats.bab.base.val();

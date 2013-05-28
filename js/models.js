@@ -1033,14 +1033,16 @@ function QualityModel(qualities, mname) {
 	self.qualities = ko.observableArray(qualities);
 
 	self.isMeasurable = function (name) {
+		name = self.formatName(name);
+		console.log(name);
 		return name != 'Spell Resistance' && name != "Regeneration" && name != "Turn Resistance";
 	};
 	self.format = function (qual) {
 		return qual.value + (self.isMeasurable(qual.name) ? "ft" : "");
 	};
 	self.formatName = function (name) {
-		if (name.indexOf(mname) != -1) return name.substring(mname.length);
-		return name;
+		if (name.indexOf(mname) != -1) return name.substring(mname.length).trim();
+		return name.trim();
 	};
 }
 
