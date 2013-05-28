@@ -1034,7 +1034,6 @@ function QualityModel(qualities, mname) {
 
 	self.isMeasurable = function (name) {
 		name = self.formatName(name);
-		console.log(name);
 		return name != 'Spell Resistance' && name != "Regeneration" && name != "Turn Resistance";
 	};
 	self.format = function (qual) {

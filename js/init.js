@@ -85,6 +85,8 @@ function bodyBinding() {
 			if (!monsters[cleaveAtk.monUid].feats.hasFeat("Great Cleave"))
 				cleaveAtk.uid = null;
 			cleaveAtk.critStatus = 'cleave';
+			cleaveAtk.baseHit.roll();
+			cleaveAtk.rerollBaseAtk();
 			cleaveAtk.display();
 		});
 	});

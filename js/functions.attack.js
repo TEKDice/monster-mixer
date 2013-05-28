@@ -1,16 +1,16 @@
 
-var roll = function (data) {
+var Roll = function (data) {
 	return {
 		rollData: data,
-		_lastRoll: {},
+		_lastRoll: rollDice(data),
 
 		roll: function () {
-			this._lastRoll = rollDice(rollData);
+			this._lastRoll = rollDice(this.rollData);
 		}
 	};
 }
 
-var atk = function() {
+var Atk = function() {
 	return {
 		monUid: '',
 		uid: null,
@@ -33,28 +33,21 @@ var atk = function() {
 		rollBaseAtk: function() {
 			var rv = [];
 			$.each(this.baseAttack, function (i, e) {
-				rv.push(rollDice(e));
+				rv.push(e._lastRoll);
 			});
 			return arrayToObject([].concat.apply([], rv));
 		},
 
-		checkCrit: function (arr) {
-			var cs = '';
-			$.each(arr, function (i, e) {
-				if (typeof e === 'object') {
-					$.each(e, function (j, f) {
-
-					});
-				} else {
-
-				}
+		rerollBaseAtk: function () {
+			$.each(this.baseAttack, function (i, e) {
+				e.roll();
 			});
 		},
 
 		display: function () {
-			var bH = _rollArray(this.baseHit);
-			var tA = _rollArray(this.threatAttack);
-			var tH = _rollArray(this.threatHit);
+			var bH = _rollArray(this.baseHit._lastRoll);
+			var tA = _rollArray(this.threatAttack._lastRoll);
+			var tH = _rollArray(this.threatHit._lastRoll);
 			var bA = _rollArray(this.rollBaseAtk());
 
 			if (this.isAttack) {
@@ -81,8 +74,6 @@ var atk = function() {
 							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid);
 				}
 			} else {
-				this.critStatus = this.checkCrit(bA.rolls);
-
 				addToLog(this.atkPreText + logMessages.skill(this.isFor.name, this.isFor.expr,
 						bA.text, bA.result), this.critStatus, this.isFor.id);
 			}
@@ -112,7 +103,7 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 
 	for (var atkCount = 0; atkCount < howManyAttacks; atkCount++) {
 
-		var attackObj = new atk();
+		var attackObj = new Atk();
 
 		attackObj.monUid = uid;
 		attackObj.isAttack = isAttack;
@@ -139,8 +130,7 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 
 			var attackRoll = _buildRoll(uid, attackRollString, true, isRanged, false);
 
-			attackObj.baseHit = new roll(attackRoll);
-			attackObj.baseHit.roll();
+			attackObj.baseHit = new Roll(attackRoll);
 
 			for (var i in attackObj.baseHit._lastRoll) {
 				var val = attackObj.baseHit._lastRoll[i];
@@ -161,8 +151,8 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 
 					iters = critMult || 1;
 
-					attackObj.threatAttack = threatBasicAttack;
-					attackObj.threatHit = threatData;
+					attackObj.threatAttack = new Roll(threatBasicAttack);
+					attackObj.threatHit = new Roll(threatData);
 				}
 			}
 		}
@@ -176,12 +166,15 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 				roll["Power Attack"] *= 2;
 			}
 
-			attackObj.baseAttack.push(roll);
+			var rollObj = new Roll(roll);
 
-			for(var i in roll) {
-				if(roll[i] == 0) continue;
+			attackObj.baseAttack.push(rollObj);
 
-				critStatus = _critStatus(roll[i], i, 0, false) || critStatus;
+			for (var i in rollObj._lastRoll) {
+				var val = rollObj._lastRoll[i];
+				if(val == 0) continue;
+
+				critStatus = _critStatus(val, i, 0, false) || critStatus;
 			}
 		}
 
