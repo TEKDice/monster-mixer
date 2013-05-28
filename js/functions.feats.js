@@ -21,6 +21,17 @@ function searchNameForNamedEntries(name) {
 }
 
 function addFeatFunctions() {
+	$("[data-cleave-uid]").livequery(function () {
+		$(this).click(function () {
+			var cleaveAtk = cleaveAtks[$(this).attr('data-cleave-uid')];
+			if (!monsters[cleaveAtk.monUid].feats.hasFeat("Great Cleave"))
+				cleaveAtk.uid = null;
+			cleaveAtk.critStatus = 'cleave';
+			cleaveAtk.baseHit.roll();
+			cleaveAtk.rerollBaseAtk();
+			cleaveAtk.display();
+		});
+	});
 	$("[data-spfunc='Dodge']").livequery(function () {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
