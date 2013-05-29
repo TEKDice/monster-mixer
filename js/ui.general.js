@@ -15,7 +15,7 @@ function setupRoller() {
 		if (e.which != 13) return;
 		e.preventDefault();
 		var toRoll = $(this).val();
-		var roll = rollDice(toRoll);
+		var roll = rollExpression(toRoll);
 		if (roll === 0) return;
 		addToLog("Custom roll: " + toRoll + " rolled " + roll + ".", "customRoll");
 	});
