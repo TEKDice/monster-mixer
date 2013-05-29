@@ -2699,22 +2699,48 @@ function updateLogNumbers(uid, killed) {
 		}
 	});
 }
-///#source 1 1 /monsters/js/sync.js
+///#source 1 1 /monsters/js/sync.global.js
 
 var SESSIONS_VARIABLE = "sessions";
 var LAST_SESSION_VARIABLE = "lastSessionId";
 var hasReloadedSession = false;
 
-//monster modify, monster create, monster remove
+var currentSessionId;
+
+function now() {
+	return new Date().getTime();
+}
+
+function _currentSessionId() {
+	return currentSessionId.toString();
+}
+
+function serverReachable() {
+	var x = new (window.ActiveXObject || XMLHttpRequest)("Microsoft.XMLHTTP"),
+		s;
+	x.open(
+	  "HEAD",
+	  "//" + window.location.hostname + "/?rand=" + Math.random(),
+	  false
+	);
+	try {
+		x.send();
+		s = x.status;
+		return (s >= 200 && s < 300 || s === 304);
+	} catch (e) {
+		return false;
+	}
+}
+///#source 1 1 /monsters/js/sync.monsters.js
 function saveMonsters() {
-	if(!loggedIn) return;
-	if(!currentSessionId) return;
+	if (!loggedIn) return;
+	if (!currentSessionId) return;
 	//TODO -- "loading icon"
 
 	var saveTheseMonsters = [];
 
-	
-	$("#monsterList li a").each(function(i, e) {
+
+	$("#monsterList li a").each(function (i, e) {
 		var uid = $(this).attr('data-uid');
 
 		var arrMon = monsters[uid];
@@ -2726,11 +2752,11 @@ function saveMonsters() {
 			init: arrMon.initiative.init.num().val()
 		};
 
-		if(mon.id == '') return;
+		if (mon.id == '') return;
 
 		saveTheseMonsters.push(mon);
 	});
-	
+
 
 	if (saveTheseMonsters.length == 0) return;
 
@@ -2748,15 +2774,15 @@ function loadMonsters(monsterSet) {
 
 	var loadTheseMonsters = [];
 
-	$.each(monsterSet, function(i, e) {
+	$.each(monsterSet, function (i, e) {
 		loadTheseMonsters.push(e.id);
 	});
 
 	$.post('ajax.php', { action: "gen", ids: JSON.stringify(loadTheseMonsters) }, function (monsterArr) {
 		var arr = $.parseJSON(monsterArr);
 		$.eachAsync(arr, {
-			loop: function(i, e){
-				setTimeout(function() {
+			loop: function (i, e) {
+				setTimeout(function () {
 					var mon = e;
 					var uid = addNewMonster(mon);
 					var oldMonData = monsterSet[i];
@@ -2784,7 +2810,7 @@ function removeAllMonsters() {
 	$("#monsterData .tab-pane").remove();
 }
 
-var currentSessionId;
+///#source 1 1 /monsters/js/sync.sessions.js
 
 function startSession() {
 	if(!loggedIn) return;
@@ -2901,24 +2927,18 @@ function sessionManagement() {
 	}
 }
 
-function _currentSessionId() {
-	return currentSessionId.toString();
-}
-
-function now() {
-	return new Date().getTime();
-}
+///#source 1 1 /monsters/js/sync.status.js
 
 function changeStatus(status) {
-	switch(status) {
-		case "ok": 				updateTextIcon("icon-ok", "Ready"); return;
-		case "syncing": 		updateTextIcon("icon-refresh", "Syncing..."); return;
-		case "noconnection": 	updateTextIcon("icon-warning-sign", "No connection"); return;
+	switch (status) {
+		case "ok": updateTextIcon("icon-ok", "Ready"); return;
+		case "syncing": updateTextIcon("icon-refresh", "Syncing..."); return;
+		case "noconnection": updateTextIcon("icon-warning-sign", "No connection"); return;
 	}
 }
 
 function updateTextIcon(iconClass, text) {
-	$("#noChangeColor").attr('class','').addClass(iconClass);
+	$("#noChangeColor").attr('class', '').addClass(iconClass);
 	$("#statusText").text(text);
 }
 ///#source 1 1 /monsters/js/ui.filters.js

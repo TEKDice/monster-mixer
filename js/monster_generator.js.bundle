@@ -18,7 +18,10 @@
   <file>/monsters/js/init.js</file>
   <file>/monsters/js/models.js</file>
   <file>/monsters/js/monster.js</file>
-  <file>/monsters/js/sync.js</file>
+  <file>/monsters/js/sync.global.js</file>
+  <file>/monsters/js/sync.monsters.js</file>
+  <file>/monsters/js/sync.sessions.js</file>
+  <file>/monsters/js/sync.status.js</file>
   <file>/monsters/js/ui.filters.js</file>
   <file>/monsters/js/ui.general.js</file>
   <file>/monsters/js/ui.generator.js</file>
