@@ -19,7 +19,7 @@ function getUserId($username) {
     $stmt->bind_param("s",$username);
     $stmt->execute();
     
-    die($sconn->error);
+    die($stmt);
     
     $res = $stmt->get_result();
     $id=$res->fetch_array(MYSQLI_ASSOC);
