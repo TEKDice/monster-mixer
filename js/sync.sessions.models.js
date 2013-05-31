@@ -116,6 +116,9 @@ var SessionModel = function() {
 			sessions[self._currentSessionId()].lastUpdate = now();
 		}
 
+		if (self.isSynced(sessions[self._currentSessionId()]))
+			self.sync(sessions[self._currentSessionId()]);
+
 		self.allSessions(sessions);
 	};
 
@@ -175,7 +178,11 @@ var SessionModel = function() {
 		if (!loggedIn) return;
 
 		Data.clearVar("monsters_" + uid);
-		self.allSessions(self.allSessions());
+		var sessionList = self.allSessions();
+		if (self.isSynced(sessionList[uid]))
+			self.unsync(sessionList[uid]);
+
+		self.allSessions(sessionList);
 		self.invalidate();
 	};
 	//#endregion
@@ -228,7 +235,7 @@ var SessionModel = function() {
 	self.sessionManagement = function () {
 		if (!loggedIn) return;
 		if (self.hasPreviousSession()) {
-			bootbox.confirm("It looks like you had a session open. Would you like to reload it?", function (result) {
+			bootbox.confirm("It looks like you had an encounter open. Would you like to reload it?", function (result) {
 				if (hasReloadedSession) return;
 				if (!result) { self.currentSessionId(now()); self.startSession(); return; }
 				hasReloadedSession = true;
@@ -245,7 +252,7 @@ var SessionModel = function() {
 		self.invalidate();
 		return {
 			startTime: self.currentSessionId(),
-			name: "Nameless Campaign",
+			name: "Nameless Encounter",
 			lastUpdate: now()
 		};
 	};
@@ -261,6 +268,57 @@ var SessionModel = function() {
 			.show()
 			.attr('class', 'pull-left label').addClass(isError ? 'label-important' : 'label-success')
 			.text(str);
+	};
+	//#endregion
+
+	//#region Sync Functions
+	self.sync = function (sessionInfo) {
+		if (!_canBeginSync()) return
+		$.ajax("sessions.php", {
+			type: "POST",
+			data: {
+				action: "new",
+				sessname: sessionInfo.name,
+				json: JSON.stringify(self.getMonsterDataBySession(sessionInfo.startTime)),
+				sttime: sessionInfo.startTime,
+				uptime: sessionInfo.lastUpdate
+			}
+		}).done(function (data) {
+			data = $.parseJSON(data);
+			self.sessionErrorMessage(data.msg, data.isError);
+
+			self.updateSyncedSessions();
+
+		}).fail(function () {
+			self.sessionErrorMessage("Error: Couldn't connect to cloud");
+
+		}).always(function() {
+			_endSync();
+
+		});
+	};
+
+	self.unsync = function (sessionInfo) {
+		if (!_canBeginSync()) return
+		$.ajax("sessions.php", {
+			type: "POST",
+			data: {
+				action: "del",
+				sttime: sessionInfo.startTime
+			}
+		}).done(function (data) {
+			data = $.parseJSON(data);
+			self.sessionErrorMessage(data.msg, data.isError);
+
+			self.updateSyncedSessions();
+
+		}).fail(function () {
+			self.sessionErrorMessage("Error: Couldn't connect to cloud");
+
+		}).always(function () {
+			_endSync();
+
+		});
 	};
 	//#endregion
 
@@ -281,42 +339,13 @@ var SessionModel = function() {
 	self.syncSessionSyncButton = function (sessionInfo, button) {
 		$(button).button('loading');
 		$(button).closest('tr').find('.status').addClass('italic').text('Syncing...');
-		$.ajax("sessions.php", {
-			type: "POST",
-			data: {
-				action: "new",
-				sessname: sessionInfo.name,
-				json: JSON.stringify(self.getMonsterDataBySession(sessionInfo.startTime)),
-				sttime: sessionInfo.startTime,
-				uptime: sessionInfo.lastUpdate
-			}
-		}).done(function (data) {
-			data = $.parseJSON(data);
-			self.sessionErrorMessage(data.msg, data.isError);
-
-			self.updateSyncedSessions();
-		}).fail(function () {
-			self.sessionErrorMessage("Error: Couldn't connect to cloud");
-		});
+		self.sync(sessionInfo);
 	};
 
 	self.syncSessionUnsyncButton = function (sessionInfo, button) {
 		$(button).button('loading');
 		$(button).closest('tr').find('.status').addClass('italic').text('Unsyncing...');
-		$.ajax("sessions.php", {
-			type: "POST",
-			data: {
-				action: "del",
-				sttime: sessionInfo.startTime
-			}
-		}).done(function (data) {
-			data = $.parseJSON(data);
-			self.sessionErrorMessage(data.msg, data.isError);
-
-			self.updateSyncedSessions();
-		}).fail(function () {
-			self.sessionErrorMessage("Error: Couldn't connect to cloud");
-		});
+		self.unsync(sessionInfo);
 	};
 
 	self.updateSyncedSessions = function () {

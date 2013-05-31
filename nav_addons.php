@@ -2,12 +2,12 @@
 <div id="sessionDialog" data-bind="with: sessionManager" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="session" aria-hidden="true">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-		<h3 id="sessionDialogHeader">Saved Sessions</h3>
+		<h3 id="sessionDialogHeader">Saved Encounters</h3>
 	</div>
 	<div class="modal-body">
 		<table class="table">
 			<thead>
-				<tr><td>Session Name</td><td>Status</td><td></td><td></td></tr>
+				<tr><td>Encounter Name</td><td>Status</td><td></td><td></td></tr>
 			</thead>
 			<tbody id="allSessions">
                 <!-- ko foreach: $data.tableDisplaySessions -->
@@ -37,12 +37,12 @@
 <div id="currentSessionDialog" data-bind="with: sessionManager.currentSession()()" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="session" aria-hidden="true" style="position: default;">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-		<h3 id="currentSessionDialogHeader">Current Session</h3>
+		<h3 id="currentSessionDialogHeader">Current Encounter</h3>
 	</div>
 	<div class="modal-body">
 		<div class="input-prepend">
-			<span class="add-on span2">Session Name</span>
-			<input class="input-xlarge" id="sessionName" type="text" placeholder="Name your campaign!" required data-bind="value: $data.name" />
+			<span class="add-on span2">Encounter Name</span>
+			<input class="input-xlarge" id="sessionName" type="text" placeholder="Name your encounter!" required data-bind="value: $data.name" />
 		</div>
 		<div class="input-prepend">
 			<span class="add-on span2">Started</span>

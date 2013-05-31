@@ -3040,6 +3040,9 @@ var SessionModel = function() {
 			sessions[self._currentSessionId()].lastUpdate = now();
 		}
 
+		if (self.isSynced(sessions[self._currentSessionId()]))
+			self.sync(sessions[self._currentSessionId()]);
+
 		self.allSessions(sessions);
 	};
 
@@ -3099,7 +3102,11 @@ var SessionModel = function() {
 		if (!loggedIn) return;
 
 		Data.clearVar("monsters_" + uid);
-		self.allSessions(self.allSessions());
+		var sessionList = self.allSessions();
+		if (self.isSynced(sessionList[uid]))
+			self.unsync(sessionList[uid]);
+
+		self.allSessions(sessionList);
 		self.invalidate();
 	};
 	//#endregion
@@ -3152,7 +3159,7 @@ var SessionModel = function() {
 	self.sessionManagement = function () {
 		if (!loggedIn) return;
 		if (self.hasPreviousSession()) {
-			bootbox.confirm("It looks like you had a session open. Would you like to reload it?", function (result) {
+			bootbox.confirm("It looks like you had an encounter open. Would you like to reload it?", function (result) {
 				if (hasReloadedSession) return;
 				if (!result) { self.currentSessionId(now()); self.startSession(); return; }
 				hasReloadedSession = true;
@@ -3169,7 +3176,7 @@ var SessionModel = function() {
 		self.invalidate();
 		return {
 			startTime: self.currentSessionId(),
-			name: "Nameless Campaign",
+			name: "Nameless Encounter",
 			lastUpdate: now()
 		};
 	};
@@ -3185,6 +3192,57 @@ var SessionModel = function() {
 			.show()
 			.attr('class', 'pull-left label').addClass(isError ? 'label-important' : 'label-success')
 			.text(str);
+	};
+	//#endregion
+
+	//#region Sync Functions
+	self.sync = function (sessionInfo) {
+		if (!_canBeginSync()) return
+		$.ajax("sessions.php", {
+			type: "POST",
+			data: {
+				action: "new",
+				sessname: sessionInfo.name,
+				json: JSON.stringify(self.getMonsterDataBySession(sessionInfo.startTime)),
+				sttime: sessionInfo.startTime,
+				uptime: sessionInfo.lastUpdate
+			}
+		}).done(function (data) {
+			data = $.parseJSON(data);
+			self.sessionErrorMessage(data.msg, data.isError);
+
+			self.updateSyncedSessions();
+
+		}).fail(function () {
+			self.sessionErrorMessage("Error: Couldn't connect to cloud");
+
+		}).always(function() {
+			_endSync();
+
+		});
+	};
+
+	self.unsync = function (sessionInfo) {
+		if (!_canBeginSync()) return
+		$.ajax("sessions.php", {
+			type: "POST",
+			data: {
+				action: "del",
+				sttime: sessionInfo.startTime
+			}
+		}).done(function (data) {
+			data = $.parseJSON(data);
+			self.sessionErrorMessage(data.msg, data.isError);
+
+			self.updateSyncedSessions();
+
+		}).fail(function () {
+			self.sessionErrorMessage("Error: Couldn't connect to cloud");
+
+		}).always(function () {
+			_endSync();
+
+		});
 	};
 	//#endregion
 
@@ -3205,42 +3263,13 @@ var SessionModel = function() {
 	self.syncSessionSyncButton = function (sessionInfo, button) {
 		$(button).button('loading');
 		$(button).closest('tr').find('.status').addClass('italic').text('Syncing...');
-		$.ajax("sessions.php", {
-			type: "POST",
-			data: {
-				action: "new",
-				sessname: sessionInfo.name,
-				json: JSON.stringify(self.getMonsterDataBySession(sessionInfo.startTime)),
-				sttime: sessionInfo.startTime,
-				uptime: sessionInfo.lastUpdate
-			}
-		}).done(function (data) {
-			data = $.parseJSON(data);
-			self.sessionErrorMessage(data.msg, data.isError);
-
-			self.updateSyncedSessions();
-		}).fail(function () {
-			self.sessionErrorMessage("Error: Couldn't connect to cloud");
-		});
+		self.sync(sessionInfo);
 	};
 
 	self.syncSessionUnsyncButton = function (sessionInfo, button) {
 		$(button).button('loading');
 		$(button).closest('tr').find('.status').addClass('italic').text('Unsyncing...');
-		$.ajax("sessions.php", {
-			type: "POST",
-			data: {
-				action: "del",
-				sttime: sessionInfo.startTime
-			}
-		}).done(function (data) {
-			data = $.parseJSON(data);
-			self.sessionErrorMessage(data.msg, data.isError);
-
-			self.updateSyncedSessions();
-		}).fail(function () {
-			self.sessionErrorMessage("Error: Couldn't connect to cloud");
-		});
+		self.unsync(sessionInfo);
 	};
 
 	self.updateSyncedSessions = function () {
@@ -3269,17 +3298,56 @@ function initialiseSessionManager() {
 }
 ///#source 1 1 /monsters/js/sync.status.js
 
+var ICON_READY = "icon-ok";
+var ICON_REFRESH = "icon-refresh";
+var ICON_DISCONNECTED = "icon-warning-sign";
+var ICON_DEFAULT = "icon-cog";
+
+var STATUS_OK = "ok";
+var STATUS_SYNCING = "syncing";
+var STATUS_DISCONNECTED = "disconnected";
+
 function changeStatus(status) {
 	switch (status) {
-		case "ok": updateTextIcon("icon-ok", "Ready"); return;
-		case "syncing": updateTextIcon("icon-refresh", "Syncing..."); return;
-		case "noconnection": updateTextIcon("icon-warning-sign", "No connection"); return;
+		case STATUS_OK: {
+			updateStatusIcon(ICON_READY, "Ready");
+			updateNavbarIcon(ICON_DEFAULT);
+			return;
+		}
+		case STATUS_SYNCING: {
+			updateStatusIcon(ICON_REFRESH, "Syncing...");
+			updateNavbarIcon(ICON_REFRESH, true);
+			return;
+		}
+		case STATUS_DISCONNECTED: {
+			updateStatusIcon(ICON_DISCONNECTED, "No connection");
+			updateNavbarIcon(ICON_DISCONNECTED);
+			return;
+		}
 	}
 }
 
-function updateTextIcon(iconClass, text) {
+function updateStatusIcon(iconClass, text) {
 	$("#noChangeColor").attr('class', '').addClass(iconClass);
 	$("#statusText").text(text);
+}
+
+function updateNavbarIcon(iconClass, shouldRotate) {
+	$("#secondaryStatusIcon").attr('class', shouldRotate ? 'rotateMe' : '').addClass(iconClass);
+}
+
+function _canBeginSync() {
+	if (serverReachable()) {
+		changeStatus(STATUS_SYNCING);
+		return true;
+	} else {
+		changeStatus(STATUS_DISCONNECTED);
+		return false;
+	}
+}
+
+function _endSync() {
+	changeStatus(STATUS_OK);
 }
 ///#source 1 1 /monsters/js/ui.filters.js
 
