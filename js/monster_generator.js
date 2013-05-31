@@ -2725,12 +2725,12 @@ function serverReachable() {
 	}
 }
 ///#source 1 1 /monsters/js/sync.monsters.js
+
+var IS_RELOADING_SESSION = false;
 function saveMonsters() {
 	if (!loggedIn) return;
-	//TODO -- "loading icon"
 
 	var saveTheseMonsters = [];
-
 
 	$("#monsterList li a").each(function (i, e) {
 		var uid = $(this).attr('data-uid');
@@ -2749,12 +2749,9 @@ function saveMonsters() {
 		saveTheseMonsters.push(mon);
 	});
 
-
 	if (saveTheseMonsters.length == 0) return;
 
 	sessionManager.saveCurrentMonsters(saveTheseMonsters);
-
-	//TODO -- remove loading icon
 }
 
 function loadMonsters(monsterSet) {
@@ -2770,25 +2767,25 @@ function loadMonsters(monsterSet) {
 
 	$.post('ajax.php', { action: "gen", ids: JSON.stringify(loadTheseMonsters) }, function (monsterArr) {
 		var arr = $.parseJSON(monsterArr);
+		IS_RELOADING_SESSION = true;
 		$.eachAsync(arr, {
 			loop: function (i, e) {
-				setTimeout(function () {
-					var mon = e;
-					var uid = addNewMonster(mon);
-					var oldMonData = monsterSet[i];
+				var mon = e;
+				var uid = addNewMonster(mon);
+				var oldMonData = monsterSet[i];
 
-					monsters[uid].hp.hp().num().val(oldMonData.maxHp);
-					modifyHp(uid, oldMonData.modHp, true);
-					monsters[uid].initiative.init.num().val(oldMonData.init);
+				monsters[uid].hp.hp().num().val(oldMonData.maxHp);
+				modifyHp(uid, oldMonData.modHp, true);
+				monsters[uid].initiative.init.num().val(oldMonData.init);
 
-					setupGrids(uid);
-					sortMonsters();
+				setupGrids(uid);
+				sortMonsters();
 
-					saveMonsters();
-				}, 1);
+				saveMonsters();
 			},
 			end: function () {
 				$("#overlay").fadeOut();
+				IS_RELOADING_SESSION = false;
 			}
 		});
 	});
@@ -2968,7 +2965,12 @@ var SessionModel = function() {
 
 	//#region Session Filtering
 	self.getSessionById = function (id) {
-		return self.allSessions()[id];
+		var sessionList = self.allSessions();
+		if (sessionList[id] === undefined) {
+			sessionList[id] = self.newSessionData();
+			self.allSessions(sessionList);
+		}
+		return sessionList[id];
 	};
 
 	self.currentSession = ko.observable(function () {
@@ -3055,9 +3057,10 @@ var SessionModel = function() {
 		return ret;
 	};
 
-	self.saveMonsters = function (id, data) {
+	self.saveMonsters = function (id, data, dontSync) {
 		Data.setVar("monsters_" + id, data);
-		self.saveSession(false);
+		if(!dontSync)
+			self.saveSession(false);
 	};
 
 	self.saveCurrentMonsters = function (data) {
@@ -3130,7 +3133,7 @@ var SessionModel = function() {
 	self.mergeCloudSessionsToLocal = function () {
 		var localSessions = self.allSessions();
 		$.each(self.syncedSessions(), function (i, e) {
-			self.saveMonsters(e.startTime, $.parseJSON(e.json));
+			self.saveMonsters(e.startTime, $.parseJSON(e.json), true);
 			localSessions[e.startTime] = {
 				name: e.name,
 				startTime: parseInt(e.startTime),
@@ -3196,7 +3199,7 @@ var SessionModel = function() {
 	//#endregion
 
 	//#region Sync Functions
-	self.sync = function (sessionInfo) {
+	self.sync = function (sessionInfo, $button) {
 		if (!_canBeginSync()) return
 		$.ajax("sessions.php", {
 			type: "POST",
@@ -3218,11 +3221,12 @@ var SessionModel = function() {
 
 		}).always(function() {
 			_endSync();
-
+			if ($button !== undefined)
+				$button.button('reset');
 		});
 	};
 
-	self.unsync = function (sessionInfo) {
+	self.unsync = function (sessionInfo, $button) {
 		if (!_canBeginSync()) return
 		$.ajax("sessions.php", {
 			type: "POST",
@@ -3241,6 +3245,8 @@ var SessionModel = function() {
 
 		}).always(function () {
 			_endSync();
+			if ($button !== undefined)
+				$button.button('reset');
 
 		});
 	};
@@ -3261,18 +3267,21 @@ var SessionModel = function() {
 	}
 
 	self.syncSessionSyncButton = function (sessionInfo, button) {
-		$(button).button('loading');
-		$(button).closest('tr').find('.status').addClass('italic').text('Syncing...');
-		self.sync(sessionInfo);
+		var $button = $(button);
+		$button.button('loading');
+		$button.closest('tr').find('.status').addClass('italic').text('Syncing...');
+		self.sync(sessionInfo, $button);
 	};
 
 	self.syncSessionUnsyncButton = function (sessionInfo, button) {
-		$(button).button('loading');
-		$(button).closest('tr').find('.status').addClass('italic').text('Unsyncing...');
-		self.unsync(sessionInfo);
+		var $button = $(button);
+		$button.button('loading');
+		$button.closest('tr').find('.status').addClass('italic').text('Unsyncing...');
+		self.unsync(sessionInfo, $button);
 	};
 
 	self.updateSyncedSessions = function () {
+		if (IS_RELOADING_SESSION) return;
 		$.ajax("sessions.php", {
 			type: "POST",
 			data: {
@@ -3337,6 +3346,7 @@ function updateNavbarIcon(iconClass, shouldRotate) {
 }
 
 function _canBeginSync() {
+	if (IS_RELOADING_SESSION) return false;
 	if (serverReachable()) {
 		changeStatus(STATUS_SYNCING);
 		return true;

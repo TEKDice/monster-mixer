@@ -54,7 +54,7 @@
 		</div>
 	</div>
 	<div class="modal-footer">
-		<span id="currentSessionDialogError" class="pull-left label label-important"></span>
+		<span id="currentSessionDialogError" class="pull-left label label-important" style="display: none;"></span>
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		<button class="btn btn-primary" id="saveCurrentSessionInfo" data-bind="click: $parent.saveCurrentSessionInfo">Save</button>
 	</div>

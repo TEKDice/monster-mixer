@@ -38,6 +38,7 @@ function updateNavbarIcon(iconClass, shouldRotate) {
 }
 
 function _canBeginSync() {
+	if (IS_RELOADING_SESSION) return false;
 	if (serverReachable()) {
 		changeStatus(STATUS_SYNCING);
 		return true;

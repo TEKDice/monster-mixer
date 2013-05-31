@@ -1,9 +1,9 @@
-﻿function saveMonsters() {
+﻿
+var IS_RELOADING_SESSION = false;
+function saveMonsters() {
 	if (!loggedIn) return;
-	//TODO -- "loading icon"
 
 	var saveTheseMonsters = [];
-
 
 	$("#monsterList li a").each(function (i, e) {
 		var uid = $(this).attr('data-uid');
@@ -22,12 +22,9 @@
 		saveTheseMonsters.push(mon);
 	});
 
-
 	if (saveTheseMonsters.length == 0) return;
 
 	sessionManager.saveCurrentMonsters(saveTheseMonsters);
-
-	//TODO -- remove loading icon
 }
 
 function loadMonsters(monsterSet) {
@@ -43,25 +40,25 @@ function loadMonsters(monsterSet) {
 
 	$.post('ajax.php', { action: "gen", ids: JSON.stringify(loadTheseMonsters) }, function (monsterArr) {
 		var arr = $.parseJSON(monsterArr);
+		IS_RELOADING_SESSION = true;
 		$.eachAsync(arr, {
 			loop: function (i, e) {
-				setTimeout(function () {
-					var mon = e;
-					var uid = addNewMonster(mon);
-					var oldMonData = monsterSet[i];
+				var mon = e;
+				var uid = addNewMonster(mon);
+				var oldMonData = monsterSet[i];
 
-					monsters[uid].hp.hp().num().val(oldMonData.maxHp);
-					modifyHp(uid, oldMonData.modHp, true);
-					monsters[uid].initiative.init.num().val(oldMonData.init);
+				monsters[uid].hp.hp().num().val(oldMonData.maxHp);
+				modifyHp(uid, oldMonData.modHp, true);
+				monsters[uid].initiative.init.num().val(oldMonData.init);
 
-					setupGrids(uid);
-					sortMonsters();
+				setupGrids(uid);
+				sortMonsters();
 
-					saveMonsters();
-				}, 1);
+				saveMonsters();
 			},
 			end: function () {
 				$("#overlay").fadeOut();
+				IS_RELOADING_SESSION = false;
 			}
 		});
 	});
