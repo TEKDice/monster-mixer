@@ -1,6 +1,6 @@
 ﻿$(function () {
 	$("#sessionDialog").on('show', function () {
-		var sessions = sessionManager.allSessions();
+		/*var sessions = sessionManager.allSessions();
 		$("#allSessions").empty();
 		$.each(sessions, function (i, e) {
 			if (!Data.hasVar("monsters_" + e.startTime)) return;
@@ -65,7 +65,7 @@
 				$(this).siblings().removeClass('info');
 				$(this).addClass('info');
 			});
-		});
+		});*/
 	});
 
 	//keep

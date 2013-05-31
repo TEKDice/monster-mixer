@@ -21,6 +21,7 @@
   <file>/monsters/js/sync.global.js</file>
   <file>/monsters/js/sync.monsters.js</file>
   <file>/monsters/js/sync.sessions.js</file>
+	<file>/monsters/js/sync.sessions.buttons.js</file>
 	<file>/monsters/js/sync.sessions.models.js</file>
   <file>/monsters/js/sync.status.js</file>
   <file>/monsters/js/ui.filters.js</file>

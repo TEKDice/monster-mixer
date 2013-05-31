@@ -1371,6 +1371,8 @@ $(function() {
 
 	initialiseSessionManager();
 
+	setupSyncButtons();
+
 	changeLogEntrySize();
 	
 	overlayLoadingGif();
@@ -2921,6 +2923,20 @@ function sessionManagement() {
 	}
 }
 */
+///#source 1 1 /monsters/js/sync.sessions.buttons.js
+function setupSyncButtons() {
+	$(".deleteButton").livequery(function () {
+
+	});
+
+	$(".syncButton").livequery(function () {
+
+	});
+
+	$(".unsyncButton").livequery(function () {
+
+	});
+}
 ///#source 1 1 /monsters/js/sync.sessions.models.js
 
 var SESSIONS_VARIABLE = "sessions";
@@ -2971,9 +2987,33 @@ var SessionModel = function() {
 		return self.getSessionById(self.currentSessionId());
 	});
 
-	self.syncedSessions = ko.computed(function () {
+	self.syncedSessions = ko.observableArray(cloudSessions);
 
+	self.nonSyncedSessions = ko.computed(function () {
+		var sessions = [];
+		var synced = self.syncedSessions();
+		var all = self.allSessions();
+		$.each(all, function (i, e) {
+			var found = false;
+			$.each(synced, function (ii, ee) {
+				if (e.startTime == ee.startTime) found = true;
+			});
+			if (!found) sessions.push(e);
+		});
+		return sessions;
 	});
+
+	self.tableDisplaySessions = ko.computed(function () {
+		return self.syncedSessions().concat(self.nonSyncedSessions());
+	});
+
+	self.isSynced = function(session) {
+		var ret = false;
+		$.each(self.syncedSessions(), function (i, e) {
+			if (session.startTime == e.startTime) ret = true;
+		});
+		return ret;
+	};
 
 	self.verifySessionData = function (data) {
 		var arr = {};
@@ -3103,7 +3143,7 @@ var SessionModel = function() {
 	};
 
 	self.formatSessionDialogDate = function (date) {
-		return new Date(date).format();
+		return new Date(parseInt(date)).format();
 	};
 
 	self.saveCurrentSessionInfo = function () {
@@ -3124,6 +3164,7 @@ var sessionManager;
 function initialiseSessionManager() {
 	sessionManager = new SessionModel();
 	ko.applyBindings(sessionManager, $("#currentSessionDialog")[0]);
+	ko.applyBindings(sessionManager, $("#sessionDialog")[0]);
 	sessionManager.sessionManagement();
 }
 ///#source 1 1 /monsters/js/sync.status.js

@@ -33,6 +33,8 @@ $(function() {
 
 	initialiseSessionManager();
 
+	setupSyncButtons();
+
 	changeLogEntrySize();
 	
 	overlayLoadingGif();

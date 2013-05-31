@@ -1,16 +1,29 @@
 
-<div id="sessionDialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="session" aria-hidden="true">
+<div id="sessionDialog" data-bind="with: sessionManager" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="session" aria-hidden="true">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
 		<h3 id="sessionDialogHeader">Saved Sessions</h3>
 	</div>
 	<div class="modal-body">
 		<table class="table">
-			<caption>Sessions</caption>
 			<thead>
-				<tr><td>Session Name</td><td>Sync Status</td><td></td></tr>
+				<tr><td>Session Name</td><td>Status</td><td></td><td></td></tr>
 			</thead>
 			<tbody id="allSessions">
+                <!-- ko foreach: $data.tableDisplaySessions -->
+                <tr data-bind="attr: {'class': $data.startTime == $parent.currentSessionId() ? 'sessionRow success' : 'sessionRow'}">
+                    <td><span class="sessionName" data-bind="text: $data.name"></span><br /><span class="subdate" data-bind="text: $parent.formatSessionDialogDate($data.startTime)"></span></td>
+                    <!-- ko if: $parent.isSynced($data) -->
+                        <td>Synced</td>
+                        <td><button class='btn btn-info unsyncButton'><i class="icon-refresh"></i> Unsync</button></td>
+                    <!-- /ko -->
+                    <!-- ko if: !$parent.isSynced($data) -->
+                        <td>Local</td>
+                        <td><button class='btn btn-info syncButton'><i class="icon-refresh"></i> Sync</button></td>
+                    <!-- /ko -->
+                    <td><button class='btn btn-danger deleteButton'><i class="icon-remove"></i> Delete</button></td>
+                </tr>
+                <!-- /ko -->
 			</tbody>
 		</table>
 	</div>
