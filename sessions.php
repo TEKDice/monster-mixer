@@ -24,6 +24,8 @@ function addNewSession($session_name, $json, $start_time, $update_time) {
     
     global $userid;
     
+    if(!isset($userid)) return ajaxReturnText("No user logged in", true);
+    
     global $conn;
     
     //redundancy check
@@ -54,6 +56,7 @@ function updateSession($start_time, $json, $session_name, $update_time) {
     
     global $userid;
     global $conn;
+    if(!isset($userid)) return ajaxReturnText("No user logged in", true);
     
     $stmt = $conn->prepare("update SyncEncounter set json=?,name=?,last_update=? where start=? and user_id=$userid");
     $stmt->bind_param("ssss", $json, $session_name, $update_time, $start_time);
@@ -68,6 +71,7 @@ function removeSession($start_time) {
     
     global $userid;
     global $conn;
+    if(!isset($userid)) return ajaxReturnText("No user logged in", true);
     
     $stmt = $conn->prepare("select * from SyncEncounter where user_id=$userid and start=?");
     $stmt->bind_param("s", $start_time);

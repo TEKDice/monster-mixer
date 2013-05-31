@@ -9,7 +9,8 @@ $password = "u53RsT4Bl3!sg0Od";
 
 $sconn = new mysqli($server, $user, $password, $database);
 
-$userid = getUserId($_SESSION["username"]);
+if(isset($_SESSION) && isset($_SESSION["username"]))
+    $userid = getUserId($_SESSION["username"]);
 
 function getUserId($username) {
     global $sconn;
@@ -26,6 +27,8 @@ function getSessions() {
     
     global $userid;
     global $sconn;
+    
+    if(!isset($userid)) return json_encode(array());
     
     return json_encode(run_query_arr($sconn, "select name, json, `start` as startTime, last_update as lastUpdate from SyncEncounter where user_id=$userid"));
 }
