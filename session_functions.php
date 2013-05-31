@@ -19,8 +19,6 @@ function getUserId($username) {
     $stmt->bind_param("s",$username);
     $stmt->execute();
     
-    die($stmt);
-    
     $res = $stmt->get_result();
     $id=$res->fetch_array(MYSQLI_ASSOC);
     $id=$id["id"];
