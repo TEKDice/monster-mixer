@@ -10,16 +10,16 @@ $password = "u53RsT4Bl3!sg0Od";
 $sconn = new mysqli($server, $user, $password, $database);
 
 if(isset($_SESSION) && isset($_SESSION["username"])) { 
-    die($_SESSION["username"]);
     $userid = getUserId($_SESSION["username"]);
 }
 
 function getUserId($username) {
     global $sconn;
-    if(!isset($username)) return 0;
     $stmt = $sconn->prepare("select id from Usernames where username=?");
     $stmt->bind_param("s",$username);
     $stmt->execute();
+    
+    die($sconn->error);
     
     $res = $stmt->get_result();
     $id=$res->fetch_array(MYSQLI_ASSOC);
