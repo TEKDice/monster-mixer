@@ -1,6 +1,6 @@
 ﻿$(function () {
 	$("#sessionDialog").on('show', function () {
-		var sessions = Data.getVar(SESSIONS_VARIABLE);
+		var sessions = sessionManager.allSessions();
 		$("#allSessions").empty();
 		$.each(sessions, function (i, e) {
 			if (!Data.hasVar("monsters_" + e.startTime)) return;
@@ -24,6 +24,42 @@
 				});
 			});
 			$("<td/>").append($button).appendTo($tr);
+
+			var $sButton = $("<button/>").addClass('btn btn-info').attr('data-session', e.startTime).html('<i class="icon-refresh"></i> Sync');
+			$sButton.click(function () {
+				var sessionInfo = e;
+				$.ajax("sessions.php", {
+					type: "POST",
+					data: {
+						action: "new",
+						sessname: sessionInfo.name,
+						json: JSON.stringify(getMonsterDataBySession(sessionInfo.startTime)),
+						sttime: sessionInfo.startTime,
+						uptime: sessionInfo.lastUpdate
+					}
+				}).done(function (data) {
+				}).fail(function () {
+				}).always(function () {
+				});
+			});
+
+			$("<td/>").append($sButton).appendTo($tr);
+			var $sButton = $("<button/>").addClass('btn btn-info').attr('data-session', e.startTime).html('<i class="icon-refresh"></i> Unsync');
+			$sButton.click(function () {
+				var sessionInfo = e;
+				$.ajax("sessions.php", {
+					type: "POST",
+					data: {
+						action: "del",
+						sttime: sessionInfo.startTime
+					}
+				}).done(function (data) {
+				}).fail(function () {
+				}).always(function () {
+				});
+			});
+
+			$("<td/>").append($sButton).appendTo($tr);
 			$tr.click(function () {
 				if ($(this).hasClass('success')) return;
 				$(this).siblings().removeClass('info');
@@ -31,36 +67,20 @@
 			});
 		});
 	});
+
+	//keep
 	$("#sessionDialog").on('shown', function () {
 		var $body = $('#allSessions').closest(".modal-body");
 		var nice = $body.niceScroll({ horizrailenabled: false });
 		$body.css('overflow', 'hidden');
 	});
-	$('#currentSessionDialog').on('show', function () {
-		var session = getCurrentSession();
-		if (session == undefined) {
-			session = saveNewSession();
-		}
-		$("#sessionName").val(session.name);
-		$("#sessionUpdated").val(new Date(session.lastUpdate).format());
-		$("#sessionStarted").val(new Date(session.startTime).format());
-	});
-	$("#saveCurrentSessionInfo").click(function () {
-		var newName = $("#sessionName").val();
-		if (newName == '') return false;
-		var session = getCurrentSession();
-		session.name = newName;
-		session.lastUpdate = now();
-		saveSession(false, session);
-		$(this).closest(".modal").modal('hide');
-	});
 	$("#sessionLoad").click(function () {
 		var sessId = $("#allSessions .info").attr('data-session');
 		if (!sessId) return;
 		$(this).closest('.modal').modal('hide');
-		loadSession(sessId);
+		sessionManager.loadSession(sessId);
 	});
 	$("#newSession").click(function () {
-		startNewSession();
+		sessionManager.startNewSession();
 	});
 });

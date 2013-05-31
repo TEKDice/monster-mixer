@@ -1,19 +1,12 @@
 ﻿
-var SESSIONS_VARIABLE = "sessions";
-var LAST_SESSION_VARIABLE = "lastSessionId";
 var hasReloadedSession = false;
-
-var currentSessionId;
 
 function now() {
 	return new Date().getTime();
 }
 
-function _currentSessionId() {
-	return currentSessionId.toString();
-}
-
 function serverReachable() {
+	//thanks https://gist.github.com/louisremi/936493
 	var x = new (window.ActiveXObject || XMLHttpRequest)("Microsoft.XMLHTTP"),
 		s;
 	x.open(

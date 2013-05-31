@@ -1,6 +1,5 @@
 ﻿function saveMonsters() {
 	if (!loggedIn) return;
-	if (!currentSessionId) return;
 	//TODO -- "loading icon"
 
 	var saveTheseMonsters = [];
@@ -26,9 +25,7 @@
 
 	if (saveTheseMonsters.length == 0) return;
 
-	Data.setVar("monsters_" + currentSessionId, saveTheseMonsters);
-
-	saveSession(false);
+	sessionManager.saveCurrentMonsters(saveTheseMonsters);
 
 	//TODO -- remove loading icon
 }

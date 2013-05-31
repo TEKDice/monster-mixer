@@ -1,4 +1,4 @@
-
+/*
 function startSession() {
 	if(!loggedIn) return;
 	currentSessionId = now();
@@ -9,7 +9,7 @@ function loadSession(id) {
 	if(!loggedIn) return;
 	removeAllMonsters();
 	currentSessionId = id;
-	var monsters = Data.getVar('monsters_'+id);
+	var monsters = getMonsterDataBySession(id);
 	loadMonsters(monsters);
 }
 
@@ -79,7 +79,7 @@ function hasPreviousSession() {
 
 	if(!Data.hasVar("monsters_"+lastSessId)) return false;
 
-	var lastSessMon = Data.getVar("monsters_"+lastSessId);
+	var lastSessMon = getMonsterDataBySession(lastSessId);
 	if(lastSessMon.length == 0) return false;
 	return true;
 }
@@ -100,6 +100,10 @@ function getSessionById(id) {
 	return sessions[id];
 }
 
+function getMonsterDataBySession(id) {
+	return Data.getVar("monsters_" + id);
+}
+
 function sessionManagement() {
 	if(!loggedIn) return;
 	if(hasPreviousSession()) {		
@@ -113,3 +117,4 @@ function sessionManagement() {
 		startSession();
 	}
 }
+*/
