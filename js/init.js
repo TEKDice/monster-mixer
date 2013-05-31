@@ -5,6 +5,8 @@ $(function() {
 		return;
 	}
 
+	$.pnotify.defaults.history = false;
+
 	handleResizing();
 
 	initializeArrowToggler();
@@ -36,7 +38,6 @@ $(function() {
 	changeLogEntrySize();
 	
 	overlayLoadingGif();
-
 });
 
 function bodyBinding() {

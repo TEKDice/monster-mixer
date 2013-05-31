@@ -1343,6 +1343,8 @@ $(function() {
 		return;
 	}
 
+	$.pnotify.defaults.history = false;
+
 	handleResizing();
 
 	initializeArrowToggler();
@@ -1374,7 +1376,6 @@ $(function() {
 	changeLogEntrySize();
 	
 	overlayLoadingGif();
-
 });
 
 function bodyBinding() {
@@ -3485,6 +3486,10 @@ var extendPopupSize = 1200;
 
 var height = 360;
 var heightAdjust = 140;
+var width;
+var pnotification;
+var MIN_X_RES = 1356;
+var MIN_Y_RES = 662;
 
 var resizeTimer;
 
@@ -3588,6 +3593,7 @@ function handleResizing() {
 
 function resizeElements() {
 	height = $(window).height();
+	width = $(window).width();
 
 	$("#log").css('height', height - 80 - heightAdjust + 'px');
 	$("#monsterListCont").css('height', height - 50 - heightAdjust + 'px');
@@ -3600,6 +3606,37 @@ function resizeElements() {
 	$("#monstersContainer > .row-fluid").first().css('height', $("#monsterListCont").height());
 
 	changeLogEntrySize();
+
+	resolutionNotification();
+}
+
+function resolutionNotification() {
+
+	if (width < MIN_X_RES || height < MIN_Y_RES) {
+		if (pnotification) {
+			pnotification.pnotify({ text: screenResolutionMessage() });
+		} else
+			pnotification = $.pnotify({
+				title: "Screen Resolution Problem Detected",
+				text: screenResolutionMessage(),
+				type: "info",
+				width: "70%",
+				addclass: "stack-bar-bottom",
+				cornerclass: "",
+				sticker: true,
+				hide: false,
+				stack: { addpos2: 0, animation: true, dir1: "up", dir2: "right", firstpos1: 0, firstpos2: 0, nextpos1: 0, nextpos2: 0, spacing1: 0, spacing2: 0 }
+			});
+	} else {
+		if (pnotification) {
+			pnotification.pnotify_remove();
+			pnotification = null;
+		}
+	}
+}
+
+function screenResolutionMessage() {
+	return "Hey, so it looks like your screen is currently running at "+width+"x"+height+", which is fine, but it might cause a problem while using this application! We recommend at least a resolution of "+MIN_X_RES+"x"+MIN_Y_RES+" (or 1366x768). If this notification is in error, please contact a member of the team and we'll sort out the issue. Thanks!";
 }
 
 function overlayLoadingGif() {
