@@ -76,13 +76,15 @@ var SessionModel = function() {
 
 	self.tableDisplaySessions = ko.computed(function () {
 		self.dummy();
-		return self.syncedSessions().concat(self.nonSyncedSessions());
+		return self.syncedSessions().sort(sortByName).concat(self.nonSyncedSessions().sort(sortByName));
 	});
 
 	self.verifySessionData = function (data) {
 		var arr = {};
 		$.each(data, function (i, e) {
-			if (self.hasMonsterDataFor(e.startTime)) arr[e.startTime] = e;
+			//if (self.hasMonsterDataFor(e.startTime))
+			if(e != null)
+				arr[e.startTime] = e;
 		});
 		return arr;
 	};
@@ -184,9 +186,13 @@ var SessionModel = function() {
 		if (!loggedIn) return;
 
 		Data.clearVar("monsters_" + uid);
+
 		var sessionList = self.allSessions();
+
 		if (self.isSynced(sessionList[uid]))
 			self.unsync(sessionList[uid]);
+
+		sessionList[uid] = null;
 
 		self.allSessions(sessionList);
 		self.invalidate();
@@ -293,19 +299,27 @@ var SessionModel = function() {
 			data = $.parseJSON(data);
 			self.sessionErrorMessage(data.msg, data.isError);
 
+			if (data.isError && $button !== undefined) {
+				$button.button('reset');
+				$delButton.button('reset');
+			}
+
 			self.updateSyncedSessions();
 
 		}).fail(function () {
 			self.sessionErrorMessage("Error: Couldn't connect to cloud");
 
+			if ($button !== undefined) {
+				$button.button('reset');
+				$delButton.button('reset');
+			}
+
 		}).always(function() {
 			_endSync();
-			if ($button !== undefined)
-				$button.button('reset');
 		});
 	};
 
-	self.unsync = function (sessionInfo, $button) {
+	self.unsync = function (sessionInfo, $button, $delButton) {
 		if (!_canBeginSync()) return
 		$.ajax("sessions.php", {
 			type: "POST",
@@ -317,28 +331,40 @@ var SessionModel = function() {
 			data = $.parseJSON(data);
 			self.sessionErrorMessage(data.msg, data.isError);
 
+			if (data.isError && $button !== undefined) {
+				$button.button('reset');
+				$delButton.button('reset');
+			}
+
 			self.updateSyncedSessions();
 
 		}).fail(function () {
 			self.sessionErrorMessage("Error: Couldn't connect to cloud");
 
+			if ($button !== undefined) {
+				$button.button('reset');
+				$delButton.button('reset');
+			}
+
 		}).always(function () {
 			_endSync();
-			if ($button !== undefined)
-				$button.button('reset');
 
 		});
 	};
 	//#endregion
 
 	//#region Sessions Menu Button Functions
-	self.syncSessionDeleteButton = function (e) {
+	self.syncSessionDeleteButton = function (e, button) {
 		$("#sessionDialog").modal('hide');
 		bootbox.confirm("Are you sure you want to delete this campaign? Not even a wish can bring this back once it's gone.", function (result) {
 			if (!result) {
 				$("#sessionDialog").modal('show');
 				return;
 			}
+			var $button = $(button);
+			$button.button('loading');
+			$button.closest('tr').find('.btn-sync').button('loading');
+
 			self.deleteSession(e.startTime);
 			$("#sessionDialog").modal('show');
 			self.sessionErrorMessage('Successfully deleted campaign', false);
@@ -349,14 +375,18 @@ var SessionModel = function() {
 		var $button = $(button);
 		$button.button('loading');
 		$button.closest('tr').find('.status').addClass('italic').text('Syncing...');
-		self.sync(sessionInfo, $button);
+		var $delButton = $button.closest('tr').find('.btn-danger');
+		$delButton.button('loading');
+		self.sync(sessionInfo, $button, $delButton);
 	};
 
 	self.syncSessionUnsyncButton = function (sessionInfo, button) {
 		var $button = $(button);
 		$button.button('loading');
 		$button.closest('tr').find('.status').addClass('italic').text('Unsyncing...');
-		self.unsync(sessionInfo, $button);
+		var $delButton = $button.closest('tr').find('.btn-danger');
+		$delButton.button('loading');
+		self.unsync(sessionInfo, $button, $delButton);
 	};
 
 	self.updateSyncedSessions = function () {
@@ -383,4 +413,10 @@ function initialiseSessionManager() {
 	ko.applyBindings(sessionManager, $("#sessionDialog")[0]);
 	sessionManager.mergeCloudSessionsToLocal();
 	sessionManager.sessionManagement();
+}
+
+function sortByName(a, b) {
+	var aName = a.name.toLowerCase();
+	var bName = b.name.toLowerCase();
+	return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
 }

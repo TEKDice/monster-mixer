@@ -15,13 +15,13 @@
                     <td><span class="sessionName" data-bind="text: $data.name"></span><br /><span class="subdate" data-bind="text: $parent.formatSessionDialogDate($data.startTime)"></span></td>
                     <!-- ko if: $parent.isSynced($data) -->
                         <td><span class="status">Synced</span></td>
-                        <td><button class='btn btn-info' data-bind="click: function(data, event) { $root.syncSessionUnsyncButton(data, event.currentTarget); }" data-loading-text="Working..."><i class="icon-refresh"></i> Unsync</button></td>
+                        <td><button class='btn btn-info btn-sync' data-bind="click: function(data, event) { $root.syncSessionUnsyncButton(data, event.currentTarget); }" data-loading-text="Working..."><i class="icon-refresh"></i> Unsync</button></td>
                     <!-- /ko -->
                     <!-- ko if: !$parent.isSynced($data) -->
                         <td><span class="status">Local</span></td>
-                        <td><button class='btn btn-info' data-bind="click: function(data, event) { $root.syncSessionSyncButton(data, event.currentTarget); }" data-loading-text="Working..."><i class="icon-refresh"></i> Sync</button></td>
+                        <td><button class='btn btn-info btn-sync' data-bind="click: function(data, event) { $root.syncSessionSyncButton(data, event.currentTarget); }" data-loading-text="Working..."><i class="icon-refresh"></i> Sync</button></td>
                     <!-- /ko -->
-                    <td><button class='btn btn-danger' data-bind="click: $root.syncSessionDeleteButton"><i class="icon-remove"></i> Delete</button></td>
+                    <td><button class='btn btn-danger' data-bind="click: function(data, event) { $root.syncSessionDeleteButton(data, event.currentTarget); }" data-loading-text="Working..."><i class="icon-remove"></i> Delete</button></td>
                 </tr>
                 <!-- /ko -->
 			</tbody>

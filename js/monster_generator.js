@@ -2793,131 +2793,12 @@ function loadMonsters(monsterSet) {
 
 function removeAllMonsters() {
 	$("#allInfo").empty();
-	$("#monsterList").empty();
+	$("#monsterList").hide().empty();
 	$("#monsterData .tab-pane").remove();
+	$("#genAlert").show();
+	_hideAllMiniboxScrollbars();
 }
 
-///#source 1 1 /monsters/js/sync.sessions.js
-/*
-function startSession() {
-	if(!loggedIn) return;
-	currentSessionId = now();
-	saveSession(false);
-}
-
-function loadSession(id) {
-	if(!loggedIn) return;
-	removeAllMonsters();
-	currentSessionId = id;
-	var monsters = getMonsterDataBySession(id);
-	loadMonsters(monsters);
-}
-
-function startNewSession() {
-	if(!loggedIn) return;
-	if(!currentSessionId) return;
-
-	saveSession(false);
-	removeAllMonsters();
-	startSession();
-}
-
-function deleteSession(uid) {
-	if(!loggedIn) return;
-	if(!currentSessionId) return;
-
-	Data.clearVar("monsters_"+uid);
-}
-
-function saveSession(ask, sessionData) {
-	if(!loggedIn) return;
-	if(!currentSessionId) return;
-
-	Data.setVar(LAST_SESSION_VARIABLE, currentSessionId);
-
-	if(!Data.hasVar(SESSIONS_VARIABLE)) { Data.setVar(SESSIONS_VARIABLE, {}); }
-
-	var sessions = Data.getVar(SESSIONS_VARIABLE);
-
-	if(ask && !sessions.hasOwnProperty(_currentSessionId())) {
-		bootbox.confirm("Would you like to save this new session?", function(result) {
-			if(!result) {return;}
-			saveNewSession();
-		});
-	} 
-
-	if(sessions.hasOwnProperty(_currentSessionId())) {
-		if(sessionData)
-			sessions[_currentSessionId()] = sessionData;
-		sessions[_currentSessionId()].lastUpdate = now();
-	} else {
-		if(sessionData)
-			sessions[_currentSessionId()] = sessionData;
-		else
-			sessions[_currentSessionId()] = saveNewSession();
-		sessions[_currentSessionId()].lastUpdate = now();
-	}
-
-	Data.setVar(SESSIONS_VARIABLE, sessions);
-}
-
-function saveNewSession() {
-	var sessions = Data.getVar(SESSIONS_VARIABLE);
-	var ret = sessions[_currentSessionId()] = {
-		startTime: currentSessionId,
-		name: "Nameless Campaign",
-		lastUpdate: now()
-	};
-	Data.setVar(SESSIONS_VARIABLE, sessions);
-	return ret;
-}
-
-function hasPreviousSession() {
-	if(!loggedIn) return;
-	if(!Data.hasVar(LAST_SESSION_VARIABLE)) return false;
-	var lastSessId = Data.getVar(LAST_SESSION_VARIABLE);
-
-	if(!Data.hasVar("monsters_"+lastSessId)) return false;
-
-	var lastSessMon = getMonsterDataBySession(lastSessId);
-	if(lastSessMon.length == 0) return false;
-	return true;
-}
-
-function getPreviousSession() {
-	if(!loggedIn) return;
-	if(!Data.hasVar(LAST_SESSION_VARIABLE)) return null;
-	return Data.getVar(LAST_SESSION_VARIABLE);
-}
-
-function getCurrentSession() {
-	var sessions = Data.getVar(SESSIONS_VARIABLE);
-	return sessions[_currentSessionId()];
-}
-
-function getSessionById(id) {
-	var sessions = Data.getVar(SESSIONS_VARIABLE);
-	return sessions[id];
-}
-
-function getMonsterDataBySession(id) {
-	return Data.getVar("monsters_" + id);
-}
-
-function sessionManagement() {
-	if(!loggedIn) return;
-	if(hasPreviousSession()) {		
-		bootbox.confirm("It looks like you had a session open. Would you like to reload it?", function(result) {
-			if(hasReloadedSession) return;
-			if(!result) { startSession(); return; }
-			hasReloadedSession = true; 
-			loadSession(getPreviousSession());
-		});
-	} else {
-		startSession();
-	}
-}
-*/
 ///#source 1 1 /monsters/js/sync.sessions.models.js
 
 var SESSIONS_VARIABLE = "sessions";
@@ -2997,13 +2878,15 @@ var SessionModel = function() {
 
 	self.tableDisplaySessions = ko.computed(function () {
 		self.dummy();
-		return self.syncedSessions().concat(self.nonSyncedSessions());
+		return self.syncedSessions().sort(sortByName).concat(self.nonSyncedSessions().sort(sortByName));
 	});
 
 	self.verifySessionData = function (data) {
 		var arr = {};
 		$.each(data, function (i, e) {
-			if (self.hasMonsterDataFor(e.startTime)) arr[e.startTime] = e;
+			//if (self.hasMonsterDataFor(e.startTime))
+			if(e != null)
+				arr[e.startTime] = e;
 		});
 		return arr;
 	};
@@ -3105,9 +2988,13 @@ var SessionModel = function() {
 		if (!loggedIn) return;
 
 		Data.clearVar("monsters_" + uid);
+
 		var sessionList = self.allSessions();
+
 		if (self.isSynced(sessionList[uid]))
 			self.unsync(sessionList[uid]);
+
+		sessionList[uid] = null;
 
 		self.allSessions(sessionList);
 		self.invalidate();
@@ -3214,19 +3101,27 @@ var SessionModel = function() {
 			data = $.parseJSON(data);
 			self.sessionErrorMessage(data.msg, data.isError);
 
+			if (data.isError && $button !== undefined) {
+				$button.button('reset');
+				$delButton.button('reset');
+			}
+
 			self.updateSyncedSessions();
 
 		}).fail(function () {
 			self.sessionErrorMessage("Error: Couldn't connect to cloud");
 
+			if ($button !== undefined) {
+				$button.button('reset');
+				$delButton.button('reset');
+			}
+
 		}).always(function() {
 			_endSync();
-			if ($button !== undefined)
-				$button.button('reset');
 		});
 	};
 
-	self.unsync = function (sessionInfo, $button) {
+	self.unsync = function (sessionInfo, $button, $delButton) {
 		if (!_canBeginSync()) return
 		$.ajax("sessions.php", {
 			type: "POST",
@@ -3238,28 +3133,40 @@ var SessionModel = function() {
 			data = $.parseJSON(data);
 			self.sessionErrorMessage(data.msg, data.isError);
 
+			if (data.isError && $button !== undefined) {
+				$button.button('reset');
+				$delButton.button('reset');
+			}
+
 			self.updateSyncedSessions();
 
 		}).fail(function () {
 			self.sessionErrorMessage("Error: Couldn't connect to cloud");
 
+			if ($button !== undefined) {
+				$button.button('reset');
+				$delButton.button('reset');
+			}
+
 		}).always(function () {
 			_endSync();
-			if ($button !== undefined)
-				$button.button('reset');
 
 		});
 	};
 	//#endregion
 
 	//#region Sessions Menu Button Functions
-	self.syncSessionDeleteButton = function (e) {
+	self.syncSessionDeleteButton = function (e, button) {
 		$("#sessionDialog").modal('hide');
 		bootbox.confirm("Are you sure you want to delete this campaign? Not even a wish can bring this back once it's gone.", function (result) {
 			if (!result) {
 				$("#sessionDialog").modal('show');
 				return;
 			}
+			var $button = $(button);
+			$button.button('loading');
+			$button.closest('tr').find('.btn-sync').button('loading');
+
 			self.deleteSession(e.startTime);
 			$("#sessionDialog").modal('show');
 			self.sessionErrorMessage('Successfully deleted campaign', false);
@@ -3270,14 +3177,18 @@ var SessionModel = function() {
 		var $button = $(button);
 		$button.button('loading');
 		$button.closest('tr').find('.status').addClass('italic').text('Syncing...');
-		self.sync(sessionInfo, $button);
+		var $delButton = $button.closest('tr').find('.btn-danger');
+		$delButton.button('loading');
+		self.sync(sessionInfo, $button, $delButton);
 	};
 
 	self.syncSessionUnsyncButton = function (sessionInfo, button) {
 		var $button = $(button);
 		$button.button('loading');
 		$button.closest('tr').find('.status').addClass('italic').text('Unsyncing...');
-		self.unsync(sessionInfo, $button);
+		var $delButton = $button.closest('tr').find('.btn-danger');
+		$delButton.button('loading');
+		self.unsync(sessionInfo, $button, $delButton);
 	};
 
 	self.updateSyncedSessions = function () {
@@ -3305,6 +3216,13 @@ function initialiseSessionManager() {
 	sessionManager.mergeCloudSessionsToLocal();
 	sessionManager.sessionManagement();
 }
+
+function sortByName(a, b) {
+	var aName = a.name.toLowerCase();
+	var bName = b.name.toLowerCase();
+	return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+}
+
 ///#source 1 1 /monsters/js/sync.status.js
 
 var ICON_READY = "icon-ok";

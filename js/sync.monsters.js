@@ -66,6 +66,8 @@ function loadMonsters(monsterSet) {
 
 function removeAllMonsters() {
 	$("#allInfo").empty();
-	$("#monsterList").empty();
+	$("#monsterList").hide().empty();
 	$("#monsterData .tab-pane").remove();
+	$("#genAlert").show();
+	_hideAllMiniboxScrollbars();
 }
