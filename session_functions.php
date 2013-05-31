@@ -27,7 +27,7 @@ function getSessions() {
     global $userid;
     global $sconn;
     
-    return run_query_arr($sconn, "select name, json, `start` as startTime, last_update as lastUpdate from SyncEncounter where user_id=$userid");
+    return json_encode(run_query_arr($sconn, "select name, json, `start` as startTime, last_update as lastUpdate from SyncEncounter where user_id=$userid"));
 }
 
 ?>

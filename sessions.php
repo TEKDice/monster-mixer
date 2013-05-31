@@ -11,8 +11,8 @@ if(isset($_POST) && isset($_POST["action"]) && !empty($_POST["action"])) {
 	header('Content Type: application/json');
 	switch($_POST["action"]) {
 		case "new": 	echo addNewSession($_POST["sessname"], $_POST["json"], $_POST["sttime"], $_POST["uptime"]); break;
-        case "del":     echo removeSession($_POST["sttime"]);
-        case "get":     echo getSessions();
+        case "del":     echo removeSession($_POST["sttime"]); break;
+        case "get":     echo getSessions(); break;
 		default: return;
 	}
 }
@@ -46,7 +46,7 @@ function addNewSession($session_name, $json, $start_time, $update_time) {
     
     if($stmt->error) return ajaxReturnText("Failed to create session (".$stmt->error.")", true);
     
-    return ajaxReturnText("Created session");
+    return ajaxReturnText("Successfully synced session");
 }
 
 function updateSession($start_time, $json, $session_name, $update_time) {
@@ -61,7 +61,7 @@ function updateSession($start_time, $json, $session_name, $update_time) {
     
     if($stmt->error) return ajaxReturnText("Failed to update session (".$stmt->error.")", true);
     
-    return ajaxReturnText("Updated session");
+    return ajaxReturnText("Successfully updated session");
 }
 
 function removeSession($start_time) {
@@ -73,7 +73,7 @@ function removeSession($start_time) {
     $stmt->bind_param("s", $start_time);
     $stmt->execute();
     $res=$stmt->get_result();
-    if($res->num_rows == 0) return ajaxReturnText("Session does not exist", true);
+    if($res->num_rows == 0) return ajaxReturnText("Session does not exist in cloud", true);
     
     $stmt = $conn->prepare("delete from SyncEncounter where user_id=$userid and start=?");
     $stmt->bind_param("s", $start_time);
@@ -81,7 +81,7 @@ function removeSession($start_time) {
     
     if($stmt->error) return ajaxReturnText("Failed to unsync session (".$stmt->error.")", true);
     
-    return ajaxReturnText("Unsynced session");
+    return ajaxReturnText("Successfully unsynced session");
 }
 
 function ajaxReturnText($str, $error = false) {

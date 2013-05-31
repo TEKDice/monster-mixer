@@ -89,7 +89,7 @@ function is_dev() {
 		<script type="text/javascript" src="js/monster_generator.js"></script>
 	<?php } ?>
 		<script type="text/javascript">
-			var cloudSessions = <?=json_encode(getSessions());?>;
+			var cloudSessions = <?=getSessions();?>;
 			var filterData = <?=json_encode($filterNames);?>;
 			var autocompleteList = <?=json_encode(build_autocomplete());?>;
 		</script>

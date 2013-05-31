@@ -32,9 +32,7 @@ $(function() {
 	loadFilters();
 
 	initialiseSessionManager();
-
-	setupSyncButtons();
-
+	
 	changeLogEntrySize();
 	
 	overlayLoadingGif();

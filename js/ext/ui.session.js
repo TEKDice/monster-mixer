@@ -1,5 +1,6 @@
 ﻿$(function () {
 	$("#sessionDialog").on('show', function () {
+		$("#sessionDialogError").hide().text('');
 		/*var sessions = sessionManager.allSessions();
 		$("#allSessions").empty();
 		$.each(sessions, function (i, e) {
@@ -84,3 +85,11 @@
 		sessionManager.startNewSession();
 	});
 });
+
+function bindTrForSession(tr) {
+	$(tr).click(function () {
+		if ($(this).hasClass('success')) return;
+		$(this).siblings().removeClass('info');
+		$(this).addClass('info');
+	});
+}
