@@ -9,8 +9,10 @@ $password = "u53RsT4Bl3!sg0Od";
 
 $sconn = new mysqli($server, $user, $password, $database);
 
-if(isset($_SESSION) && isset($_SESSION["username"]))
+if(isset($_SESSION) && isset($_SESSION["username"])) { 
+    die($_SESSION["username"]);
     $userid = getUserId($_SESSION["username"]);
+}
 
 function getUserId($username) {
     global $sconn;
