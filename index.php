@@ -395,8 +395,8 @@ function is_dev() {
 											<tr>
 												<td>Disarm</td><td></td>
 											</tr>
-											<tr>
-												<td>Feint</td><td></td>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollFeint()}">
+												<td colspan="2">Feint</td>
 											</tr>
 											<tr>
 												<td>Grapple</td><td></td>

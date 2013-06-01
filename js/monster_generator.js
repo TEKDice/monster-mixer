@@ -1681,6 +1681,13 @@ function RollerHandler(monModel) {
 	self.rollDisarm = ko.computed(function () {
 		self.dummy();
 	});
+
+	self.rollFeint = ko.computed(function () {
+		var roll = { "Base": "1d20" };
+		roll["Bluff"] = self.monster.skills.countSkill('Bluff');
+		roll["CHA Mod"] = self.monster.stats.cha.bonus();
+		return JSON.stringify({ 'for': 'Feint', 'howMany': 1, 'primary': roll });
+	});
 }
 
 //#region AC-related Models
@@ -2511,6 +2518,20 @@ function SkillModel(skills) {
 
 	self.primaryRoll = function (skill) {
 		return { "Base": "1d20", "Bonus": skill.skill_level };
+	};
+
+	self.hasSkill = function (skill) {
+		return self.countSkill(skill) != 0;
+	};
+
+	self.countSkill = function (skillName) {
+		var ret = 0;
+
+		$.each(self.skills(), function (i, e) {
+			if (e.name && e.name.indexOf(skillName) != -1) ret = parseInt(e.skill_level);
+		});
+
+		return ret;
 	};
 }
 
