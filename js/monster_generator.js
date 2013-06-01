@@ -868,14 +868,14 @@ var Atk = function() {
 
 					addToLog(this.atkPreText + logMessages.critMiss(this.isFor.name, this.isFor.expr,
 						tA.text, tA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id);
+							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid);
 
 					addToLog(this.atkPreText + logMessages.critSecond(this.isFor.name, this.isFor.expr,
 						tH.text, tH.result), this.critStatus, this.isFor.id);
 
 					addToLog(this.atkPreText + logMessages.critSuccess(this.isFor.name, this.isFor.expr,
 						bA.text, bA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid);
+							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id);
 				} else {
 					addToLog(this.atkPreText + logMessages.initiate(this.isFor.name, this.isFor.expr,
 						bH.text, bH.result), this.critStatus, this.isFor.id);
@@ -1168,6 +1168,7 @@ function addFeatFunctions() {
 			cleaveAtk.display();
 		});
 	});
+
 	$("[data-spfunc='Dodge']").livequery(function () {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
@@ -1237,6 +1238,7 @@ function addFeatFunctions() {
 		var uid = $this.attr('data-uid');
 		$this.click(function () {
 			var props = monsters[uid].ac.arrayProps();
+			monsters[uid].roller.invalidate();
 
 			if ($this.is(":checked")) {
 				props["Charge"] = -2;
@@ -1523,6 +1525,12 @@ var MonsterModel = function (uid, data) {
 function RollerHandler(monModel) {
 	var self = this;
 
+	self.dummy = ko.observable();
+
+	self.invalidate = function () {
+		self.dummy.notifySubscribers();
+	};
+
 	self.monster = monModel;
 
 	self.rollStat = function (stat) {
@@ -1659,6 +1667,15 @@ function RollerHandler(monModel) {
 		if (name.indexOf(self.monster.stats.name()) != -1) return name.substring(self.monster.stats.name().length+1).trim();
 		return name;
 	};
+
+	self.rollBullrush = ko.computed(function () {
+		self.dummy();
+		var roll = { "Base": "1d20" };
+		roll["STR Mod"] = self.monster.stats.str.bonus();
+		roll["Size Mod"] = maneuverModifier(self.monster.stats.size()) * 4;
+		roll["Charge Mod"] = $$(self.monster.uid + "_calc_charge").is(":checked") ? 2 : 0;
+		return JSON.stringify({ 'for': 'Bullrush', 'howMany': 1, 'primary': roll });
+	});
 }
 
 //#region AC-related Models

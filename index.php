@@ -377,16 +377,16 @@ function is_dev() {
 									</table>
 								</div>
 							</li>
-							<li class="draggable maneuvers">
+							<li class="draggable maneuvers rollable">
 								<span class="title">Combat Maneuvers</span>
 								<hr />
 								<div class="minibox-content">
 									<table class="table table-striped table-condensed">
 										<tbody>
-											<tr>
-												<td>Bullrush</td><td></td>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollBullrush()}">
+												<td colspan="2">Bullrush</td>
 											</tr>
-											<tr>
+											<tr class="unrollable">
 												<td>Charge</td>
 												<td class='sp'> 
 													<input class="inline-checkbox" data-bind="attr: {'data-spfunc': 'Charge', 'data-uid': $root.uid, id: $root.formatSpName('Charge')}" type="checkbox" />

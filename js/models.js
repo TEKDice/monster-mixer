@@ -100,6 +100,12 @@ var MonsterModel = function (uid, data) {
 function RollerHandler(monModel) {
 	var self = this;
 
+	self.dummy = ko.observable();
+
+	self.invalidate = function () {
+		self.dummy.notifySubscribers();
+	};
+
 	self.monster = monModel;
 
 	self.rollStat = function (stat) {
@@ -236,6 +242,15 @@ function RollerHandler(monModel) {
 		if (name.indexOf(self.monster.stats.name()) != -1) return name.substring(self.monster.stats.name().length+1).trim();
 		return name;
 	};
+
+	self.rollBullrush = ko.computed(function () {
+		self.dummy();
+		var roll = { "Base": "1d20" };
+		roll["STR Mod"] = self.monster.stats.str.bonus();
+		roll["Size Mod"] = maneuverModifier(self.monster.stats.size()) * 4;
+		roll["Charge Mod"] = $$(self.monster.uid + "_calc_charge").is(":checked") ? 2 : 0;
+		return JSON.stringify({ 'for': 'Bullrush', 'howMany': 1, 'primary': roll });
+	});
 }
 
 //#region AC-related Models

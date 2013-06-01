@@ -32,6 +32,7 @@ function addFeatFunctions() {
 			cleaveAtk.display();
 		});
 	});
+
 	$("[data-spfunc='Dodge']").livequery(function () {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
@@ -101,6 +102,7 @@ function addFeatFunctions() {
 		var uid = $this.attr('data-uid');
 		$this.click(function () {
 			var props = monsters[uid].ac.arrayProps();
+			monsters[uid].roller.invalidate();
 
 			if ($this.is(":checked")) {
 				props["Charge"] = -2;

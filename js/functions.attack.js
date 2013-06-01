@@ -57,14 +57,14 @@ var Atk = function() {
 
 					addToLog(this.atkPreText + logMessages.critMiss(this.isFor.name, this.isFor.expr,
 						tA.text, tA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id);
+							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid);
 
 					addToLog(this.atkPreText + logMessages.critSecond(this.isFor.name, this.isFor.expr,
 						tH.text, tH.result), this.critStatus, this.isFor.id);
 
 					addToLog(this.atkPreText + logMessages.critSuccess(this.isFor.name, this.isFor.expr,
 						bA.text, bA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid);
+							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id);
 				} else {
 					addToLog(this.atkPreText + logMessages.initiate(this.isFor.name, this.isFor.expr,
 						bH.text, bH.result), this.critStatus, this.isFor.id);
