@@ -384,7 +384,7 @@ function is_dev() {
 									<table class="table table-striped table-condensed">
 										<tbody>
 											<tr data-bind="attr: {'data-roll': $root.roller.rollBullrush()}">
-												<td colspan="2">Bullrush</td>
+												<td colspan="2">Bull Rush</td>
 											</tr>
 											<tr class="unrollable">
 												<td>Charge</td>

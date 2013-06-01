@@ -249,7 +249,12 @@ function RollerHandler(monModel) {
 		roll["STR Mod"] = self.monster.stats.str.bonus();
 		roll["Size Mod"] = maneuverModifier(self.monster.stats.size()) * 4;
 		roll["Charge Mod"] = $$(self.monster.uid + "_calc_charge").is(":checked") ? 2 : 0;
-		return JSON.stringify({ 'for': 'Bullrush', 'howMany': 1, 'primary': roll });
+		roll["Improved Bull Rush"] = self.monster.feats.hasFeat("Improved Bull Rush") ? 4 : 0;
+		return JSON.stringify({ 'for': 'Bull Rush', 'howMany': 1, 'primary': roll });
+	});
+
+	self.rollDisarm = ko.computed(function () {
+		self.dummy();
 	});
 }
 
