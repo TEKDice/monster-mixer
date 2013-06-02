@@ -689,11 +689,11 @@ function WeaponAttackModel(damagers, mname) {
 	var _damagers = [];
 
 	self.calcRange = function (weapon) {
-		return weapon.is_ranged == "0" ? "Melee" : weapon.is_ranged + "ft";
+		return weapon.is_ranged == "0" ? "Melee" : weapon.is_ranged + " ft";
 	};
 
 	self.handClassification = function (weapon) {
-		return weapon.hasOwnProperty("is_multi_handed") && weapon.is_multi_handed == "1" ? "Two-handed" : "One-handed";
+		return weapon.hasOwnProperty("is_multi_handed") && weapon.is_multi_handed == "1" && weapon.is_one_handed == "0" ? "Two-handed" : "One-handed";
 	};
 
 	self.weightClassification = function (weapon) {
