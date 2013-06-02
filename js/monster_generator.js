@@ -2163,6 +2163,7 @@ function WeaponAttackModel(damagers, mname) {
 
 			var oldName = e.wname.trim();
 			var range = e.is_ranged;
+			var oldDescript = e.descript;
 
 			e.wname = oldName + " (Melee)";
 			e.is_ranged = "0";
@@ -2174,12 +2175,14 @@ function WeaponAttackModel(damagers, mname) {
 			newObject.is_ranged = range;
 			newObject.is_melee = "0";
 			newObject.wname = oldName + " (Ranged)";
+			newObject.descript = oldDescript;
 			newObject.descript = self.newTooltip(newObject);
 
 			_damagers.push(newObject);
 
 		} else if (e.hasOwnProperty("is_multi_handed") && e.is_multi_handed == "1") {
 			var oldName = e.wname.trim();
+			var oldDescript = e.descript;
 
 			e.is_one_handed = "1";
 			e.wname = oldName + " (1H)";
@@ -2190,6 +2193,7 @@ function WeaponAttackModel(damagers, mname) {
 
 			newObject.is_one_handed = "0";
 			newObject.wname = oldName + " (2H)";
+			newObject.descript = oldDescript;
 			newObject.descript = self.newTooltip(newObject);
 			_damagers.push(newObject);
 		} else {
