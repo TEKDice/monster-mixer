@@ -80,9 +80,9 @@ function is_dev() {
 
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
 	<?php
-		if(!is_dev()) {
+		if(false) {//if(!is_dev()) {
 	?>
-		<script type="text/javascript" src="js/test.min.js"></script>
+		<script type="text/javascript" src="js/monster_generator.min.js"></script>
 	<?php
 		} else {
 	?>
