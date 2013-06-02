@@ -196,6 +196,8 @@ function attack($rollable, $roller, uid) {
 
 	var data = $.parseJSON($rollable.attr('data-roll'));
 
+	if (data == null) throw new Error("There is nothing rollable here");
+
 	var isFullAttack = data.isFatk;
 
 	var expr = JSON.stringify(data.primary);

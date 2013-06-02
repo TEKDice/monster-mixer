@@ -301,6 +301,8 @@ function RollerHandler(monModel) {
 
 	self.rollSunder = ko.computed(function () {
 		self.dummy();
+		var selected = $("#" + self.monster.uid + "_mweapon_table .info, #" + self.monster.uid + "_mattack_table .info");
+		if (selected.size() == 0) return {};
 		var roll = { "Base": "1d20" };
 		//light weapon -4, two handed weapon +4 
 		//size difference, *4
@@ -693,6 +695,7 @@ function WeaponAttackModel(damagers, mname) {
 	};
 
 	self.newTooltip = function (weapon) {
+		if (weapon.hasOwnProperty("aname")) return weapon.descript;
 		var tt = "Range: " + self.calcRange(weapon) + "<br>";
 		tt += "Classification: " + self.handClassification(weapon) + "<br>";
 		tt += "Weight: " + self.weightClassification(weapon) + "<br>";
