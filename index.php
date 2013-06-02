@@ -539,8 +539,11 @@ function is_dev() {
 													<input class="inline-checkbox" data-bind="attr: {'data-spfunc': 'Charge', 'data-uid': $root.uid, id: $root.formatSpName('Charge')}" type="checkbox" />
 												</td>
 											</tr>
-											<tr>
-												<td>Disarm</td><td></td>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollDisarm()}">
+												<td>Disarm</td>
+                                                <td>
+													<input class="pull-right input-mini-inline applyNum" value="0" data-bind="attr: {'data-spfunc': 'Disarm', 'data-uid': $parent.uid, id: $root.formatSpName('Disarm')}" type="number" />
+                                                </td>
 											</tr>
 											<tr data-bind="attr: {'data-roll': $root.roller.rollFeint()}">
 												<td colspan="2">Feint</td>

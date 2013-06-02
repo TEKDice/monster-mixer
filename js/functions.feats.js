@@ -10,6 +10,7 @@ function formatSpecialFeatName(name) {
 		case 'Cleave': return 'cleave';
 		case 'Charge': return 'charge';
 		case 'Sunder': return 'sunder';
+		case 'Disarm': return 'disarm';
 		case 'Combat Expertise': return 'ce';
 	}
 	return searchNameForNamedEntries(name);
@@ -147,7 +148,7 @@ function addFeatFunctions() {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
 		var func = $this.attr('data-spfunc');
-		if (func == 'Sunder') {
+		if (func == 'Sunder' || func == 'Disarm') {
 			$this.change(function () { sunderFunc(uid, $this) });
 		} else {
 			$this.change(function () { applyNumFunc(uid, $this) });

@@ -199,7 +199,7 @@ function attack($rollable, $roller, uid) {
 	if (data == null) throw new Error("There is nothing rollable here");
 
 	if (data.howMany == 0 && data.primary == null) {
-		bootbox.alert("Your roll is invalid. If you are trying to sunder, please select a weapon or a natural attack before rolling.");
+		bootbox.alert("Your roll is invalid. If you are trying to sunder or disarm, please select a weapon or a natural attack before rolling.");
 		return;
 	}
 

@@ -1010,7 +1010,7 @@ function attack($rollable, $roller, uid) {
 	if (data == null) throw new Error("There is nothing rollable here");
 
 	if (data.howMany == 0 && data.primary == null) {
-		bootbox.alert("Your roll is invalid. If you are trying to sunder, please select a weapon or a natural attack before rolling.");
+		bootbox.alert("Your roll is invalid. If you are trying to sunder or disarm, please select a weapon or a natural attack before rolling.");
 		return;
 	}
 
@@ -1158,6 +1158,7 @@ function formatSpecialFeatName(name) {
 		case 'Cleave': return 'cleave';
 		case 'Charge': return 'charge';
 		case 'Sunder': return 'sunder';
+		case 'Disarm': return 'disarm';
 		case 'Combat Expertise': return 'ce';
 	}
 	return searchNameForNamedEntries(name);
@@ -1295,7 +1296,7 @@ function addFeatFunctions() {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
 		var func = $this.attr('data-spfunc');
-		if (func == 'Sunder') {
+		if (func == 'Sunder' || func == 'Disarm') {
 			$this.change(function () { sunderFunc(uid, $this) });
 		} else {
 			$this.change(function () { applyNumFunc(uid, $this) });
@@ -1705,6 +1706,26 @@ function RollerHandler(monModel) {
 
 	self.rollDisarm = ko.computed(function () {
 		self.dummy();
+
+		var $selected = $("#" + self.monster.uid + "_mweapon_table .info, #" + self.monster.uid + "_mattack_table .info");
+		if ($selected.size() == 0) return JSON.stringify({ 'for': 'Disarm', 'howMany': 0, 'primary': null });;
+
+		var $child = $selected.find("td:first-child a");
+		var tt = $child.attr('data-tt');
+
+		var roll = { "Base": "1d20" };
+		roll["Base Attack Bonus"] = self.monster.stats.bab.base.val();
+
+		if (tt.indexOf('Weight: Light') !== -1)
+			roll["Light Weapon Penalty"] = -4;
+
+		roll["Size Difference"] = parseInt($$(self.monster.uid + "_calc_disarm").val()) * 4;
+		roll["STR Mod"] = self.monster.stats.str.bonus();
+
+		if (tt.indexOf('Two-handed') !== -1)
+			roll["Two-handed Bonus"] = 4;
+
+		return JSON.stringify({ 'for': 'Disarm using ' + $child.text(), 'howMany': 1, 'primary': roll });
 	});
 
 	self.rollFeint = ko.computed(function () {
