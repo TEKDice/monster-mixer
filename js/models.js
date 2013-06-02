@@ -303,13 +303,18 @@ function RollerHandler(monModel) {
 		self.dummy();
 		var $selected = $("#" + self.monster.uid + "_mweapon_table .info, #" + self.monster.uid + "_mattack_table .info");
 		if ($selected.size() == 0) return JSON.stringify({ 'for': 'Sunder', 'howMany': 0, 'primary': null });;
+
 		var roll = { "Base": "1d20" };
 		var $child = $selected.find("td:first-child a");
 		var tt = $child.attr('data-tt');
+
 		if (tt.indexOf('Two-handed') !== -1)
 			roll["Two-handed Bonus"] = 4;
+
 		if (tt.indexOf('Weight: Light') !== -1)
 			roll["Light Weapon Penalty"] = -4;
+
+		roll["Base Attack Bonus"] = self.monster.stats.bab.base.val();
 		roll["Size Difference"] = parseInt($$(self.monster.uid + "_calc_sunder").val()) * 4;
 		return JSON.stringify({'for': 'Sunder using '+$child.text(), 'howMany': 1, 'primary': roll});
 	});
