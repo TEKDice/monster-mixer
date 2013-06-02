@@ -1743,8 +1743,8 @@ function RollerHandler(monModel) {
 
 	self.rollOpposedGrapple = ko.computed(function () {
 		var roll = { "Base": "1d20" };
-		roll["STR Mod"] = self.monster.stats.str.bonus();
 		roll["Base Attack Bonus"] = self.monster.stats.bab.base.val();
+		roll["STR Mod"] = self.monster.stats.str.bonus();
 		roll["Size Mod"] = maneuverModifier(self.monster.stats.size()) * 4;
 		return JSON.stringify({ 'for': 'Opposed Grapple', 'howMany': 1, 'primary': roll });
 	});
@@ -1758,15 +1758,33 @@ function RollerHandler(monModel) {
 		var $child = $selected.find("td:first-child a");
 		var tt = $child.attr('data-tt');
 
-		if (tt.indexOf('Two-handed') !== -1)
-			roll["Two-handed Bonus"] = 4;
+		roll["Base Attack Bonus"] = self.monster.stats.bab.base.val();
 
 		if (tt.indexOf('Weight: Light') !== -1)
 			roll["Light Weapon Penalty"] = -4;
 
-		roll["Base Attack Bonus"] = self.monster.stats.bab.base.val();
 		roll["Size Difference"] = parseInt($$(self.monster.uid + "_calc_sunder").val()) * 4;
+
+		if (tt.indexOf('Two-handed') !== -1)
+			roll["Two-handed Bonus"] = 4;
+
 		return JSON.stringify({'for': 'Sunder using '+$child.text(), 'howMany': 1, 'primary': roll});
+	});
+
+	self.rollTripTouch = ko.computed(function () {
+		self.dummy();
+		var roll = { "Base": "1d20" };
+		roll["Base Attack Bonus"] = self.monster.stats.bab.base.val();
+		roll["STR Mod"] = self.monster.stats.str.bonus();
+		return JSON.stringify({ 'for': 'Trip Melee Touch Attack', 'howMany': 1, 'primary': roll });
+	});
+
+	self.rollTripStr = ko.computed(function () {
+		self.dummy();
+		var roll = { "Base": "1d20" };
+		roll["STR Mod"] = self.monster.stats.str.bonus();
+		roll["Size Mod"] = maneuverModifier(self.monster.stats.size()) * 4;
+		return JSON.stringify({ 'for': 'Trip STR Check', 'howMany': 1, 'primary': roll });
 	});
 }
 

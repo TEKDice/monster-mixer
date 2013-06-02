@@ -563,8 +563,11 @@ function is_dev() {
 													<input class="pull-right input-mini-inline applyNum" value="0" data-bind="attr: {'data-spfunc': 'Sunder', 'data-uid': $parent.uid, id: $root.formatSpName('Sunder')}" type="number" />
                                                 </td>
 											</tr>
-											<tr>
-												<td>Trip</td><td></td>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollTripTouch()}">
+												<td colspan="2">Trip Melee Touch Attack</td>
+											</tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollTripStr()}">
+												<td colspan="2">Trip STR Check</td>
 											</tr>
 											<tr class="loaded" style="display: none"><td></td></tr>
 										</tbody>
