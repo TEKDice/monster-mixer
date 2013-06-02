@@ -282,7 +282,7 @@ function is_dev() {
 												<!-- ko if: descript !== "" -->
 												<td data-bind="attr: {colspan: $parent.countColumns($data)}">
 													<i class="icon-bookmark"></i>
-													<a href="#" rel="tooltip" data-bind="text: $parent.formatName($data.wname), bootstrapTooltip: {title: $data.descript, html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+													<a href="#" rel="tooltip" data-bind="text: $parent.formatName($data.wname), attr: {'data-tt': $data.descript}, bootstrapTooltip: {title: $data.descript, html: true, placement: 'bottom', trigger: 'manual'}" ></a>
 												</td>
 												<!-- /ko -->
 												<!-- ko if: descript === "" -->
@@ -306,7 +306,7 @@ function is_dev() {
 												<!-- ko if: descript !== "" -->
 												<td data-bind="attr: {colspan: $parent.countColumns($data)}">
 													<i class="icon-bookmark"></i>
-													<a href="#" rel="tooltip" data-bind="text: $parent.formatName($data.aname), bootstrapTooltip: {title: $data.descript, html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+													<a href="#" rel="tooltip" data-bind="text: $parent.formatName($data.aname), attr: {'data-tt': $data.descript}, bootstrapTooltip: {title: $data.descript, html: true, placement: 'bottom', trigger: 'manual'}" ></a>
 												</td>
 												<!-- /ko -->
 												<!-- ko if: descript === "" -->
@@ -557,10 +557,10 @@ function is_dev() {
 											<tr data-bind="attr: {'data-roll': $root.roller.rollOverrunSave()}">
 												<td colspan="2">Overrun Save vs. Prone</td>
 											</tr>
-											<tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollSunder()}">
 												<td>Sunder</td>
                                                 <td>
-													<input class="pull-right input-mini-inline applyNum" placeholder="#" data-bind="attr: {'data-spfunc': 'Sunder', 'data-uid': $parent.uid, id: $root.formatSpName('Sunder')}" type="number" />
+													<input class="pull-right input-mini-inline applyNum" value="0" data-bind="attr: {'data-spfunc': 'Sunder', 'data-uid': $parent.uid, id: $root.formatSpName('Sunder')}" type="number" />
                                                 </td>
 											</tr>
 											<tr>

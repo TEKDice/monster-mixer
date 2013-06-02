@@ -39,11 +39,13 @@ function setupRollables($parent) {
 		$set.each(function () {
 			if ($(this).find('td.unrollable').size() > 0) return;
 			$(this).click(function () {
-				$set.removeClass('info');
-				if ($(this).hasClass('info'))
+				if ($(this).hasClass('info')) {
 					$(this).removeClass('info');
-				else
+				} else {
+					$set.removeClass('info');
 					$(this).addClass('info');
+				}
+				monsters[uid].roller.invalidate();
 			});
 		});
 

@@ -301,11 +301,17 @@ function RollerHandler(monModel) {
 
 	self.rollSunder = ko.computed(function () {
 		self.dummy();
-		var selected = $("#" + self.monster.uid + "_mweapon_table .info, #" + self.monster.uid + "_mattack_table .info");
-		if (selected.size() == 0) return {};
+		var $selected = $("#" + self.monster.uid + "_mweapon_table .info, #" + self.monster.uid + "_mattack_table .info");
+		if ($selected.size() == 0) return JSON.stringify({ 'for': 'Sunder', 'howMany': 0, 'primary': null });;
 		var roll = { "Base": "1d20" };
-		//light weapon -4, two handed weapon +4 
-		//size difference, *4
+		var $child = $selected.find("td:first-child a");
+		var tt = $child.attr('data-tt');
+		if (tt.indexOf('Two-handed') !== -1)
+			roll["Two-handed Bonus"] = 4;
+		if (tt.indexOf('Weight: Light') !== -1)
+			roll["Light Weapon Penalty"] = -4;
+		roll["Size Difference"] = parseInt($$(self.monster.uid + "_calc_sunder").val()) * 4;
+		return JSON.stringify({'for': 'Sunder using '+$child.text(), 'howMany': 1, 'primary': roll});
 	});
 }
 

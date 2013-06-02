@@ -1009,6 +1009,11 @@ function attack($rollable, $roller, uid) {
 
 	if (data == null) throw new Error("There is nothing rollable here");
 
+	if (data.howMany == 0 && data.primary == null) {
+		bootbox.alert("Your roll is invalid. If you are trying to sunder, please select a weapon or a natural attack before rolling.");
+		return;
+	}
+
 	var isFullAttack = data.isFatk;
 
 	var expr = JSON.stringify(data.primary);
@@ -1746,11 +1751,17 @@ function RollerHandler(monModel) {
 
 	self.rollSunder = ko.computed(function () {
 		self.dummy();
-		var selected = $("#" + self.monster.uid + "_mweapon_table .info, #" + self.monster.uid + "_mattack_table .info");
-		if (selected.size() == 0) return {};
+		var $selected = $("#" + self.monster.uid + "_mweapon_table .info, #" + self.monster.uid + "_mattack_table .info");
+		if ($selected.size() == 0) return JSON.stringify({ 'for': 'Sunder', 'howMany': 0, 'primary': null });;
 		var roll = { "Base": "1d20" };
-		//light weapon -4, two handed weapon +4 
-		//size difference, *4
+		var $child = $selected.find("td:first-child a");
+		var tt = $child.attr('data-tt');
+		if (tt.indexOf('Two-handed') !== -1)
+			roll["Two-handed Bonus"] = 4;
+		if (tt.indexOf('Weight: Light') !== -1)
+			roll["Light Weapon Penalty"] = -4;
+		roll["Size Difference"] = parseInt($$(self.monster.uid + "_calc_sunder").val()) * 4;
+		return JSON.stringify({'for': 'Sunder using '+$child.text(), 'howMany': 1, 'primary': roll});
 	});
 }
 
@@ -3653,11 +3664,13 @@ function setupRollables($parent) {
 		$set.each(function () {
 			if ($(this).find('td.unrollable').size() > 0) return;
 			$(this).click(function () {
-				$set.removeClass('info');
-				if ($(this).hasClass('info'))
+				if ($(this).hasClass('info')) {
 					$(this).removeClass('info');
-				else
+				} else {
+					$set.removeClass('info');
 					$(this).addClass('info');
+				}
+				monsters[uid].roller.invalidate();
 			});
 		});
 
