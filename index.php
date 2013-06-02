@@ -131,12 +131,12 @@ function is_dev() {
 							</div>
 						</div>
 						<div id="encounterStats" class="row-fluid">
-								<button class="btn span2">Encounter CR</button>
-								<button class="btn span2"><span class='shorten-average'></span> Level</button>
-								<button class="btn span2" data-toggle='modal' data-target="#damageStatisticsModal"><span class='shorten-damage'></span> Stats</button>
-								<button class="btn span2"><span class='shorten-average'></span> <span class='shorten-damage'></span> Taken</button>
-								<button class="btn span2"><span class='shorten-total'></span> <span class='shorten-damage'></span> Dealt</button>
-								<button class="btn span2"><span class='shorten-total'></span> <span class='shorten-damage'></span> Taken</button>
+								<button class="btn span2 disabled">Encounter CR</button>
+								<button class="btn span2 disabled"><span class='shorten-average'></span> Level</button>
+								<button class="btn span2 disabled" data-toggle='modal' data-target="#damageStatisticsModal"><span class='shorten-damage'></span> Stats</button>
+								<button class="btn span2 disabled"><span class='shorten-average'></span> <span class='shorten-damage'></span> Taken</button>
+								<button class="btn span2 disabled"><span class='shorten-total'></span> <span class='shorten-damage'></span> Dealt</button>
+								<button class="btn span2 disabled"><span class='shorten-total'></span> <span class='shorten-damage'></span> Taken</button>
 						</div>
 					</div>
 
@@ -225,28 +225,6 @@ function is_dev() {
 									</table>
 								</div>
 							</li>
-							<li class="draggable rollable skills">
-								<span class="title">Skills</span>
-								<hr />
-								<div class="minibox-content">
-									<table class="table table-striped table-condensed" data-bind="with: $parent.skills">
-										<tbody class="mskill" id="1A_mskill_table" data-bind="foreach: skills">
-											<tr data-bind="attr: {'data-roll': $root.roller.rollSkill($data)}">
-												<td>
-													<!-- ko if: descript !== "" -->
-													<i class="icon-bookmark"></i>
-													<a href="#" rel="tooltip" data-bind="text: $parent.formatName($data), bootstrapTooltip: {title: $data.descript, html: true, placement: 'bottom', trigger: 'manual'}" ></a>
-													<!-- /ko -->
-													<!-- ko if: descript === "" -->
-													None
-													<!-- /ko -->
-												</td>
-												<td data-bind="text: $parent.formatNum($data)"></td>
-											</tr>
-										</tbody>
-									</table>
-								</div> 
-							</li>
 							<li class="draggable rollable cstats">
 								<span class="title">Combat Stats</span>
 								<hr />
@@ -270,6 +248,28 @@ function is_dev() {
 										</tbody>
 									</table>
 								</div>
+							</li>
+							<li class="draggable rollable skills">
+								<span class="title">Skills</span>
+								<hr />
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed" data-bind="with: $parent.skills">
+										<tbody class="mskill" id="1A_mskill_table" data-bind="foreach: skills">
+											<tr data-bind="attr: {'data-roll': $root.roller.rollSkill($data)}">
+												<td>
+													<!-- ko if: descript !== "" -->
+													<i class="icon-bookmark"></i>
+													<a href="#" rel="tooltip" data-bind="text: $parent.formatName($data), bootstrapTooltip: {title: $data.descript, html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+													<!-- /ko -->
+													<!-- ko if: descript === "" -->
+													None
+													<!-- /ko -->
+												</td>
+												<td data-bind="text: $parent.formatNum($data)"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div> 
 							</li>
 							<li class="draggable rollable attacks">
 								<span class="title">Weapons &amp; Attacks</span>
@@ -341,111 +341,6 @@ function is_dev() {
 									</table>
 								</div> 
 							</li>
-							<li class="draggable misc">
-								<span class="title">Misc. Info.</span>
-								<hr />
-								<div class="minibox-content">
-									<table class="table table-striped table-condensed" data-bind="with: $parent.speeds">
-										<caption>Speeds</caption>
-										<tbody class="mmove" id="1A_mmove_table">
-											<tr>
-												<td>Base Speed</td><td id="1A_base_spd" class="ftable" data-bind="text: $parent.monsterBaseStats.base_spd+'ft'"></td>
-											</tr>
-											<!-- ko foreach: speeds -->
-											<tr>
-												<td data-bind="text: $data.movement_type">
-												</td>
-												<td data-bind="text: $data.movement_speed+'ft'">
-												</td>
-											</tr>
-											<!-- /ko -->
-										</tbody>
-									</table>
-									<table class="table table-striped table-condensed" data-bind="with: $parent.stats">
-										<caption>Misc</caption>
-										<tbody>
-											<tr>
-												<td>Reach</td><td data-bind="text: $data.reach+'ft'" id="1A_reach" class="ftable"></td>
-											</tr>
-											<tr>
-												<td>Space Taken</td><td data-bind="text: $data.space+'ft'" id="1A_space_taken" class="ftable"></td>
-											</tr>
-											<tr>
-												<td>Treasure</td><td data-bind="text: $data.treasure" id="1A_treasure"></td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</li>
-							<li class="draggable maneuvers rollable">
-								<span class="title">Combat Maneuvers</span>
-								<hr />
-								<div class="minibox-content">
-									<table class="table table-striped table-condensed">
-										<tbody>
-											<tr data-bind="attr: {'data-roll': $root.roller.rollBullrush()}">
-												<td colspan="2">Bull Rush</td>
-											</tr>
-											<tr class="unrollable">
-												<td>Charge</td>
-												<td class='sp'> 
-													<input class="inline-checkbox" data-bind="attr: {'data-spfunc': 'Charge', 'data-uid': $root.uid, id: $root.formatSpName('Charge')}" type="checkbox" />
-												</td>
-											</tr>
-											<tr>
-												<td>Disarm</td><td></td>
-											</tr>
-											<tr data-bind="attr: {'data-roll': $root.roller.rollFeint()}">
-												<td colspan="2">Feint</td>
-											</tr>
-											<tr data-bind="attr: {'data-roll': $root.roller.rollGrappleGrab()}">
-												<td colspan="2">Grapple Grab</td>
-											</tr>
-											<tr data-bind="attr: {'data-roll': $root.roller.rollOpposedGrapple()}">
-												<td colspan="2">Opposed Grapple</td>
-											</tr>
-											<tr data-bind="attr: {'data-roll': $root.roller.rollOverrunAttack()}">
-												<td colspan="2">Overrun Attack</td>
-											</tr>
-											<tr data-bind="attr: {'data-roll': $root.roller.rollOverrunSave()}">
-												<td colspan="2">Overrun Save vs. Prone</td>
-											</tr>
-											<tr>
-												<td>Sunder</td><td></td>
-											</tr>
-											<tr>
-												<td>Trip</td><td></td>
-											</tr>
-											<tr class="loaded" style="display: none"><td></td></tr>
-										</tbody>
-									</table>
-								</div>
-							</li>
-							<li class="draggable qualities">
-								<span class="title">Qualities</span>
-								<hr />
-								<div class="minibox-content">
-									<table class="table table-striped table-condensed" data-bind="with: $parent.qualities">
-										<tbody class="mqualit" id="1A_mqualit_table" data-bind="foreach: qualities">
-											<tr>
-												<td data-bind="attr: {colspan: $data.value!='0' ? 1 : 2}">
-													<!-- ko if: descript !== "" -->
-													<i class="icon-bookmark"></i>
-													<a href="#" rel="tooltip" data-bind="text: $parent.formatName($data.name), bootstrapTooltip: {title: $data.descript, html: true, placement: 'bottom', trigger: 'manual'}"></a>
-													<!-- /ko -->
-													<!-- ko if: descript === "" -->
-													None
-													<!-- /ko -->
-												</td>
-												<!-- ko if: $data.value!='0' -->
-												<td data-bind="text: $parent.format($data)">
-												</td>
-												<!-- /ko -->
-											</tr>
-										</tbody>
-									</table>
-								</div> 
-							</li>
 							<li class="draggable armor">
 								<span class="title">AC, Armor &amp; DR</span>
 								<hr />
@@ -505,6 +400,67 @@ function is_dev() {
 										</tbody>
 									</table>
 								</div>
+							</li>
+							<li class="draggable misc">
+								<span class="title">Misc. Info.</span>
+								<hr />
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed" data-bind="with: $parent.speeds">
+										<caption>Speeds</caption>
+										<tbody class="mmove" id="1A_mmove_table">
+											<tr>
+												<td>Base Speed</td><td id="1A_base_spd" class="ftable" data-bind="text: $parent.monsterBaseStats.base_spd+'ft'"></td>
+											</tr>
+											<!-- ko foreach: speeds -->
+											<tr>
+												<td data-bind="text: $data.movement_type">
+												</td>
+												<td data-bind="text: $data.movement_speed+'ft'">
+												</td>
+											</tr>
+											<!-- /ko -->
+										</tbody>
+									</table>
+									<table class="table table-striped table-condensed" data-bind="with: $parent.stats">
+										<caption>Misc</caption>
+										<tbody>
+											<tr>
+												<td>Reach</td><td data-bind="text: $data.reach+'ft'" id="1A_reach" class="ftable"></td>
+											</tr>
+											<tr>
+												<td>Space Taken</td><td data-bind="text: $data.space+'ft'" id="1A_space_taken" class="ftable"></td>
+											</tr>
+											<tr>
+												<td>Treasure</td><td data-bind="text: $data.treasure" id="1A_treasure"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</li>
+							<li class="draggable qualities">
+								<span class="title">Qualities</span>
+								<hr />
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed" data-bind="with: $parent.qualities">
+										<tbody class="mqualit" id="1A_mqualit_table" data-bind="foreach: qualities">
+											<tr>
+												<td data-bind="attr: {colspan: $data.value!='0' ? 1 : 2}">
+													<!-- ko if: descript !== "" -->
+													<i class="icon-bookmark"></i>
+													<a href="#" rel="tooltip" data-bind="text: $parent.formatName($data.name), bootstrapTooltip: {title: $data.descript, html: true, placement: 'bottom', trigger: 'manual'}"></a>
+													<!-- /ko -->
+													<!-- ko if: descript === "" -->
+													None
+													<!-- /ko -->
+												</td>
+												<!-- ko if: $data.value!='0' -->
+												<td data-bind="text: $parent.format($data)">
+												</td>
+												<!-- /ko -->
+											</tr>
+										</tbody>
+									</table>
+								</div> 
 							</li>
 							<li class="draggable feats">
 								<span class="title">Feats</span>
@@ -568,11 +524,50 @@ function is_dev() {
 									</table>
 								</div> 
 							</li>
-							<li class="draggable invisible"></li>
-							<li class="draggable invisible"></li>
-							<li class="draggable invisible"></li>
-							<li class="draggable invisible"></li>
-							<li class="draggable invisible"></li>
+							<li class="draggable maneuvers rollable">
+								<span class="title">Combat Maneuvers</span>
+								<hr />
+								<div class="minibox-content">
+									<table class="table table-striped table-condensed">
+										<tbody>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollBullrush()}">
+												<td colspan="2">Bull Rush</td>
+											</tr>
+											<tr class="unrollable">
+												<td>Charge</td>
+												<td class='sp'> 
+													<input class="inline-checkbox" data-bind="attr: {'data-spfunc': 'Charge', 'data-uid': $root.uid, id: $root.formatSpName('Charge')}" type="checkbox" />
+												</td>
+											</tr>
+											<tr>
+												<td>Disarm</td><td></td>
+											</tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollFeint()}">
+												<td colspan="2">Feint</td>
+											</tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollGrappleGrab()}">
+												<td colspan="2">Grapple Grab</td>
+											</tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollOpposedGrapple()}">
+												<td colspan="2">Opposed Grapple</td>
+											</tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollOverrunAttack()}">
+												<td colspan="2">Overrun Attack</td>
+											</tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollOverrunSave()}">
+												<td colspan="2">Overrun Save vs. Prone</td>
+											</tr>
+											<tr>
+												<td>Sunder</td><td></td>
+											</tr>
+											<tr>
+												<td>Trip</td><td></td>
+											</tr>
+											<tr class="loaded" style="display: none"><td></td></tr>
+										</tbody>
+									</table>
+								</div>
+							</li>
 						</ul>
 					</div>
 				</div>
