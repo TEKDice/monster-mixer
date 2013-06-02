@@ -272,7 +272,6 @@ function RollerHandler(monModel) {
 	});
 
 	self.rollOverrunSave = ko.computed(function () {
-		//max(dex, str)
 		var roll = { "Base": "1d20" };
 		roll["Size Mod"] = maneuverModifier(self.monster.stats.size()) * 4;
 		var dexMod = self.monster.stats.dex.bonus();

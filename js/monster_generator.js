@@ -855,6 +855,11 @@ var Atk = function() {
 			});
 		},
 
+		rerollForCleave: function() {
+			this.baseAttack = arrayToObject([].concat.apply([], [].concat(this.baseAttack[0])));
+			this.baseAttack[0].roll();
+		},
+
 		display: function () {
 			var bH = _rollArray(this.baseHit._lastRoll);
 			var tA = _rollArray(this.threatAttack._lastRoll);
@@ -1164,7 +1169,7 @@ function addFeatFunctions() {
 				cleaveAtk.uid = null;
 			cleaveAtk.critStatus = 'cleave';
 			cleaveAtk.baseHit.roll();
-			cleaveAtk.rerollBaseAtk();
+			cleaveAtk.rerollForCleave();
 			cleaveAtk.display();
 		});
 	});
@@ -1697,7 +1702,6 @@ function RollerHandler(monModel) {
 	});
 
 	self.rollOverrunSave = ko.computed(function () {
-		//max(dex, str)
 		var roll = { "Base": "1d20" };
 		roll["Size Mod"] = maneuverModifier(self.monster.stats.size()) * 4;
 		var dexMod = self.monster.stats.dex.bonus();

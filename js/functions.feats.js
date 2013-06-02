@@ -28,7 +28,7 @@ function addFeatFunctions() {
 				cleaveAtk.uid = null;
 			cleaveAtk.critStatus = 'cleave';
 			cleaveAtk.baseHit.roll();
-			cleaveAtk.rerollBaseAtk();
+			cleaveAtk.rerollForCleave();
 			cleaveAtk.display();
 		});
 	});

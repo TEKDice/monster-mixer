@@ -44,6 +44,11 @@ var Atk = function() {
 			});
 		},
 
+		rerollForCleave: function() {
+			this.baseAttack = arrayToObject([].concat.apply([], [].concat(this.baseAttack[0])));
+			this.baseAttack[0].roll();
+		},
+
 		display: function () {
 			var bH = _rollArray(this.baseHit._lastRoll);
 			var tA = _rollArray(this.threatAttack._lastRoll);
