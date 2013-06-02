@@ -531,46 +531,79 @@ function is_dev() {
 									<table class="table table-striped table-condensed">
 										<tbody>
 											<tr data-bind="attr: {'data-roll': $root.roller.rollBullrush()}">
-												<td colspan="2">Bull Rush</td>
+												<td colspan="2">
+                                                    <i class="icon-bookmark"></i>
+                                                    <a href="#" rel="tooltip" data-bind="text: 'Bull Rush', bootstrapTooltip: {title: combatManeuverTooltipText('Bull Rush'), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+                                                </td>
 											</tr>
 											<tr class="unrollable">
-												<td>Charge</td>
+												<td>    
+                                                    <i class="icon-bookmark"></i>
+                                                    <a href="#" rel="tooltip" data-bind="text: 'Charge', bootstrapTooltip: {title: combatManeuverTooltipText('Charge'), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+                                                </td>
 												<td class='sp'> 
 													<input class="inline-checkbox" data-bind="attr: {'data-spfunc': 'Charge', 'data-uid': $root.uid, id: $root.formatSpName('Charge')}" type="checkbox" />
 												</td>
 											</tr>
 											<tr data-bind="attr: {'data-roll': $root.roller.rollDisarm()}">
-												<td>Disarm</td>
+												<td>    
+                                                    <i class="icon-bookmark"></i>
+                                                    <a href="#" rel="tooltip" data-bind="text: 'Disarm', bootstrapTooltip: {title: combatManeuverTooltipText('Disarm'), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+                                                </td>
                                                 <td>
 													<input class="pull-right input-mini-inline applyNum" value="0" data-bind="attr: {'data-spfunc': 'Disarm', 'data-uid': $parent.uid, id: $root.formatSpName('Disarm')}" type="number" />
                                                 </td>
 											</tr>
 											<tr data-bind="attr: {'data-roll': $root.roller.rollFeint()}">
-												<td colspan="2">Feint</td>
+												<td colspan="2">    
+                                                    <i class="icon-bookmark"></i>
+                                                    <a href="#" rel="tooltip" data-bind="text: 'Feint', bootstrapTooltip: {title: combatManeuverTooltipText('Feint'), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+                                                </td>
 											</tr>
 											<tr data-bind="attr: {'data-roll': $root.roller.rollGrappleGrab()}">
-												<td colspan="2">Grapple Grab</td>
+												<td colspan="2">    
+                                                    <i class="icon-bookmark"></i>
+                                                    <a href="#" rel="tooltip" data-bind="text: 'Grapple Grab', bootstrapTooltip: {title: combatManeuverTooltipText('Grapple Grab'), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+                                                </td>
 											</tr>
 											<tr data-bind="attr: {'data-roll': $root.roller.rollOpposedGrapple()}">
-												<td colspan="2">Opposed Grapple</td>
+												<td colspan="2">    
+                                                    <i class="icon-bookmark"></i>
+                                                    <a href="#" rel="tooltip" data-bind="text: 'Opposed Grapple', bootstrapTooltip: {title: combatManeuverTooltipText('Opposed Grapple'), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+                                                </td>
 											</tr>
 											<tr data-bind="attr: {'data-roll': $root.roller.rollOverrunAttack()}">
-												<td colspan="2">Overrun Attack</td>
+												<td colspan="2">    
+                                                    <i class="icon-bookmark"></i>
+                                                    <a href="#" rel="tooltip" data-bind="text: 'Overrun Attack', bootstrapTooltip: {title: combatManeuverTooltipText('Overrun Attack'), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+                                                </td>
 											</tr>
 											<tr data-bind="attr: {'data-roll': $root.roller.rollOverrunSave()}">
-												<td colspan="2">Overrun Save vs. Prone</td>
+												<td colspan="2">    
+                                                    <i class="icon-bookmark"></i>
+                                                    <a href="#" rel="tooltip" data-bind="text: 'Overrun Prone Save', bootstrapTooltip: {title: combatManeuverTooltipText('Overrun Save'), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+                                                </td>
 											</tr>
 											<tr data-bind="attr: {'data-roll': $root.roller.rollSunder()}">
-												<td>Sunder</td>
+												<td>    
+                                                    <i class="icon-bookmark"></i>
+                                                    <a href="#" rel="tooltip" data-bind="text: 'Sunder', bootstrapTooltip: {title: combatManeuverTooltipText('Sunder'), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+                                                </td>
                                                 <td>
 													<input class="pull-right input-mini-inline applyNum" value="0" data-bind="attr: {'data-spfunc': 'Sunder', 'data-uid': $parent.uid, id: $root.formatSpName('Sunder')}" type="number" />
                                                 </td>
 											</tr>
 											<tr data-bind="attr: {'data-roll': $root.roller.rollTripTouch()}">
-												<td colspan="2">Trip Melee Touch Attack</td>
+												<td colspan="2">    
+                                                    <i class="icon-bookmark"></i>
+                                                    <a href="#" rel="tooltip" data-bind="text: 'Trip Melee Touch', bootstrapTooltip: {title: combatManeuverTooltipText('Trip Melee Touch Attack'), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+                                                </td>
 											</tr>
 											<tr data-bind="attr: {'data-roll': $root.roller.rollTripStr()}">
-												<td colspan="2">Trip STR Check</td>
+												<td colspan="2">    
+                                                    <i class="icon-bookmark"></i>
+                                                    <a href="#" rel="tooltip" data-bind="text: 'Trip STR Check', bootstrapTooltip: {title: combatManeuverTooltipText('Trip STR Check'), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
+                                                </td>
 											</tr>
 											<tr class="loaded" style="display: none"><td></td></tr>
 										</tbody>
