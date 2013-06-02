@@ -9,6 +9,7 @@ function formatSpecialFeatName(name) {
 		case 'Power Attack': return 'pa';
 		case 'Cleave': return 'cleave';
 		case 'Charge': return 'charge';
+		case 'Sunder': return 'sunder';
 		case 'Combat Expertise': return 'ce';
 	}
 	return searchNameForNamedEntries(name);
@@ -135,9 +136,21 @@ function addFeatFunctions() {
 
 	};
 
+	var sunderFunc = function (uid, scope) {
+		var val = parseInt(scope.val());
+		val = clamp(-8, 8, val);
+		scope.val(val);
+		monsters[uid].roller.invalidate();
+	};
+
 	$(".applyNum[data-spfunc][type='number']").livequery(function () {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
-		$this.change(function () { applyNumFunc(uid, $this) });
+		var func = $this.attr('data-spfunc');
+		if (func == 'Sunder') {
+			$this.change(function () { sunderFunc(uid, $this) });
+		} else {
+			$this.change(function () { applyNumFunc(uid, $this) });
+		}
 	});
 }

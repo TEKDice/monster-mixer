@@ -298,6 +298,13 @@ function RollerHandler(monModel) {
 		roll["Size Mod"] = maneuverModifier(self.monster.stats.size()) * 4;
 		return JSON.stringify({ 'for': 'Opposed Grapple', 'howMany': 1, 'primary': roll });
 	});
+
+	self.rollSunder = ko.computed(function () {
+		self.dummy();
+		var roll = { "Base": "1d20" };
+		//light weapon -4, two handed weapon +4 
+		//size difference, *4
+	});
 }
 
 //#region AC-related Models
@@ -673,6 +680,25 @@ function WeaponAttackModel(damagers, mname) {
 
 	var _damagers = [];
 
+	self.calcRange = function (weapon) {
+		return weapon.is_ranged == "0" ? "Melee" : weapon.is_ranged + "ft";
+	};
+
+	self.handClassification = function (weapon) {
+		return weapon.hasOwnProperty("is_multi_handed") && weapon.is_multi_handed == "1" ? "Two-handed" : "One-handed";
+	};
+
+	self.weightClassification = function (weapon) {
+		return weapon.is_light == "1" ? "Light" : "Normal";
+	};
+
+	self.newTooltip = function (weapon) {
+		var tt = "Range: " + self.calcRange(weapon) + "<br>";
+		tt += "Classification: " + self.handClassification(weapon) + "<br>";
+		tt += "Weight: " + self.weightClassification(weapon) + "<br>";
+		return tt + weapon.descript;
+	};
+
 	$.each(damagers, function (i, e) {
 		if (e.hasOwnProperty("is_melee") && e.hasOwnProperty("is_ranged") && e.hasOwnProperty("wname") && e.is_melee == "1" && e.is_ranged != "0") {
 
@@ -681,6 +707,7 @@ function WeaponAttackModel(damagers, mname) {
 
 			e.wname = oldName + " (Melee)";
 			e.is_ranged = "0";
+			e.descript = self.newTooltip(e);
 			_damagers.push(e);
 
 			var newObject = $.extend(true, {}, e);
@@ -688,6 +715,7 @@ function WeaponAttackModel(damagers, mname) {
 			newObject.is_ranged = range;
 			newObject.is_melee = "0";
 			newObject.wname = oldName + " (Ranged)";
+			newObject.descript = self.newTooltip(newObject);
 
 			_damagers.push(newObject);
 
@@ -696,22 +724,25 @@ function WeaponAttackModel(damagers, mname) {
 
 			e.is_one_handed = "1";
 			e.wname = oldName + " (1H)";
+			e.descript = self.newTooltip(e);
 			_damagers.push(e);
 
 			var newObject = $.extend(true, {}, e);
 
 			newObject.is_one_handed = "0";
 			newObject.wname = oldName + " (2H)";
+			newObject.descript = self.newTooltip(newObject);
 			_damagers.push(newObject);
 		} else {
+			e.descript = self.newTooltip(e);
 			_damagers.push(e);
 		}
 	});
 
-	if (damagers.length == 0) _damagers.push({ name: "None", descript: "", hit_dice: '0' });
-
 	self.mname = mname;
 	self.damagers = ko.observableArray(_damagers);
+
+	if (damagers.length == 0) _damagers.push({ name: "None", descript: "", hit_dice: '0' });
 
 	self.countColumns = function (spatk) {
 		var cols = 3;

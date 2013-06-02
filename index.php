@@ -558,7 +558,10 @@ function is_dev() {
 												<td colspan="2">Overrun Save vs. Prone</td>
 											</tr>
 											<tr>
-												<td>Sunder</td><td></td>
+												<td>Sunder</td>
+                                                <td>
+													<input class="pull-right input-mini-inline applyNum" placeholder="#" data-bind="attr: {'data-spfunc': 'Sunder', 'data-uid': $parent.uid, id: $root.formatSpName('Sunder')}" type="number" />
+                                                </td>
 											</tr>
 											<tr>
 												<td>Trip</td><td></td>
