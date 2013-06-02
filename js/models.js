@@ -263,6 +263,27 @@ function RollerHandler(monModel) {
 		roll["CHA Mod"] = self.monster.stats.cha.bonus();
 		return JSON.stringify({ 'for': 'Feint', 'howMany': 1, 'primary': roll });
 	});
+
+	self.rollOverrunAttack = ko.computed(function () {
+		var roll = { "Base": "1d20" };
+		roll["STR Mod"] = self.monster.stats.str.bonus();
+		roll["Size Mod"] = maneuverModifier(self.monster.stats.size()) * 4;
+		return JSON.stringify({ 'for': 'Overrun Attack', 'howMany': 1, 'primary': roll });
+	});
+
+	self.rollOverrunSave = ko.computed(function () {
+		//max(dex, str)
+		var roll = { "Base": "1d20" };
+		roll["Size Mod"] = maneuverModifier(self.monster.stats.size()) * 4;
+		var dexMod = self.monster.stats.dex.bonus();
+		var strMod = self.monster.stats.str.bonus();
+		if (dexMod > strMod) {
+			roll["DEX Mod"] = dexMod;
+		} else {
+			roll["STR Mod"] = strMod;
+		}
+		return JSON.stringify({ 'for': 'Overrun Save vs. Prone', 'howMany': 1, 'primary': roll });
+	});
 }
 
 //#region AC-related Models

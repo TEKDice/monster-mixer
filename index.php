@@ -399,10 +399,16 @@ function is_dev() {
 												<td colspan="2">Feint</td>
 											</tr>
 											<tr>
-												<td>Grapple</td><td></td>
+												<td colspan="2">Grapple</td>
 											</tr>
 											<tr>
-												<td>Overrun</td><td></td>
+												<td colspan="2">Opposed Grapple</td>
+											</tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollOverrunAttack()}">
+												<td colspan="2">Overrun Attack</td>
+											</tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollOverrunSave()}">
+												<td colspan="2">Overrun Save vs. Prone</td>
 											</tr>
 											<tr>
 												<td>Sunder</td><td></td>
