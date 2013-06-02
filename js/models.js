@@ -150,7 +150,7 @@ function RollerHandler(monModel) {
 			self.monster.stats.dex.bonus(),
 			self.monster.stats.str.bonus());
 
-		var secondary = self.monster.weapons.weaponDamageRoll(weapon, self.monster.stats.str.bonus(), weapon.is_ranged, parseInt(weapon.is_ranged)==0);
+		var secondary = self.monster.weapons.weaponDamageRoll(weapon, self.monster.stats.str.bonus(), weapon.is_ranged, parseInt(weapon.is_ranged) == 0);
 		var critical = self.determineCritical(weapon, self.hasFeat('Improved Critical'));
 		return JSON.stringify({
 			'for': self.formatName(weapon.wname), 'primary': secondary, 'secondary': primary, 'howMany': parseInt(weapon.how_many) || 1,
@@ -212,7 +212,7 @@ function RollerHandler(monModel) {
 		self.hasFeat("Improved Two-Weapon Fighting") || self.hasFeat("Improved Multiweapon Fighting");
 	};
 
-	self.determineCritical = function(obj, hasImpCrit) {
+	self.determineCritical = function (obj, hasImpCrit) {
 		var minCrit = 20;
 		var critMult = 2;
 
@@ -239,7 +239,7 @@ function RollerHandler(monModel) {
 
 	self.formatName = function (name) {
 		if (name == undefined) return;
-		if (name.indexOf(self.monster.stats.name()) != -1) return name.substring(self.monster.stats.name().length+1).trim();
+		if (name.indexOf(self.monster.stats.name()) != -1) return name.substring(self.monster.stats.name().length + 1).trim();
 		return name;
 	};
 
@@ -283,6 +283,21 @@ function RollerHandler(monModel) {
 			roll["STR Mod"] = strMod;
 		}
 		return JSON.stringify({ 'for': 'Overrun Save vs. Prone', 'howMany': 1, 'primary': roll });
+	});
+
+	self.rollGrappleGrab = ko.computed(function () {
+		var roll = { "Base": "1d20" };
+		roll["STR Mod"] = self.monster.stats.str.bonus();
+		roll["Base Attack Bonus"] = self.monster.stats.bab.base.val();
+		return JSON.stringify({ 'for': 'Grapple Grab', 'howMany': 1, 'primary': roll });
+	});
+
+	self.rollOpposedGrapple = ko.computed(function () {
+		var roll = { "Base": "1d20" };
+		roll["STR Mod"] = self.monster.stats.str.bonus();
+		roll["Base Attack Bonus"] = self.monster.stats.bab.base.val();
+		roll["Size Mod"] = maneuverModifier(self.monster.stats.size()) * 4;
+		return JSON.stringify({ 'for': 'Opposed Grapple', 'howMany': 1, 'primary': roll });
 	});
 }
 

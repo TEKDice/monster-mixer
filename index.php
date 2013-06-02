@@ -398,10 +398,10 @@ function is_dev() {
 											<tr data-bind="attr: {'data-roll': $root.roller.rollFeint()}">
 												<td colspan="2">Feint</td>
 											</tr>
-											<tr>
-												<td colspan="2">Grapple</td>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollGrappleGrab()}">
+												<td colspan="2">Grapple Grab</td>
 											</tr>
-											<tr>
+											<tr data-bind="attr: {'data-roll': $root.roller.rollOpposedGrapple()}">
 												<td colspan="2">Opposed Grapple</td>
 											</tr>
 											<tr data-bind="attr: {'data-roll': $root.roller.rollOverrunAttack()}">
