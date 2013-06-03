@@ -729,14 +729,24 @@ function SpecialAttackModel(spatks, mname) {
 function WeaponAttackModel(damagers, mname) {
 	var self = this;
 
+	self.dummy = ko.observable();
+
+	self.invalidate = function () {
+		self.dummy.notifySubscribers();
+	};
+
 	var _damagers = [];
 
 	self.calcRange = function (weapon) {
 		return weapon.is_ranged == "0" ? "Melee" : weapon.is_ranged + " ft";
 	};
 
+	self.isTwoHanded = function (weapon) {
+		return weapon.hasOwnProperty("is_multi_handed") && weapon.is_multi_handed == "1" && weapon.is_one_handed == "0";
+	};
+
 	self.handClassification = function (weapon) {
-		return weapon.hasOwnProperty("is_multi_handed") && weapon.is_multi_handed == "1" && weapon.is_one_handed == "0" ? "Two-handed" : "One-handed";
+		return self.isTwoHanded(weapon) ? "Two-handed" : "One-handed";
 	};
 
 	self.weightClassification = function (weapon) {

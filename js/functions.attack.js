@@ -98,8 +98,8 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 	if(spatkFor) spatkFor = spatkFor.trim();
 	if(exprFor) exprFor = exprFor.trim();
 
-	var nameFor = $("a[href='#"+idFor+"']").html();
-	var is2h = expr.indexOf("(2H)") != -1;
+	var nameFor = $("a[href='#" + idFor + "']").html();
+	var is2h = exprFor.indexOf("(2H)") != -1;
 	var iters = 1;
 
 	var totalAttacks = atkCtOverride != null ? atkCtOverride : howManyAttacks;
