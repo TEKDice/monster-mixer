@@ -161,7 +161,6 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 				}
 			}
 		}
-
 		attackObj.baseAttack = [];
 
 		for(var x=0; x<iters; x++) {
