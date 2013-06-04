@@ -3802,7 +3802,7 @@ function resizeElements() {
 	$("#monsterListCont").css('height', height - 50 - heightAdjust + 'px');
 	$("#monsterList").css('height', height - 50 - heightAdjust + 'px');
 
-	$(".tab-content").css('height', $("#log").height() - 38);
+	$("#monsterData").css('height', $("#log").height() - 38);
 
 	$("#log .tab-pane > div").css('height', $("#log").height() - 38);
 
