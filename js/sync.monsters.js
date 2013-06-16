@@ -30,11 +30,11 @@ function saveMonsters() {
 function loadMonsters(monsterSet) {
 	if (!loggedIn) return;
 
-	$("#overlay").fadeIn();
-
 	var loadTheseMonsters = [];
 
 	if (monsterSet == null) return;
+
+	$("#overlay").fadeIn();
 
 	$.each(monsterSet, function (i, e) {
 		loadTheseMonsters.push(e.id);
