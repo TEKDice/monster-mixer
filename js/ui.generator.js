@@ -238,7 +238,7 @@ function addNewSuggestedRow(monster, data) {
 	var template = $("#advGenTemplate").html();
 	$("#advGenMonsters").append("<tr data-monster-name='" + monster + "' data-monster-id='" + data.id + "'><td>" + template + "</td></tr>");
 	_makeSelect(monster, data.orgs);
-	$("[data-monster-name='" + monster + "'] .monsterName").attr('title', monster).text(monster).tooltip({ delay: 500 });
+	$("[data-monster-name='" + monster + "'] .monsterName").attr('title', monster).text("(" + formatCR(data.cr) + ") " + monster).tooltip({ delay: 500 });
 	$("#advGenContainer").niceScroll({ zindex: 14, horizrailenabled: false });
 	$('#advGenContainer').css('overflow', 'hidden');
 }

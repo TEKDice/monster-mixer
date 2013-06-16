@@ -1363,6 +1363,15 @@ function arrayToObject(arr) {
 		rv[i] = arr[i];
 	return rv;
 }
+
+function formatCR(cr) {
+	switch (cr) {
+		case '0.25': return $("<div/>").html("&frac14;").text();
+		case '0.33': return $("<div/>").html("&frac13;").text();
+		case '0.50': return $("<div/>").html("&frac12;").text();
+	}
+	return parseInt(cr);
+};
 ///#source 1 1 /monsters/js/init.js
 $(function() {
 
@@ -1520,12 +1529,7 @@ var MonsterModel = function (uid, data) {
 	self.roller = new RollerHandler(self);
 
 	self.formatCR = function (cr) {
-		switch (cr) {
-			case '0.25': return $("<div/>").html("&frac14;").text();
-			case '0.33': return $("<div/>").html("&frac13;").text();
-			case '0.50': return $("<div/>").html("&frac12;").text();
-		}
-		return parseInt(cr);
+		return formatCR(cr);
 	};
 
 	self.formatSpName = function (name) {
@@ -4127,7 +4131,7 @@ function addNewSuggestedRow(monster, data) {
 	var template = $("#advGenTemplate").html();
 	$("#advGenMonsters").append("<tr data-monster-name='" + monster + "' data-monster-id='" + data.id + "'><td>" + template + "</td></tr>");
 	_makeSelect(monster, data.orgs);
-	$("[data-monster-name='" + monster + "'] .monsterName").attr('title', monster).text(monster).tooltip({ delay: 500 });
+	$("[data-monster-name='" + monster + "'] .monsterName").attr('title', monster).text("(" + formatCR(data.cr) + ") " + monster).tooltip({ delay: 500 });
 	$("#advGenContainer").niceScroll({ zindex: 14, horizrailenabled: false });
 	$('#advGenContainer').css('overflow', 'hidden');
 }

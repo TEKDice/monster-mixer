@@ -53,7 +53,8 @@ if(isset($_POST["orgs"])) {
 		$mon_id = $conn->real_escape_string($mon["monster_id"]);
 		$newMonsters[get_monster_name($mon_id)] = array(
 			"id" => $mon_id,
-			"orgs" => get_monster_orgs($mon_id)
+			"orgs" => get_monster_orgs($mon_id),
+			"cr" => get_monster_cr($mon_id)
 		);
 	}
 
@@ -216,7 +217,6 @@ function build_query($json, $type_info) {
 	$query .= ") Monster_table\n";
 	$query .= "ON Monster_table.monster_id = $header"."_table.monster_id\n";
 	$query .= "ORDER BY Monster_table.name";
-
 	return $query;
 }
 ?>

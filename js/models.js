@@ -69,12 +69,7 @@ var MonsterModel = function (uid, data) {
 	self.roller = new RollerHandler(self);
 
 	self.formatCR = function (cr) {
-		switch (cr) {
-			case '0.25': return $("<div/>").html("&frac14;").text();
-			case '0.33': return $("<div/>").html("&frac13;").text();
-			case '0.50': return $("<div/>").html("&frac12;").text();
-		}
-		return parseInt(cr);
+		return formatCR(cr);
 	};
 
 	self.formatSpName = function (name) {

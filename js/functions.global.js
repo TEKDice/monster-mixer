@@ -57,3 +57,12 @@ function arrayToObject(arr) {
 		rv[i] = arr[i];
 	return rv;
 }
+
+function formatCR(cr) {
+	switch (cr) {
+		case '0.25': return $("<div/>").html("&frac14;").text();
+		case '0.33': return $("<div/>").html("&frac13;").text();
+		case '0.50': return $("<div/>").html("&frac12;").text();
+	}
+	return parseInt(cr);
+};
