@@ -34,6 +34,8 @@ function loadMonsters(monsterSet) {
 
 	var loadTheseMonsters = [];
 
+	if (monsterSet == null) return;
+
 	$.each(monsterSet, function (i, e) {
 		loadTheseMonsters.push(e.id);
 	});

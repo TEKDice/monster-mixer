@@ -1193,7 +1193,7 @@ function QualityModel(qualities, mname) {
 
 	self.isMeasurable = function (name) {
 		name = self.formatName(name);
-		return name != 'Spell Resistance' && name != "Regeneration" && name != "Turn Resistance";
+		return name != 'Spell Resistance' && name != "Regeneration" && name != "Turn Resistance" && name != "Fast Healing";
 	};
 	self.format = function (qual) {
 		return qual.value + (self.isMeasurable(qual.name) ? "ft" : "");
