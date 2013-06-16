@@ -213,7 +213,12 @@ function _genButtonFunctionality($button) {
 			return;
 		}
 		if (!advMode) {
-			monster = $.parseJSON(monster);
+			try {
+				monster = $.parseJSON(monster);
+			} catch (e) {
+				console.error("error parsing" + monster);
+				throw e;
+			}
 			var uid = addNewMonster(monster);
 			setupGrids(uid);
 			return;
