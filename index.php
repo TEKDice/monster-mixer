@@ -327,13 +327,13 @@ function is_dev() {
 										<caption>Full Attacks</caption>
 										<tbody class="mfatk" id="1A_mfatk_table" data-bind="foreach: fatks">
 											<tr data-bind="attr: {'data-roll': $root.roller.rollFatk($data)}">
-												<!-- ko if: $data[0].hasOwnProperty('aname') && $data[0].aname != 'None' -->
+												<!-- ko if: $data[0] != undefined && $data[0].hasOwnProperty('aname') && $data[0].aname != 'None' -->
 												<td>
 													<i class="icon-bookmark"></i>
 													<a href="#" rel="tooltip" data-bind="text: $parent.formatName($data), bootstrapTooltip: {title: $parent.toolTip($data), html: true, placement: 'bottom', trigger: 'manual'}" ></a>
 												</td>
 												<!-- /ko -->
-												<!-- ko if: $data[0].hasOwnProperty('aname') && $data[0].aname == 'None' -->
+												<!-- ko if: $data[0] != undefined &&  $data[0].hasOwnProperty('aname') && $data[0].aname == 'None' -->
 												<td class='unrollable'>None</td>
 												<!-- /ko -->
 											</tr>
