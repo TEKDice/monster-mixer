@@ -4117,9 +4117,14 @@ function _genButtonFunctionality($button) {
 			return;
 		}
 		$("#advGenMonsters").empty();
-		$.each($.parseJSON(monster), function (i, e) {
-			addNewSuggestedRow(i, e);
-		});
+		try {
+			$.each($.parseJSON(monster), function (i, e) {
+				addNewSuggestedRow(i, e);
+			});
+		} catch (e) {
+			console.log("error parsing " + monster);
+			throw e;
+		}
 		$(".only-positive").change(function () {
 			var val = parseInt($(this).val());
 			if (val < 0) val = 0;
