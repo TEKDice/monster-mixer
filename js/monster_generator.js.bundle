@@ -6,8 +6,9 @@
   <file>/monsters/js/lib/jquery.async.loops.js</file>
   <file>/monsters/js/lib/jquery.boxshadow.min.js</file>
   <file>/monsters/js/lib/jquery.cookie.js</file>
-  <file>/monsters/js/lib/jquery.livequery.min.js</file>
-  <file>/monsters/js/lib/jquery.nicescroll.min.js</file>
+	<file>/monsters/js/lib/jquery.livequery.min.js</file>
+	<file>/monsters/js/lib/jquery.nicescroll.min.js</file>
+	<file>/monsters/js/lib/keyboard.js</file>
   <file>/monsters/js/lib/knockout.js</file>
   <file>/monsters/js/lib/roll.js</file>
   <file>/monsters/js/lib/storage.js</file>
@@ -15,6 +16,7 @@
   <file>/monsters/js/functions.attack.js</file>
   <file>/monsters/js/functions.feats.js</file>
   <file>/monsters/js/functions.global.js</file>
+	<file>/monsters/js/functions.hotkeys.js</file>
   <file>/monsters/js/init.js</file>
   <file>/monsters/js/models.js</file>
   <file>/monsters/js/monster.js</file>

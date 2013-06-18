@@ -38,6 +38,8 @@ $(function() {
 	changeLogEntrySize();
 	
 	overlayLoadingGif();
+
+	initHotkeys();
 });
 
 function bodyBinding() {
@@ -47,27 +49,9 @@ function bodyBinding() {
 		monsters[uid].hp.hp().reroll();
 	});
 
-	$("body").on('click', '.left', function () {
-		var $cur = $("#monsterList").children(".active");
-		var $newtab;
-		if ($cur.is($("#monsterList").children().first())) {
-			$newtab = $("#monsterList").children().last();
-		} else {
-			$newtab = $("#monsterList").children(".active").prev();
-		}
-		$newtab.children("a").tab('show');
-	});
+	$("body").on('click', '.left', prevMonster);
 
-	$("body").on('click', '.right', function () {
-		var $cur = $("#monsterList").children(".active");
-		var $newtab;
-		if ($cur.is($("#monsterList").children().last())) {
-			$newtab = $("#monsterList").children().first();
-		} else {
-			$newtab = $("#monsterList").children(".active").next();
-		}
-		$newtab.children("a").tab('show');
-	});
+	$("body").on('click', '.right', nextMonster);
 
 	$(".delete").livequery(function () {
 		$(this).click(function () {
