@@ -3,7 +3,6 @@ var MonsterModel = function (uid, data) {
 	var self = this;
 
 	//store the monster data here
-	//self.monsterData = data;
 	self.monsterBaseStats = data.data[0];
 
 	self.uid = uid;
@@ -40,6 +39,8 @@ var MonsterModel = function (uid, data) {
 	self.skills = new SkillModel(data.mskill);
 
 	self.reductions = new DRModel(data.mdmgred);
+
+	self.languages = new LanguageModel(data.mlang);
 
 	self.qualities = new QualityModel(data.mqualit, self.monsterBaseStats.name);
 
@@ -1109,6 +1110,14 @@ function DRModel(reductions) {
 	self.format = function (val) {
 		return val == '0' || val == 0 ? "Immune" : (val == -1 ? '' : val);
 	};
+}
+
+function LanguageModel(languages) {
+	var self = this;
+
+	if (languages.length == 0) languages.push({ language: "None" });
+
+	self.languages = ko.observableArray(languages);
 }
 
 function FeatModel(feats, uid) {

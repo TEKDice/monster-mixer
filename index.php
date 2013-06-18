@@ -421,6 +421,17 @@ function is_dev() {
 											<!-- /ko -->
 										</tbody>
 									</table>
+									<table class="table table-striped table-condensed" data-bind="with: $parent.languages">
+										<caption>Languages</caption>
+										<tbody>
+											<!-- ko foreach: languages -->
+											<tr>
+												<td data-bind="text: $data.language">
+												</td>
+											</tr>
+											<!-- /ko -->
+										</tbody>
+									</table>
 									<table class="table table-striped table-condensed" data-bind="with: $parent.stats">
 										<caption>Misc</caption>
 										<tbody>
