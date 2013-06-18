@@ -2,10 +2,15 @@
 function initializePopupToggler() {
 	//toggle the sizes between the two popup possibilities
 	$("#medianArrowContainer").click(_togglePopupInsides);
+
+	if (Data.getVar("isAdvancedMode")) {
+		_togglePopupInsides();
+	}
 }
 
 function _togglePopupInsides() {
 	if ($("#extra").is(":visible")) {
+		Data.setVar("isAdvancedMode", false);
 		$("#popup").animate({ width: defaultPopupSize });
 		$("#popupLeft").animate({ width: defaultPopupSize });
 		$("#extra").animate({ width: 0 }, function () {
@@ -14,6 +19,7 @@ function _togglePopupInsides() {
 			$("#medianArrowContainer").attr('title', 'More options');
 		});
 	} else {
+		Data.setVar("isAdvancedMode", true);
 		$("#popup").animate({ width: extendPopupSize }, function () {
 			$("#popupLeft").animate({ width: defaultPopupSize });
 			$("#extra").css('display', 'block');
