@@ -180,7 +180,7 @@ function build_query($json, $type_info) {
 			$first_crit = true;
 			foreach($data as $criteria) {
 				if(!$first_crit) $query .= " OR ";
-				$query .= $_sql_name.$criteria["sign"].$criteria["value"];
+				$query .= "`".$_sql_name."`".$criteria["sign"].$criteria["value"];
 
 				$first_crit = false;
 			}
