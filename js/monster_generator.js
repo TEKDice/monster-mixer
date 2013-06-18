@@ -1626,7 +1626,8 @@ var Data = {
 		return $.cookie(check);
 	},
 
-	_html5VarGetRaw: function(check) {
+	_html5VarGetRaw: function (check) {
+		if (localStorage == null) throw new Error("localStorage is null with mode " + Data.mode);
 		return localStorage[check];
 	},
 
