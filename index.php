@@ -1,13 +1,14 @@
 
 <?php
 
+include_once('../../forum/simplepie/mixer_feed.php');
 
 define('readonly',true);
 include_once('../include/database.php');
 include_once('session_functions.php');
 
 global $conn;
-	
+
 $filterNamesArr = run_query_arr($conn, "select name,is_numeric,sql_name,join_table,join_table_col,link_table from GeneratorFilters order by name");
 $filterNames = array();
 
@@ -89,6 +90,7 @@ function is_dev() {
 		<script type="text/javascript" src="js/monster_generator.js"></script>
 	<?php } ?>
 		<script type="text/javascript">
+            var lastPostedUpdate = <?=json_encode($postObj);?>
 			var cloudSessions = <?=getSessions();?>;
 			var filterData = <?=json_encode($filterNames);?>;
 			var autocompleteList = <?=json_encode(build_autocomplete());?>;
