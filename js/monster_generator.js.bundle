@@ -28,5 +28,6 @@
   <file>/monsters/js/ui.general.js</file>
   <file>/monsters/js/ui.generator.js</file>
   <file>/monsters/js/ui.log.js</file>
+	<file>/monsters/js/ui.notifier.js</file>
   <file>/monsters/js/ui.tooltiptext.js</file>
 </bundle>

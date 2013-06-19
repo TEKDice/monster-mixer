@@ -5,6 +5,8 @@ $(function() {
 		return;
 	}
 
+	Notifier.checkUpdates();
+
 	$.pnotify.defaults.history = false;
 
 	handleResizing();

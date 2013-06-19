@@ -1,7 +1,7 @@
 
 <?php
 
-//include_once('../../forum/simplepie/mixer_feed.php');
+include_once('../../forum/simplepie/mixer_feed.php');
 
 define('readonly',true);
 include_once('../include/database.php');
@@ -90,7 +90,7 @@ function is_dev() {
 		<script type="text/javascript" src="js/monster_generator.js"></script>
 	<?php } ?>
 		<script type="text/javascript">
-            var lastPostedUpdate = <?=json_encode($postObj);?>
+            var lastPostedUpdate = '<?=json_encode($postObj);?>';
 			var cloudSessions = <?=getSessions();?>;
 			var filterData = <?=json_encode($filterNames);?>;
 			var autocompleteList = <?=json_encode(build_autocomplete());?>;
