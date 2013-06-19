@@ -1,7 +1,7 @@
 
 <?php
 
-include_once('../../forum/simplepie/mixer_feed.php');
+//include_once('../../forum/simplepie/mixer_feed.php');
 
 define('readonly',true);
 include_once('../include/database.php');
