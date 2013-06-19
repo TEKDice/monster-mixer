@@ -301,7 +301,6 @@ var SessionModel = function() {
 
 			if (data.isError && $button !== undefined) {
 				$button.button('reset');
-				$delButton.button('reset');
 			}
 
 			self.updateSyncedSessions();

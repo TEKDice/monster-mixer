@@ -1,7 +1,16 @@
 
 <?php
 
-include_once('/var/www/forum/simplepie/mixer_feed.php');
+function is_dev() {
+	$parsedUrl = parse_url($_SERVER['HTTP_HOST']);
+
+	$host = explode('.', $parsedUrl['path']);
+
+	return $host[0] == 'localhost';
+}
+
+if(!is_dev())
+    include_once('/var/www/forum/simplepie/mixer_feed.php');
 
 define('readonly',true);
 include_once('../include/database.php');
@@ -56,14 +65,6 @@ function is_test() {
 	$host = explode('.', $parsedUrl['path']);
 
 	return $host[0] == 'dev';
-}
-
-function is_dev() {
-	$parsedUrl = parse_url($_SERVER['HTTP_HOST']);
-
-	$host = explode('.', $parsedUrl['path']);
-
-	return $host[0] == 'localhost';
 }
 
 ?>

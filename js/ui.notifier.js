@@ -5,6 +5,8 @@
 	},
 
 	checkUpdates: function () {
+		//sanity check for local development
+		if (lastPostedUpdate == "{}") return;
 
 		Notifier.decodeObject();
 

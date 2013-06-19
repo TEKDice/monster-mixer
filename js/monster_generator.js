@@ -4282,7 +4282,6 @@ var SessionModel = function() {
 
 			if (data.isError && $button !== undefined) {
 				$button.button('reset');
-				$delButton.button('reset');
 			}
 
 			self.updateSyncedSessions();
@@ -5205,6 +5204,8 @@ var Notifier = {
 	},
 
 	checkUpdates: function () {
+		//sanity check for local development
+		if (lastPostedUpdate == "{}") return;
 
 		Notifier.decodeObject();
 
