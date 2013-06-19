@@ -9,6 +9,8 @@ include_once('session_functions.php');
 
 global $conn;
 
+if(!isset($postObj)) $postObj = new stdClass();
+
 $filterNamesArr = run_query_arr($conn, "select name,is_numeric,sql_name,join_table,join_table_col,link_table from GeneratorFilters order by name");
 $filterNames = array();
 
