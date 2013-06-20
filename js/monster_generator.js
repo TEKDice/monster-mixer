@@ -5204,8 +5204,9 @@ var Notifier = {
 	},
 
 	checkUpdates: function () {
+
 		//sanity check for local development
-		if (lastPostedUpdate) return;
+		if (!lastPostedUpdate) return;
 
 		Notifier.decodeObject();
 
