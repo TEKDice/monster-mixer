@@ -1,30 +1,6 @@
 
 <?php
 
-function is_testing_root($root) {
-	$parsedUrl = parse_url($_SERVER['HTTP_HOST']);
-
-	$host = explode('.', $parsedUrl['path']);
-
-	return $host[0] == $root;
-}
-
-function is_dev() {
-    return is_testing_root("localhost");
-}
-
-function is_test() {
-    return is_testing_root("dev");
-}
-
-function is_stage() {
-    return is_testing_root("stage");
-}
-
-function is_live() {
-    return is_testing_root("tekdice");
-}
-
 if(!is_dev())
     include_once('/var/www/forum/simplepie/mixer_feed.php');
 
