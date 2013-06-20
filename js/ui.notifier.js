@@ -24,7 +24,7 @@
 	updateNotification: function () {
 		$.pnotify({
 			title: "Updated!",
-			text: "Hey, we updated recently! You can see the most recent changelog <a href='"+lastPostedUpdate.link+"'>here</a>!"
+			text: "Hey, we updated recently! You can see the most recent changelog <a target='_blank' href='"+lastPostedUpdate.link+"'>here</a>!"
 		});
 	}
 };
