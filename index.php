@@ -1,12 +1,28 @@
 
 <?php
 
-function is_dev() {
+function is_testing_root($root) {
 	$parsedUrl = parse_url($_SERVER['HTTP_HOST']);
 
 	$host = explode('.', $parsedUrl['path']);
 
-	return $host[0] == 'localhost';
+	return $host[0] == $root;
+}
+
+function is_dev() {
+    return is_testing_root("localhost");
+}
+
+function is_test() {
+    return is_testing_root("dev");
+}
+
+function is_stage() {
+    return is_testing_root("stage");
+}
+
+function is_live() {
+    return is_testing_root("tekdice");
 }
 
 if(!is_dev())
@@ -59,14 +75,6 @@ function build_autocomplete() {
 
 }
 
-function is_test() {
-	$parsedUrl = parse_url($_SERVER['HTTP_HOST']);
-
-	$host = explode('.', $parsedUrl['path']);
-
-	return $host[0] == 'dev';
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -93,7 +101,7 @@ function is_test() {
 		<script type="text/javascript" src="js/monster_generator.js"></script>
 	<?php } ?>
 		<script type="text/javascript">
-            var lastPostedUpdate = '<?=json_encode($postObj);?>';
+            var lastPostedUpdate = '<?=isset($postObj) ? json_encode($postObj) : '';?>';
 			var cloudSessions = <?=getSessions();?>;
 			var filterData = <?=json_encode($filterNames);?>;
 			var autocompleteList = <?=json_encode(build_autocomplete());?>;
