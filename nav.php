@@ -10,6 +10,9 @@
 			<li><a href="#" data-toggle="modal" data-target="#sessionDialog">Encounters...</a></li>
 			<li class="divider"></li>
 			<li class="disabled"><a href="#"><i id="noChangeColor" class="icon-ok"></i>&nbsp;<span id="statusText">Ready</span></a></li>
+            <li class="divider"></li>
+            <li class="disabled"><a href="#">Version <?=getVersion()?></a></li>
+            <li><a href="http://tekdice.com/forum/viewforum.php?f=16" target="_blank">Help</a></li>
 		</ul>
 	</li>
 </ul>

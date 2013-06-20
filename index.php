@@ -1,9 +1,6 @@
 
 <?php
 
-if(!is_dev())
-    include_once('/var/www/forum/simplepie/mixer_feed.php');
-
 define('readonly',true);
 include_once('../include/database.php');
 include_once('session_functions.php');
@@ -68,6 +65,11 @@ function build_autocomplete() {
 
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
 	<?php
+
+        if(!is_dev())
+            include_once('/var/www/forum/simplepie/mixer_feed.php');
+            
+            
 		if(false) {//if(!is_dev()) {
 	?>
 		<script type="text/javascript" src="js/monster_generator.min.js"></script>
