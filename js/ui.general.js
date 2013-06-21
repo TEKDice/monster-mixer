@@ -98,6 +98,8 @@ function tabChangeScrollbars($a) {
 		$("[data-nice-uid='" + uid + "']").show();
 
 		setupGrids(uid);
+
+		logModel.currentMonsterId(uid);
 	});
 }
 

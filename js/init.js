@@ -36,6 +36,8 @@ $(function() {
 	loadFilters();
 
 	initialiseSessionManager();
+
+	initialiseLog();
 	
 	changeLogEntrySize();
 	

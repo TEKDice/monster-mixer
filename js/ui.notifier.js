@@ -7,7 +7,7 @@
 	checkUpdates: function () {
 
 		//sanity check for local development
-		if (!lastPostedUpdate) return;
+		if (!lastPostedUpdate || lastPostedUpdate == "{}") return;
 
 		Notifier.decodeObject();
 

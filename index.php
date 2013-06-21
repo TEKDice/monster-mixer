@@ -152,7 +152,7 @@ function build_autocomplete() {
 							</div>
 						</div>
 
-						<div id="log" class="tabbable">
+						<div id="log" class="tabbable" data-bind="with: logModel">
 							<ul class="nav nav-tabs">
 								<li class="active">
 									<a href="#allTab" data-toggle="tab">All Info</a>
@@ -163,10 +163,35 @@ function build_autocomplete() {
 							</ul>
 							<div class="tab-content">
 								<div class="tab-pane active" id="allTab">                    
-									<div id="allInfo" class="logHighlighter"></div>                                         
+									<div id="allInfo" class="logHighlighter" data-bind="foreach: $parent.currentSessionMessages">
+                                        <div data-bind="attr: {'class': 'logInner ' + $parent.generateIdForEntry($data)}">
+                                            <div class='attackSide'>
+                                                <p data-bind="attr:{'class':'pull-left '+$data.type, 'data-uid': $data.uid}, html: $data.message"></p>
+                                            </div>
+                                            <div data-bind="attr: {'class': 'pull-right threat-status '+$data.type}"></div>
+                                                
+                                            <!-- ko if: $data.attack -->
+                                                <br>
+                                                <button class='btn btn-link pull-right' data-bind="attr: {'data-cleave-uid': $data.attack}">Cleave?</button>
+                                            <!-- /ko -->
+		                                    <div class='clearfix'></div>
+                                        </div>
+                                    </div>                                         
 								</div>
 								<div class="tab-pane" id="curTab">                 
-									<div id="curMon" class="logHighlighter">
+									<div id="curMon" class="logHighlighter" data-bind="foreach: $parent.currentMonsterMessages">
+                                        <div data-bind="attr: {'class': 'logInner ' + $parent.generateIdForEntry($data)}">
+                                            <div class='attackSide'>
+                                                <p data-bind="attr:{'class':'pull-left '+$data.type, 'data-uid': $data.uid}, html: $data.message"></p>
+                                            </div>
+                                            <div data-bind="attr: {'class': 'pull-right threat-status '+$data.type}"></div>
+                                                
+                                            <!-- ko if: $data.attack -->
+                                                <br>
+                                                <button class='btn btn-link pull-right' data-bind="attr: {'data-cleave-uid': $data.attack}">Cleave?</button>
+                                            <!-- /ko -->
+		                                    <div class='clearfix'></div>
+                                        </div>
 									</div>    
 								</div>
 							</div>
