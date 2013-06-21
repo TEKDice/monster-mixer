@@ -2,8 +2,6 @@
 var logTimer;
 var newLogEntryWidth;
 
-var logModel = new LogModel();
-
 var LogModel = function () {
 	var self = this;
 
@@ -19,6 +17,8 @@ var LogModel = function () {
 	};
 
 }
+
+var logModel = new LogModel();
 
 function addToLog(string, selector, uid, atkUid) {
 
