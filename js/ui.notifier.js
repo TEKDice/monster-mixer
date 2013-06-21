@@ -18,6 +18,7 @@
 
 		if (Data.getVar("lastUpdate") < lastPostedUpdate.date) {
 			Notifier.updateNotification();
+			Data.setVar("lastUpdate", lastPostedUpdate.date);
 		}
 	},
 

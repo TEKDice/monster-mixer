@@ -2,6 +2,24 @@
 var logTimer;
 var newLogEntryWidth;
 
+var logModel = new LogModel();
+
+var LogModel = function () {
+	var self = this;
+
+	self.messages = {
+
+	};
+
+	self.addMessage = function (uid, msg) {
+		if (!self.messages.hasOwnProperty(uid))
+			self.messages[uid] = ko.observableArray([]);
+		
+
+	};
+
+}
+
 function addToLog(string, selector, uid, atkUid) {
 
 	//bleh, damned inability to append the same element in two places..
