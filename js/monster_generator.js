@@ -2316,6 +2316,7 @@ function initHotkeys() {
 
 var callIfNotActive = function ($input, call) {
 	if ($input.is(":focus")) return;
+	call();
 }
 
 var prevMonster = function () {
