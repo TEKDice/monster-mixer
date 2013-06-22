@@ -435,7 +435,18 @@ function FullAttackModel(fatks, mname) {
 	self.formatName = function (fatk) {
 		var retStr = [];
 		$.each(fatk, function (i, e) {
-			retStr.push(self.formatNameStr(e.aname || e.wname));
+			console.log(e);
+			var name;
+			try {
+				name = self.formatNameStr(e.spatkname || e.aname || e.wname);
+			} catch (e) {
+				name = "ERROR";
+				var exceptionMessage = e.message + " | DATA = " + JSON.stringify(e);
+				Raven.captureException(exceptionMessage);
+				console.error(exceptionMessage);
+			}
+
+			retStr.push(name);
 		});
 		return retStr.join(", ");
 	};
@@ -443,13 +454,13 @@ function FullAttackModel(fatks, mname) {
 	self.toolTip = function (fatk) {
 		var retStr = '';
 		$.each(fatk, function (i, e) {
-			var atkStr = self.formatNameStr(e.aname || e.wname);
+			var atkStr = self.formatNameStr(e.aname || e.wname || e.spatkname);
 			atkStr += ': ';
 			var rollStr = e.hitdc;
-			var eleStr = (rollStr == '0' ? '' : '+') + e.dmgred_hd + ' ' + e.dmgname;
+			var eleStr = (rollStr == '0' || rollStr == null ? '' : '+') + e.dmgred_hd + ' ' + e.dmgname;
 			var count = e.whm || e.atkhm;
 
-			if (rollStr != '0') atkStr += rollStr + "x" + count + " ";
+			if (rollStr != '0' && rollStr != null) atkStr += rollStr + "x" + count + " ";
 			if (e.dmgname != null) atkStr += eleStr;
 			atkStr += "<br />";
 			retStr += atkStr;
@@ -458,7 +469,9 @@ function FullAttackModel(fatks, mname) {
 	};
 
 	self.formatNameStr = function (name) {
-		if (name == undefined) return "ERROR";
+		if (name == undefined) {
+			throw new Error("Could not get a name for a full attack attribute in " + mname)
+		}
 		if (name.indexOf(mname) != -1) return name.substring(mname.length).trim();
 		return name;
 	};

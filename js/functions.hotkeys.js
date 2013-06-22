@@ -2,14 +2,46 @@
 	var $input = $("input");
 	KeyboardJS.on("g", function () { callIfNotActive($input, genMonster) });
 	KeyboardJS.on("h", function () { callIfNotActive($input, openHpPopup) });
-	KeyboardJS.on("right", function () { callIfNotActive($input, nextMonster) });
-	KeyboardJS.on("left", function () { callIfNotActive($input, prevMonster) });
+	KeyboardJS.on("right", function () {
+		callIfNotActive($input,
+			determineContext({ 'default': nextMonster })
+		);
+	});
+	KeyboardJS.on("left", function () {
+		callIfNotActive($input,
+			determineContext({ 'default': prevMonster })
+		);
+	});
 }
 
 var callIfNotActive = function ($input, call) {
 	if ($input.is(":focus")) return;
 	call();
 }
+
+var determineContext = function (args) {
+	var focused = $("*:focus").attr("id");
+	console.log(focused);
+	switch (focused) {
+		case "curMon":	return switchToAll; 
+		case "allInfo": return switchToCurMon; 
+		default:		return args.default;
+	}
+};
+
+var switchToCurMon = function () {
+	switchActiveTab("curTab");
+	$("#curMon").focus();
+};
+
+var switchToAll = function () {
+	switchActiveTab("allTab");
+	$("#allInfo").focus();
+};
+
+var switchActiveTab = function(to) {
+	$("[href='#"+to+"']").tab('show');
+};
 
 var prevMonster = function () {
 	var $cur = $("#monsterList").children(".active");

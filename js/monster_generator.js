@@ -1843,7 +1843,7 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 	if(exprFor) exprFor = exprFor.trim();
 
 	var nameFor = $("a[href='#" + idFor + "']").html();
-	var is2h = exprFor.indexOf("(2H)") != -1;
+	var is2h = exprFor && exprFor.indexOf("(2H)") != -1;
 	var iters = 1;
 
 	var totalAttacks = atkCtOverride != null ? atkCtOverride : howManyAttacks;
@@ -2310,14 +2310,46 @@ function initHotkeys() {
 	var $input = $("input");
 	KeyboardJS.on("g", function () { callIfNotActive($input, genMonster) });
 	KeyboardJS.on("h", function () { callIfNotActive($input, openHpPopup) });
-	KeyboardJS.on("right", function () { callIfNotActive($input, nextMonster) });
-	KeyboardJS.on("left", function () { callIfNotActive($input, prevMonster) });
+	KeyboardJS.on("right", function () {
+		callIfNotActive($input,
+			determineContext({ 'default': nextMonster })
+		);
+	});
+	KeyboardJS.on("left", function () {
+		callIfNotActive($input,
+			determineContext({ 'default': prevMonster })
+		);
+	});
 }
 
 var callIfNotActive = function ($input, call) {
 	if ($input.is(":focus")) return;
 	call();
 }
+
+var determineContext = function (args) {
+	var focused = $("*:focus").attr("id");
+	console.log(focused);
+	switch (focused) {
+		case "curMon":	return switchToAll; 
+		case "allInfo": return switchToCurMon; 
+		default:		return args.default;
+	}
+};
+
+var switchToCurMon = function () {
+	switchActiveTab("curTab");
+	$("#curMon").focus();
+};
+
+var switchToAll = function () {
+	switchActiveTab("allTab");
+	$("#allInfo").focus();
+};
+
+var switchActiveTab = function(to) {
+	$("[href='#"+to+"']").tab('show');
+};
 
 var prevMonster = function () {
 	var $cur = $("#monsterList").children(".active");
@@ -2860,7 +2892,18 @@ function FullAttackModel(fatks, mname) {
 	self.formatName = function (fatk) {
 		var retStr = [];
 		$.each(fatk, function (i, e) {
-			retStr.push(self.formatNameStr(e.aname || e.wname));
+			console.log(e);
+			var name;
+			try {
+				name = self.formatNameStr(e.spatkname || e.aname || e.wname);
+			} catch (e) {
+				name = "ERROR";
+				var exceptionMessage = e.message + " | DATA = " + JSON.stringify(e);
+				Raven.captureException(exceptionMessage);
+				console.error(exceptionMessage);
+			}
+
+			retStr.push(name);
 		});
 		return retStr.join(", ");
 	};
@@ -2868,13 +2911,13 @@ function FullAttackModel(fatks, mname) {
 	self.toolTip = function (fatk) {
 		var retStr = '';
 		$.each(fatk, function (i, e) {
-			var atkStr = self.formatNameStr(e.aname || e.wname);
+			var atkStr = self.formatNameStr(e.aname || e.wname || e.spatkname);
 			atkStr += ': ';
 			var rollStr = e.hitdc;
-			var eleStr = (rollStr == '0' ? '' : '+') + e.dmgred_hd + ' ' + e.dmgname;
+			var eleStr = (rollStr == '0' || rollStr == null ? '' : '+') + e.dmgred_hd + ' ' + e.dmgname;
 			var count = e.whm || e.atkhm;
 
-			if (rollStr != '0') atkStr += rollStr + "x" + count + " ";
+			if (rollStr != '0' && rollStr != null) atkStr += rollStr + "x" + count + " ";
 			if (e.dmgname != null) atkStr += eleStr;
 			atkStr += "<br />";
 			retStr += atkStr;
@@ -2883,7 +2926,9 @@ function FullAttackModel(fatks, mname) {
 	};
 
 	self.formatNameStr = function (name) {
-		if (name == undefined) return "ERROR";
+		if (name == undefined) {
+			throw new Error("Could not get a name for a full attack attribute in " + mname)
+		}
 		if (name.indexOf(mname) != -1) return name.substring(mname.length).trim();
 		return name;
 	};
@@ -3755,7 +3800,7 @@ function _addNewMonster(monster, uid, name) {
 		});
 	});
 
-	var nice = $('#monsterList').niceScroll({ horizrailenabled: false, zindex: 9, railoffset: { left: -118 } });
+	var nice = $('#monsterList').niceScroll({ horizrailenabled: false, zindex: 9, railalign: "left" });
 	$('#monsterList').css('overflow', 'hidden');
 
 	setupGrids(uid);

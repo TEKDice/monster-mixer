@@ -76,7 +76,7 @@ function _addNewMonster(monster, uid, name) {
 		});
 	});
 
-	var nice = $('#monsterList').niceScroll({ horizrailenabled: false, zindex: 9, railoffset: { left: -118 } });
+	var nice = $('#monsterList').niceScroll({ horizrailenabled: false, zindex: 9, railalign: "left" });
 	$('#monsterList').css('overflow', 'hidden');
 
 	setupGrids(uid);
