@@ -1,12 +1,13 @@
 
 var newLogEntryWidth;
 
-var LogMessage = function (message, classification, uid, atkUid) {
+var LogMessage = function (message, classification, uid, atkUid, bundleId) {
 	return {
 		message: message,
-		type: classification,
+		type: classification || 'none',
 		attack: atkUid,
 		monster: uid,
+		bundle: bundleId,
 		created: now()
 	};
 }
@@ -31,14 +32,14 @@ var LogModel = function () {
 		self.currentSessionId(session);
 	};
 
-	self.addMessage = function (msg, cls, uid, auid) {
+	self.addMessage = function (msg, cls, uid, auid, bundle) {
 		
-		var logEntry = new LogMessage(msg, cls, uid, auid);
+		var logEntry = new LogMessage(msg, cls, uid, auid, bundle);
 
 		if(self.currentMonsterId() == uid) 
 			self.currentMonsterMessages.push(logEntry);
 
-		self.currentSessionMessages.push(logEntry);
+		self.messages[self.currentSessionId()].push(logEntry);
 
 		self.uiLogManagement(logEntry);
 	};
@@ -52,9 +53,18 @@ var LogModel = function () {
 
 		if (self.messages[session]().length == 0) return;
 
-		$.each(self.messages[session], function (i, e) {
+		$.each(self.messages[session](), function (i, e) {
 			if (e.monster == self.currentMonsterId())
 				self.currentMonsterMessages.push(e);
+		});
+	};
+
+	self.removeMessagesByBundle = function (bundle) {
+
+		var session = self.currentSessionId();
+
+		self.messages[session].remove(function (item) {
+			return item.bundle == bundle;
 		});
 	};
 
@@ -62,17 +72,22 @@ var LogModel = function () {
 		return self.currentSessionId() + "_" + message.monster + "_" + message.created;
 	};
 
+	self.uiLookManagement = function () {
+		$(".attackSide").width(newLogEntryWidth);
+		$("#allInfo").animate({ scrollTop: $("#allInfo")[0].scrollHeight }, 50);
+		$("#curMon").animate({ scrollTop: $("#curMon")[0].scrollHeight }, 50);
+		$("#log .tab-pane > div").getNiceScroll().resize();
+	};
+
 	self.uiLogManagement = function (message) {
 		var elementId = self.generateIdForEntry(message);
 		$("#log ." + elementId).find('a').tooltip({ html: true });
-		$(".attackSide").width(newLogEntryWidth);
-		$("#log .tab-pane > div").getNiceScroll().resize();
-		$("#allInfo").animate({ scrollTop: $("#allInfo")[0].scrollHeight }, 50);
-		$("#curMon").animate({ scrollTop: $("#curMon")[0].scrollHeight }, 50);
+		self.uiLookManagement();
 	};
 
 	self.currentMonsterId.subscribe(function (value) {
 		self.recalculateIndividualMonsterMessages();
+		self.uiLookManagement()
 	});
 
 	self.currentSessionId.subscribe(function (value) {
@@ -92,8 +107,8 @@ function initialiseLog() {
 	$("#log .tab-pane > div").css('overflow', 'hidden');
 }
 
-function addToLog(string, selector, uid, atkUid) {
-	logModel.addMessage(string, selector, uid, atkUid);
+function addToLog(string, selector, uid, atkUid, bundle) {
+	logModel.addMessage(string, selector, uid, atkUid, bundle);
 }
 
 function changeLogEntrySize() {

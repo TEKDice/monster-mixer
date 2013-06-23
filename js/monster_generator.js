@@ -1758,6 +1758,7 @@ var Atk = function() {
 	return {
 		monUid: '',
 		uid: null,
+		bundleId: null,
 
 		isAttack: false,
 		isRanged: false,
@@ -1798,33 +1799,34 @@ var Atk = function() {
 			var tA = _rollArray(this.threatAttack._lastRoll);
 			var tH = _rollArray(this.threatHit._lastRoll);
 			var bA = _rollArray(this.rollBaseAtk());
+			var bundle = this.bundleId;
 
 			if (this.isAttack) {
 				if (this.critStatus == 'threat' || this.critStatus == 'success') {
 					addToLog(this.atkPreText + logMessages.critAttempt(this.isFor.name, this.isFor.expr,
-						bH.text, bH.result), this.critStatus, this.isFor.id);
+						bH.text, bH.result), this.critStatus, this.isFor.id, null, bundle);
 
 					addToLog(this.atkPreText + logMessages.critMiss(this.isFor.name, this.isFor.expr,
 						tA.text, tA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid);
+							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid, bundle);
 
 					addToLog(this.atkPreText + logMessages.critSecond(this.isFor.name, this.isFor.expr,
-						tH.text, tH.result), this.critStatus, this.isFor.id);
+						tH.text, tH.result), this.critStatus, this.isFor.id, null, bundle);
 
 					addToLog(this.atkPreText + logMessages.critSuccess(this.isFor.name, this.isFor.expr,
 						bA.text, bA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id);
+							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, null, bundle);
 				} else {
 					addToLog(this.atkPreText + logMessages.initiate(this.isFor.name, this.isFor.expr,
-						bH.text, bH.result), this.critStatus, this.isFor.id);
+						bH.text, bH.result), this.critStatus, this.isFor.id, null, bundle);
 
 					addToLog(this.atkPreText + logMessages.hit(this.isFor.name, this.isFor.expr,
 						bA.text, bA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid);
+							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid, bundle);
 				}
 			} else {
 				addToLog(this.atkPreText + logMessages.skill(this.isFor.name, this.isFor.expr,
-						bA.text, bA.result), this.critStatus, this.isFor.id);
+						bA.text, bA.result), this.critStatus, this.isFor.id, null, bundle);
 			}
 		},
 
@@ -1836,8 +1838,23 @@ var Atk = function() {
 
 var cleaveAtks = {};
 
-function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks, isRanged, threatRange,
-	attackRollString, critMult, isFullAttack, atkCtOverride, atkPosOverride) {
+function doAttack(args) {
+
+	var uid = args.uid;
+	var expr = args.expr;
+	var isAttack = args.isAttack;
+	var spatkFor = args.spatkFor;
+	var exprFor = args.exprFor;
+	var idFor = args.idFor;
+	var howManyAttacks = args.howManyAttacks;
+	var isRanged = args.isRanged;
+	var threatRange = args.threatRange;
+	var attackRollString = args.attackRollString;
+	var critMult = args.critMult;
+	var isFullAttack = args.isFullAttack;
+	var atkCtOverride = args.atkCtOverride;
+	var atkPosOverride = args.atkPosOverride;
+	var bundle = args.bundle;
 
 	if(spatkFor) spatkFor = spatkFor.trim();
 	if(exprFor) exprFor = exprFor.trim();
@@ -1854,6 +1871,7 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 
 		var attackObj = new Atk();
 
+		attackObj.bundleId = bundle;
 		attackObj.monUid = uid;
 		attackObj.isAttack = isAttack;
 		attackObj.isRanged = isRanged;
@@ -1964,6 +1982,8 @@ function attack($rollable, $roller, uid) {
 
 	var attacks = [];
 
+	var bundle = now();
+
 	if(isFullAttack) {
 		var fatk = data.primary;
 
@@ -1971,13 +1991,45 @@ function attack($rollable, $roller, uid) {
 
 		$.each(fatk.rolls, function(i, ee) {
 			var index = ee.refIndex;
-			attacks.push(doAttack(uid, JSON.stringify(ee.tohit), true, fatk.spatk[index], fatk.names[index], 
-				idFor, 1, parseInt(fatk.range[index])!=0, fatk.minCrit[index], JSON.stringify(ee.damage), 
-				fatk.critMult[index], true, fatk.rolls.length, i));
+
+			var atk = doAttack({
+				uid: uid,
+				expr: JSON.stringify(ee.tohit),
+				isAttack: true,
+				spatkFor: fatk.spatk[index],
+				exprFor: fatk.names[index],
+				idFor: idFor,
+				howManyAttacks: 1,
+				isRanged: parseInt(fatk.range[index]) != 0,
+				threatRange: fatk.minCrit[index],
+				attackRollString: JSON.stringify(ee.damage),
+				critMult: fatk.critMult[index],
+				isFullAttack: true,
+				atkCtOverride: fatk.rolls.length,
+				atkPosOverride: i,
+				bundle: bundle
+			});
+			attacks.push(atk);
 		});
 
-	}  else {
-		attacks.push(doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks, isRanged, threatRange, attackRollString, crits, false));
+	} else {
+		var atk = doAttack({
+			uid: uid,
+			expr: expr,
+			isAttack: isAttack,
+			spatkFor: spatkFor,
+			exprFor: exprFor,
+			idFor: idFor,
+			howManyAttacks: howManyAttacks,
+			isRanged: isRanged,
+			threatRange: threatRange,
+			attackRollString: attackRollString,
+			critMult: crits,
+			isFullAttack: false,
+			bundle: bundle
+		});
+		
+		attacks.push(atk);
 	}
 
 	displayAttacks([].concat.apply([], attacks));
@@ -2449,6 +2501,52 @@ function bodyBinding() {
 				if (result)
 					remove(uid, false);
 			});
+		});
+	});
+
+	$(".logInner").livequery(function () {
+
+		var $this = $(this);
+
+		$this.mousemove(function (e) {
+			var $target = $(e.target);
+			if (!$target.hasClass(".logInner")) $target = $target.closest(".logInner");
+			var parentOffset = $target.offset();
+
+			var relX = e.pageX - parentOffset.left;
+			var relY = e.pageY - parentOffset.top;
+		
+			if ($target.width() - relX < 100
+			&& $target.height() - relY > 30)
+				$target.find(".threat-status").removeClass($target.attr('data-type')).addClass('remove').trigger('change-to');
+			else 
+				$target.find(".threat-status").removeClass('remove').addClass($target.attr('data-type')).trigger('change-from');
+		});
+
+		$this.mouseleave(function (e) {
+			$this.find(".threat-status").removeClass('remove').addClass($this.attr('data-type')).trigger('change-from');
+		});
+
+		$this.find(".threat-status").click(function () {
+			var bundle = $this.attr('data-bundle');
+			var bundled = $("#allInfo [data-bundle='" + bundle + "']");
+
+			bootbox.confirm("Are you sure you want to do this? Removing this message will remove a total of " + bundled.size() + " messages.", function (result) {
+				if (result === null || !result) return;
+				logModel.removeMessagesByBundle(bundle);
+			});
+		});
+	});
+
+	$(".threat-status.remove,.threat-status.none").livequery(function () {
+		var $this = $(this);
+
+		$this.on('change-to',function (e) {
+			$this.addClass('btn-link');
+		});
+
+		$this.on('change-from', function (e) {
+			$this.removeClass('btn-link');
 		});
 	});
 
@@ -5185,12 +5283,13 @@ function _makeSelect(monster, data) {
 
 var newLogEntryWidth;
 
-var LogMessage = function (message, classification, uid, atkUid) {
+var LogMessage = function (message, classification, uid, atkUid, bundleId) {
 	return {
 		message: message,
-		type: classification,
+		type: classification || 'none',
 		attack: atkUid,
 		monster: uid,
+		bundle: bundleId,
 		created: now()
 	};
 }
@@ -5215,14 +5314,14 @@ var LogModel = function () {
 		self.currentSessionId(session);
 	};
 
-	self.addMessage = function (msg, cls, uid, auid) {
+	self.addMessage = function (msg, cls, uid, auid, bundle) {
 		
-		var logEntry = new LogMessage(msg, cls, uid, auid);
+		var logEntry = new LogMessage(msg, cls, uid, auid, bundle);
 
 		if(self.currentMonsterId() == uid) 
 			self.currentMonsterMessages.push(logEntry);
 
-		self.currentSessionMessages.push(logEntry);
+		self.messages[self.currentSessionId()].push(logEntry);
 
 		self.uiLogManagement(logEntry);
 	};
@@ -5236,9 +5335,18 @@ var LogModel = function () {
 
 		if (self.messages[session]().length == 0) return;
 
-		$.each(self.messages[session], function (i, e) {
+		$.each(self.messages[session](), function (i, e) {
 			if (e.monster == self.currentMonsterId())
 				self.currentMonsterMessages.push(e);
+		});
+	};
+
+	self.removeMessagesByBundle = function (bundle) {
+
+		var session = self.currentSessionId();
+
+		self.messages[session].remove(function (item) {
+			return item.bundle == bundle;
 		});
 	};
 
@@ -5246,17 +5354,22 @@ var LogModel = function () {
 		return self.currentSessionId() + "_" + message.monster + "_" + message.created;
 	};
 
+	self.uiLookManagement = function () {
+		$(".attackSide").width(newLogEntryWidth);
+		$("#allInfo").animate({ scrollTop: $("#allInfo")[0].scrollHeight }, 50);
+		$("#curMon").animate({ scrollTop: $("#curMon")[0].scrollHeight }, 50);
+		$("#log .tab-pane > div").getNiceScroll().resize();
+	};
+
 	self.uiLogManagement = function (message) {
 		var elementId = self.generateIdForEntry(message);
 		$("#log ." + elementId).find('a').tooltip({ html: true });
-		$(".attackSide").width(newLogEntryWidth);
-		$("#log .tab-pane > div").getNiceScroll().resize();
-		$("#allInfo").animate({ scrollTop: $("#allInfo")[0].scrollHeight }, 50);
-		$("#curMon").animate({ scrollTop: $("#curMon")[0].scrollHeight }, 50);
+		self.uiLookManagement();
 	};
 
 	self.currentMonsterId.subscribe(function (value) {
 		self.recalculateIndividualMonsterMessages();
+		self.uiLookManagement()
 	});
 
 	self.currentSessionId.subscribe(function (value) {
@@ -5276,8 +5389,8 @@ function initialiseLog() {
 	$("#log .tab-pane > div").css('overflow', 'hidden');
 }
 
-function addToLog(string, selector, uid, atkUid) {
-	logModel.addMessage(string, selector, uid, atkUid);
+function addToLog(string, selector, uid, atkUid, bundle) {
+	logModel.addMessage(string, selector, uid, atkUid, bundle);
 }
 
 function changeLogEntrySize() {

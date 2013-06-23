@@ -164,7 +164,7 @@ function build_autocomplete() {
 							<div class="tab-content">
 								<div class="tab-pane active" id="allTab">                    
 									<div id="allInfo" class="logHighlighter" data-bind="foreach: $parent.currentSessionMessages">
-                                        <div data-bind="attr: {'class': 'logInner ' + $parent.generateIdForEntry($data)}">
+                                        <div data-bind="attr: {'class': 'logInner ' + $parent.generateIdForEntry($data), 'data-type': $data.type, 'data-bundle': $data.bundle}">
                                             <div class='attackSide'>
                                                 <p data-bind="attr:{'class':'pull-left '+$data.type, 'data-uid': $data.uid}, html: $data.message"></p>
                                             </div>
@@ -180,7 +180,7 @@ function build_autocomplete() {
 								</div>
 								<div class="tab-pane" id="curTab">                 
 									<div id="curMon" class="logHighlighter" data-bind="foreach: $parent.currentMonsterMessages">
-                                        <div data-bind="attr: {'class': 'logInner ' + $parent.generateIdForEntry($data)}">
+                                        <div data-bind="attr: {'class': 'logInner ' + $parent.generateIdForEntry($data), 'data-type': $data.type, 'data-bundle': $data.bundle}">
                                             <div class='attackSide'>
                                                 <p data-bind="attr:{'class':'pull-left '+$data.type, 'data-uid': $data.uid}, html: $data.message"></p>
                                             </div>

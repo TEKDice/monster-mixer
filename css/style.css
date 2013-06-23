@@ -113,6 +113,10 @@ Log-related
 	content: "[CLEAVE]";
 }
 
+#log div.remove:after {
+	content: "[Remove?]";
+}
+
 html {
 	overflow-x: hidden;
 }

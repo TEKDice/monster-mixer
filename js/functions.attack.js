@@ -14,6 +14,7 @@ var Atk = function() {
 	return {
 		monUid: '',
 		uid: null,
+		bundleId: null,
 
 		isAttack: false,
 		isRanged: false,
@@ -54,33 +55,34 @@ var Atk = function() {
 			var tA = _rollArray(this.threatAttack._lastRoll);
 			var tH = _rollArray(this.threatHit._lastRoll);
 			var bA = _rollArray(this.rollBaseAtk());
+			var bundle = this.bundleId;
 
 			if (this.isAttack) {
 				if (this.critStatus == 'threat' || this.critStatus == 'success') {
 					addToLog(this.atkPreText + logMessages.critAttempt(this.isFor.name, this.isFor.expr,
-						bH.text, bH.result), this.critStatus, this.isFor.id);
+						bH.text, bH.result), this.critStatus, this.isFor.id, null, bundle);
 
 					addToLog(this.atkPreText + logMessages.critMiss(this.isFor.name, this.isFor.expr,
 						tA.text, tA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid);
+							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid, bundle);
 
 					addToLog(this.atkPreText + logMessages.critSecond(this.isFor.name, this.isFor.expr,
-						tH.text, tH.result), this.critStatus, this.isFor.id);
+						tH.text, tH.result), this.critStatus, this.isFor.id, null, bundle);
 
 					addToLog(this.atkPreText + logMessages.critSuccess(this.isFor.name, this.isFor.expr,
 						bA.text, bA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id);
+							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, null, bundle);
 				} else {
 					addToLog(this.atkPreText + logMessages.initiate(this.isFor.name, this.isFor.expr,
-						bH.text, bH.result), this.critStatus, this.isFor.id);
+						bH.text, bH.result), this.critStatus, this.isFor.id, null, bundle);
 
 					addToLog(this.atkPreText + logMessages.hit(this.isFor.name, this.isFor.expr,
 						bA.text, bA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid);
+							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid, bundle);
 				}
 			} else {
 				addToLog(this.atkPreText + logMessages.skill(this.isFor.name, this.isFor.expr,
-						bA.text, bA.result), this.critStatus, this.isFor.id);
+						bA.text, bA.result), this.critStatus, this.isFor.id, null, bundle);
 			}
 		},
 
@@ -92,8 +94,23 @@ var Atk = function() {
 
 var cleaveAtks = {};
 
-function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks, isRanged, threatRange,
-	attackRollString, critMult, isFullAttack, atkCtOverride, atkPosOverride) {
+function doAttack(args) {
+
+	var uid = args.uid;
+	var expr = args.expr;
+	var isAttack = args.isAttack;
+	var spatkFor = args.spatkFor;
+	var exprFor = args.exprFor;
+	var idFor = args.idFor;
+	var howManyAttacks = args.howManyAttacks;
+	var isRanged = args.isRanged;
+	var threatRange = args.threatRange;
+	var attackRollString = args.attackRollString;
+	var critMult = args.critMult;
+	var isFullAttack = args.isFullAttack;
+	var atkCtOverride = args.atkCtOverride;
+	var atkPosOverride = args.atkPosOverride;
+	var bundle = args.bundle;
 
 	if(spatkFor) spatkFor = spatkFor.trim();
 	if(exprFor) exprFor = exprFor.trim();
@@ -110,6 +127,7 @@ function doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks,
 
 		var attackObj = new Atk();
 
+		attackObj.bundleId = bundle;
 		attackObj.monUid = uid;
 		attackObj.isAttack = isAttack;
 		attackObj.isRanged = isRanged;
@@ -220,6 +238,8 @@ function attack($rollable, $roller, uid) {
 
 	var attacks = [];
 
+	var bundle = now();
+
 	if(isFullAttack) {
 		var fatk = data.primary;
 
@@ -227,13 +247,45 @@ function attack($rollable, $roller, uid) {
 
 		$.each(fatk.rolls, function(i, ee) {
 			var index = ee.refIndex;
-			attacks.push(doAttack(uid, JSON.stringify(ee.tohit), true, fatk.spatk[index], fatk.names[index], 
-				idFor, 1, parseInt(fatk.range[index])!=0, fatk.minCrit[index], JSON.stringify(ee.damage), 
-				fatk.critMult[index], true, fatk.rolls.length, i));
+
+			var atk = doAttack({
+				uid: uid,
+				expr: JSON.stringify(ee.tohit),
+				isAttack: true,
+				spatkFor: fatk.spatk[index],
+				exprFor: fatk.names[index],
+				idFor: idFor,
+				howManyAttacks: 1,
+				isRanged: parseInt(fatk.range[index]) != 0,
+				threatRange: fatk.minCrit[index],
+				attackRollString: JSON.stringify(ee.damage),
+				critMult: fatk.critMult[index],
+				isFullAttack: true,
+				atkCtOverride: fatk.rolls.length,
+				atkPosOverride: i,
+				bundle: bundle
+			});
+			attacks.push(atk);
 		});
 
-	}  else {
-		attacks.push(doAttack(uid, expr, isAttack, spatkFor, exprFor, idFor, howManyAttacks, isRanged, threatRange, attackRollString, crits, false));
+	} else {
+		var atk = doAttack({
+			uid: uid,
+			expr: expr,
+			isAttack: isAttack,
+			spatkFor: spatkFor,
+			exprFor: exprFor,
+			idFor: idFor,
+			howManyAttacks: howManyAttacks,
+			isRanged: isRanged,
+			threatRange: threatRange,
+			attackRollString: attackRollString,
+			critMult: crits,
+			isFullAttack: false,
+			bundle: bundle
+		});
+		
+		attacks.push(atk);
 	}
 
 	displayAttacks([].concat.apply([], attacks));
