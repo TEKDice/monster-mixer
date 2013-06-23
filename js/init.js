@@ -34,6 +34,8 @@ $(function() {
 	bodyBinding();
 
 	loadFilters();
+	
+	initializeMonsterModel();
 
 	initialiseSessionManager();
 
@@ -50,7 +52,7 @@ function bodyBinding() {
 
 	$("body").on('click', '.reroll-hp', function () {
 		var uid = $(this).attr('data-uid');
-		monsters[uid].hp.hp().reroll();
+		monsters.getMonster(uid).hp.hp().reroll();
 	});
 
 	$("body").on('click', '.left', prevMonster);

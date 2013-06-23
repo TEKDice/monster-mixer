@@ -26,7 +26,7 @@ function addFeatFunctions() {
 	$("[data-cleave-uid]").livequery(function () {
 		$(this).click(function () {
 			var cleaveAtk = cleaveAtks[$(this).attr('data-cleave-uid')];
-			if (!monsters[cleaveAtk.monUid].feats.hasFeat("Great Cleave"))
+			if (!monsters.getMonster(cleaveAtk.monUid).feats.hasFeat("Great Cleave"))
 				cleaveAtk.uid = null;
 			cleaveAtk.critStatus = 'cleave';
 			cleaveAtk.baseHit.roll();
@@ -39,85 +39,88 @@ function addFeatFunctions() {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
 		$this.click(function () {
-			var props = monsters[uid].ac.arrayProps();
+			var props = monsters.getMonster(uid).ac.arrayProps();
 			if ($this.is(":checked")) {
 				props["Dodge"] = 1;
-				monsters[uid].ac.arrayProps(props);
+				monsters.getMonster(uid).ac.arrayProps(props);
 			} else {
 				props["Dodge"] = 0;
-				monsters[uid].ac.arrayProps(props);
+				monsters.getMonster(uid).ac.arrayProps(props);
 			}
 		})
 	});
 	$("[data-spfunc='Rage']").livequery(function () {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
+		var monster = monsters.getMonster(uid);
 		$this.click(function () {
-			var props = monsters[uid].ac.arrayProps();
-			var str = monsters[uid].stats.str.base.val();
-			var con = monsters[uid].stats.con.base.val();
+			var props = monster.ac.arrayProps();
+			var str = monster.stats.str.base.val();
+			var con = monster.stats.con.base.val();
 			if ($this.is(":checked")) {
 				props["Rage"] = -2;
-				monsters[uid].ac.arrayProps(props);
+				monster.ac.arrayProps(props);
 
-				monsters[uid].stats.str.base.val(str + 4);
-				monsters[uid].stats.con.base.val(con + 4);
+				monster.stats.str.base.val(str + 4);
+				monster.stats.con.base.val(con + 4);
 
 			} else {
 				props["Rage"] = 0;
-				monsters[uid].ac.arrayProps(props);
+				monster.ac.arrayProps(props);
 
-				monsters[uid].stats.str.base.val(str - 4);
-				monsters[uid].stats.con.base.val(con - 4);
+				monster.stats.str.base.val(str - 4);
+				monster.stats.con.base.val(con - 4);
 			}
 		})
 	});
 	$("[data-spfunc='Frenzy']").livequery(function () {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
+		var monster = monsters.getMonster(uid);
 		$this.click(function () {
-			var props = monsters[uid].ac.arrayProps();
-			var str = monsters[uid].stats.str.base.val();
-			var con = monsters[uid].stats.con.base.val();
-			var will = monsters[uid].stats.will.base.val();
+			var props = monster.ac.arrayProps();
+			var str = monster.stats.str.base.val();
+			var con = monster.stats.con.base.val();
+			var will = monster.stats.will.base.val();
 
 			if ($this.is(":checked")) {
 				props["Frenzy"] = -2;
-				monsters[uid].ac.arrayProps(props);
+				monster.ac.arrayProps(props);
 
-				monsters[uid].stats.str.base.val(str + 4);
-				monsters[uid].stats.con.base.val(con + 4);
-				monsters[uid].stats.will.base.val(will + 2);
+				monster.stats.str.base.val(str + 4);
+				monster.stats.con.base.val(con + 4);
+				monster.stats.will.base.val(will + 2);
 
 			} else {
 				props["Frenzy"] = 0;
-				monsters[uid].ac.arrayProps(props);
+				monster.ac.arrayProps(props);
 
-				monsters[uid].stats.str.base.val(str - 4);
-				monsters[uid].stats.con.base.val(con - 4);
-				monsters[uid].stats.will.base.val(will - 2);
+				monster.stats.str.base.val(str - 4);
+				monster.stats.con.base.val(con - 4);
+				monster.stats.will.base.val(will - 2);
 			}
 		})
 	});
 	$("[data-spfunc='Charge']").livequery(function () {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
+		var monster = monsters.getMonster(uid);
 		$this.click(function () {
-			var props = monsters[uid].ac.arrayProps();
-			monsters[uid].roller.invalidate();
+			var props = monster.ac.arrayProps();
+			monster.roller.invalidate();
 
 			if ($this.is(":checked")) {
 				props["Charge"] = -2;
-				monsters[uid].ac.arrayProps(props);
+				monster.ac.arrayProps(props);
 			} else {
 				props["Charge"] = 0;
-				monsters[uid].ac.arrayProps(props);
+				monster.ac.arrayProps(props);
 			}
 		})
 	});
 
 	var applyNumFunc = function (uid, scope) {
-		var bab = monsters[uid].stats.bab.base.val();
+		var bab = monsters.getMonster(uid).stats.bab.base.val();
 		var conv = { "Power Attack": bab, "Combat Expertise": 5, "Cleave": 4 };
 		var val = parseInt(scope.val());
 
@@ -130,9 +133,9 @@ function addFeatFunctions() {
 		scope.val(val);
 
 		if (func == 'Combat Expertise') {
-			var props = monsters[uid].ac.arrayProps();
+			var props = monsters.getMonster(uid).ac.arrayProps();
 			props["Combat Expertise"] = val;
-			monsters[uid].ac.arrayProps(props);
+			monsters.getMonster(uid).ac.arrayProps(props);
 		}
 
 	};
@@ -141,7 +144,7 @@ function addFeatFunctions() {
 		var val = parseInt(scope.val());
 		val = clamp(-8, 8, val);
 		scope.val(val);
-		monsters[uid].roller.invalidate();
+		monsters.getMonster(uid).roller.invalidate();
 	};
 
 	$(".applyNum[data-spfunc][type='number']").livequery(function () {

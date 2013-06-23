@@ -2040,7 +2040,7 @@ function displayAttacks(attacks) {
 	for (var atk = 0; atk < attacks.length; atk++) {
 		var curAtk = attacks[atk];
 
-		if (!curAtk.isRanged && curAtk.isAttack && monsters[curAtk.monUid].feats.hasFeat("Cleave")) {
+		if (!curAtk.isRanged && curAtk.isAttack && monsters.getMonster(curAtk.monUid).feats.hasFeat("Cleave")) {
 			var newUid = new Date().getTime();
 			curAtk.uid = newUid;
 			cleaveAtks[curAtk.uid] = curAtk;
@@ -2069,7 +2069,7 @@ function _critStatus(roll, i, threatRange, canThreat) {
 function _buildRoll(uid, roll, isAttack, isRanged, isDamage) {
 	var retRoll = $.parseJSON(roll);
 
-	var featModel = monsters[uid].feats;
+	var featModel = monsters.getMonster(uid).feats;
 
 	if(isAttack) {
 		if(featModel.hasFeat('Combat Expertise')) {
@@ -2159,7 +2159,7 @@ function addFeatFunctions() {
 	$("[data-cleave-uid]").livequery(function () {
 		$(this).click(function () {
 			var cleaveAtk = cleaveAtks[$(this).attr('data-cleave-uid')];
-			if (!monsters[cleaveAtk.monUid].feats.hasFeat("Great Cleave"))
+			if (!monsters.getMonster(cleaveAtk.monUid).feats.hasFeat("Great Cleave"))
 				cleaveAtk.uid = null;
 			cleaveAtk.critStatus = 'cleave';
 			cleaveAtk.baseHit.roll();
@@ -2172,85 +2172,88 @@ function addFeatFunctions() {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
 		$this.click(function () {
-			var props = monsters[uid].ac.arrayProps();
+			var props = monsters.getMonster(uid).ac.arrayProps();
 			if ($this.is(":checked")) {
 				props["Dodge"] = 1;
-				monsters[uid].ac.arrayProps(props);
+				monsters.getMonster(uid).ac.arrayProps(props);
 			} else {
 				props["Dodge"] = 0;
-				monsters[uid].ac.arrayProps(props);
+				monsters.getMonster(uid).ac.arrayProps(props);
 			}
 		})
 	});
 	$("[data-spfunc='Rage']").livequery(function () {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
+		var monster = monsters.getMonster(uid);
 		$this.click(function () {
-			var props = monsters[uid].ac.arrayProps();
-			var str = monsters[uid].stats.str.base.val();
-			var con = monsters[uid].stats.con.base.val();
+			var props = monster.ac.arrayProps();
+			var str = monster.stats.str.base.val();
+			var con = monster.stats.con.base.val();
 			if ($this.is(":checked")) {
 				props["Rage"] = -2;
-				monsters[uid].ac.arrayProps(props);
+				monster.ac.arrayProps(props);
 
-				monsters[uid].stats.str.base.val(str + 4);
-				monsters[uid].stats.con.base.val(con + 4);
+				monster.stats.str.base.val(str + 4);
+				monster.stats.con.base.val(con + 4);
 
 			} else {
 				props["Rage"] = 0;
-				monsters[uid].ac.arrayProps(props);
+				monster.ac.arrayProps(props);
 
-				monsters[uid].stats.str.base.val(str - 4);
-				monsters[uid].stats.con.base.val(con - 4);
+				monster.stats.str.base.val(str - 4);
+				monster.stats.con.base.val(con - 4);
 			}
 		})
 	});
 	$("[data-spfunc='Frenzy']").livequery(function () {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
+		var monster = monsters.getMonster(uid);
 		$this.click(function () {
-			var props = monsters[uid].ac.arrayProps();
-			var str = monsters[uid].stats.str.base.val();
-			var con = monsters[uid].stats.con.base.val();
-			var will = monsters[uid].stats.will.base.val();
+			var props = monster.ac.arrayProps();
+			var str = monster.stats.str.base.val();
+			var con = monster.stats.con.base.val();
+			var will = monster.stats.will.base.val();
 
 			if ($this.is(":checked")) {
 				props["Frenzy"] = -2;
-				monsters[uid].ac.arrayProps(props);
+				monster.ac.arrayProps(props);
 
-				monsters[uid].stats.str.base.val(str + 4);
-				monsters[uid].stats.con.base.val(con + 4);
-				monsters[uid].stats.will.base.val(will + 2);
+				monster.stats.str.base.val(str + 4);
+				monster.stats.con.base.val(con + 4);
+				monster.stats.will.base.val(will + 2);
 
 			} else {
 				props["Frenzy"] = 0;
-				monsters[uid].ac.arrayProps(props);
+				monster.ac.arrayProps(props);
 
-				monsters[uid].stats.str.base.val(str - 4);
-				monsters[uid].stats.con.base.val(con - 4);
-				monsters[uid].stats.will.base.val(will - 2);
+				monster.stats.str.base.val(str - 4);
+				monster.stats.con.base.val(con - 4);
+				monster.stats.will.base.val(will - 2);
 			}
 		})
 	});
 	$("[data-spfunc='Charge']").livequery(function () {
 		var $this = $(this);
 		var uid = $this.attr('data-uid');
+		var monster = monsters.getMonster(uid);
 		$this.click(function () {
-			var props = monsters[uid].ac.arrayProps();
-			monsters[uid].roller.invalidate();
+			var props = monster.ac.arrayProps();
+			monster.roller.invalidate();
 
 			if ($this.is(":checked")) {
 				props["Charge"] = -2;
-				monsters[uid].ac.arrayProps(props);
+				monster.ac.arrayProps(props);
 			} else {
 				props["Charge"] = 0;
-				monsters[uid].ac.arrayProps(props);
+				monster.ac.arrayProps(props);
 			}
 		})
 	});
 
 	var applyNumFunc = function (uid, scope) {
-		var bab = monsters[uid].stats.bab.base.val();
+		var bab = monsters.getMonster(uid).stats.bab.base.val();
 		var conv = { "Power Attack": bab, "Combat Expertise": 5, "Cleave": 4 };
 		var val = parseInt(scope.val());
 
@@ -2263,9 +2266,9 @@ function addFeatFunctions() {
 		scope.val(val);
 
 		if (func == 'Combat Expertise') {
-			var props = monsters[uid].ac.arrayProps();
+			var props = monsters.getMonster(uid).ac.arrayProps();
 			props["Combat Expertise"] = val;
-			monsters[uid].ac.arrayProps(props);
+			monsters.getMonster(uid).ac.arrayProps(props);
 		}
 
 	};
@@ -2274,7 +2277,7 @@ function addFeatFunctions() {
 		var val = parseInt(scope.val());
 		val = clamp(-8, 8, val);
 		scope.val(val);
-		monsters[uid].roller.invalidate();
+		monsters.getMonster(uid).roller.invalidate();
 	};
 
 	$(".applyNum[data-spfunc][type='number']").livequery(function () {
@@ -2359,23 +2362,22 @@ function formatCR(cr) {
 };
 ///#source 1 1 /monsters/js/functions.hotkeys.js
 function initHotkeys() {
-	var $input = $("input");
-	KeyboardJS.on("g", function () { callIfNotActive($input, genMonster) });
-	KeyboardJS.on("h", function () { callIfNotActive($input, openHpPopup) });
+	KeyboardJS.on("g", function () { callIfNotActive(genMonster) });
+	KeyboardJS.on("h", function () { callIfNotActive(openHpPopup) });
 	KeyboardJS.on("right", function () {
-		callIfNotActive($input,
+		callIfNotActive(
 			determineContext({ 'default': nextMonster })
 		);
 	});
 	KeyboardJS.on("left", function () {
-		callIfNotActive($input,
+		callIfNotActive(
 			determineContext({ 'default': prevMonster })
 		);
 	});
 }
 
-var callIfNotActive = function ($input, call) {
-	if ($input.is(":focus")) return;
+var callIfNotActive = function (call) {
+	if ($("input:focus").length > 0) return;
 	call();
 }
 
@@ -2470,6 +2472,8 @@ $(function() {
 	bodyBinding();
 
 	loadFilters();
+	
+	initializeMonsterModel();
 
 	initialiseSessionManager();
 
@@ -2486,7 +2490,7 @@ function bodyBinding() {
 
 	$("body").on('click', '.reroll-hp', function () {
 		var uid = $(this).attr('data-uid');
-		monsters[uid].hp.hp().reroll();
+		monsters.getMonster(uid).hp.hp().reroll();
 	});
 
 	$("body").on('click', '.left', prevMonster);
@@ -2552,7 +2556,204 @@ function bodyBinding() {
 
 	addFeatFunctions();
 }
-///#source 1 1 /monsters/js/models.js
+///#source 1 1 /monsters/js/monster.js
+
+var monsterCount = 0;
+
+function addNewMonster(monster) {
+
+	$(".alert").hide();
+	$("#monsterList").show();
+
+	var uid = new Date().getTime();
+
+	_addNewMonster(monster, uid);
+
+	modifyHp(uid, 0, true);
+
+	_hidePopup();
+
+	sortMonsters();
+
+	saveMonsters();
+
+	return uid;
+
+}
+
+function _addNewMonster(monster, uid, name) {
+
+	var $li = $("<li/>");
+
+	var realName = monster == null ? name : monster.data[0].name;
+
+	var $a = $("<a/>", {
+		href: "#" + uid
+	}).html("[<span class='logCount'>" + (++monsterCount) + "</span>] " + realName).attr('data-toggle', 'tab').attr('data-uid', uid);
+
+	$a.appendTo($li);
+
+	var newHtml = $("#dummyData").html();
+	$("#monsterData").append(newHtml);
+
+	var $parent = $(".tab-pane[data-for='none']").not("#dummyData > [data-for='none']");
+
+	$parent.attr('id', uid);
+	$parent.attr('data-for', uid);
+
+	$parent.find("*[id*='1A']").each(function () {
+		$(this).attr('id', $(this).attr('id').replace('1A', uid));
+	});
+
+	$parent.find("*[data-uid*='1A']").each(function () {
+		$(this).attr('data-uid', $(this).attr('data-uid').replace('1A', uid));
+	});
+
+	if (!(uid in monsters.allMonsters())) {
+		monsters.addMonster(uid, new MonsterModel(uid, monster));
+	}
+
+	var monsterModel = monsters.getMonster(uid);
+
+	ko.applyBindings(monsterModel, $$(uid)[0]);
+
+	var popover = $("#dummyModifiable").html();
+	popover = popover.split("1A").join(uid);
+	$("#health_" + uid).popover({
+		html: true,
+		placement: 'bottom',
+		content: popover,
+		title: "Modify HP"
+	}).click(function () {
+		$(".modify-hp").click(function () {
+			var modHp = parseInt($$(uid + "_hp_mod").val());
+			if ($(this).hasClass('subtract')) {
+				modifyHp(uid, -modHp);
+			} else {
+				modifyHp(uid, modHp);
+			}
+		});
+	});
+
+	var nice = $('#monsterList').niceScroll({ horizrailenabled: false, zindex: 9, railalign: "left" });
+	$('#monsterList').css('overflow', 'hidden');
+
+	setupGrids(uid);
+
+	tabChangeScrollbars($a);
+
+	setupRollables($parent);
+
+	$li.appendTo($("#monsterList"));
+
+	$a.tab('show');
+}
+
+function sortMonsters() {
+	var mylist = $('#monsterList');
+	var listitems = mylist.children('li').get();
+	listitems.sort(function (a, b) {
+		var leftId = $(a).children("a").attr('data-uid');
+		var rightId = $(b).children("a").attr('data-uid');
+
+		var left = parseInt($$(leftId + "_init").text());
+		var right = parseInt($$(rightId + "_init").text());
+		//var left = monsters[leftId].initiative.init.num().val();
+		//var right = monsters[rightId].initiative.init.num().val();
+
+		if ((right-left) == 0) {
+			var leftDex = monsters.getMonster(leftId).stats.dex.bonus();
+			var rightDex = monsters.getMonster(rightId).stats.dex.bonus();
+
+			//TODO if rightDex-leftDex <0 sort by alpha
+
+			return rightDex - leftDex;
+		}
+
+		return right - left;
+	});
+	$.each(listitems, function (idx, itm) { mylist.append(itm); });
+}
+
+function modifyHp(uid, mod, notLog) {
+	if (isNaN(mod)) return;
+	monsters.getMonster(uid).hp.mod().relative(mod);
+
+	var curHp = monsters.getMonster(uid).hp.total();
+	var maxHp = monsters.getMonster(uid).hp.max();
+	var $monsterNode = $("[href=#" + uid + "]");
+	var monsterName = $monsterNode.html();
+
+	var hpPerc = Math.round((curHp/maxHp)*100);
+	if(hpPerc <= 15)	  $monsterNode.attr('class','hp-critical');
+	else if(hpPerc <= 50) $monsterNode.attr('class','hp-warning');
+	else 				  $monsterNode.attr('class','hp-good');
+
+	if(!notLog)
+		addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp. ("+curHp+"/"+maxHp+") ["+hpPerc+"%]");
+
+	saveMonsters();
+
+	if(curHp <= 0) {		
+		bootbox.confirm("It looks like "+$monsterNode.text()+" has died. Would you like to mark it as 'killed'?", function(result) {
+			if(result)
+				remove(uid, true);
+		});
+	}
+}
+
+function remove(uid, killed) {
+	var $node = $("#monsterList a[href='#"+uid+"']");
+	var pos = parseInt($node.find('.logCount').text());
+
+	var count = 0;
+
+	$("#monsterList li").each(function(i, e) {
+		count++;
+	});
+	
+	var $a = $("#monsterList li a").first();
+
+	$a.tab('show');
+
+	if (count > 0) {
+		$a = $("#monsterList li:nth-child("+(pos-1)+")").find("a");
+		$a.tab('show');
+	} else {
+		if(killed) {
+			$("#winAlert").show();
+		} else {
+			$("#genAlert").show();
+		}
+		$("#monsterList").hide();
+	}
+
+	$node.parent().remove();
+	$(".tab-pane[data-for='" + uid + "']").remove();
+	$("div[data-nice-uid='" + uid + "']").hide();
+	$("#" + uid + "_log").remove();
+
+	saveMonsters();
+
+	updateLogNumbers(uid, killed);
+}
+
+function updateLogNumbers(uid, killed) {
+	$("#allInfo div p span.logCount").each(function(i,e){
+		var uid = $(this).closest('[data-uid]').attr('data-uid');
+
+		if($(this).text() == 'DEAD' || $(this).text() == 'GONE');
+
+		var $monNode = $("#monsterList a[href='#"+uid+"']");
+
+		if($monNode.length == 0) {
+			$(this).text(killed ? 'DEAD' : 'GONE');
+		} else {
+			//$(this).text($monNode.find('.logCount').text());
+		}
+	});
+}
+///#source 1 1 /monsters/js/monster.models.js
 
 var MonsterModel = function (uid, data) {
 	var self = this;
@@ -3819,209 +4020,6 @@ function SpeedModel(speeds) {
 	this.speeds = ko.observableArray(speeds);
 }
 //#endregion
-///#source 1 1 /monsters/js/monster.js
-
-var monsterCount = 0;
-
-var monsters = {};
-
-function addNewMonster(monster) {
-
-	$(".alert").hide();
-	$("#monsterList").show();
-
-	var uid = new Date().getTime();
-
-	_addNewMonster(monster, uid);
-
-	modifyHp(uid, 0, true);
-
-	_hidePopup();
-
-	sortMonsters();
-
-	saveMonsters();
-
-	return uid;
-
-}
-
-function _addNewMonster(monster, uid, name) {
-
-	var $li = $("<li/>");
-
-	var realName = monster == null ? name : monster.data[0].name;
-
-	var $a = $("<a/>", {
-		href: "#" + uid
-	}).html("[<span class='logCount'>" + (++monsterCount) + "</span>] " + realName).attr('data-toggle', 'tab').attr('data-uid', uid);
-
-	$a.appendTo($li);
-
-	var newHtml = $("#dummyData").html();
-	$("#monsterData").append(newHtml);
-
-	var $parent = $(".tab-pane[data-for='none']").not("#dummyData > [data-for='none']");
-
-	$parent.attr('id', uid);
-	$parent.attr('data-for', uid);
-
-	$parent.find("*[id*='1A']").each(function () {
-		$(this).attr('id', $(this).attr('id').replace('1A', uid));
-	});
-
-	$parent.find("*[data-uid*='1A']").each(function () {
-		$(this).attr('data-uid', $(this).attr('data-uid').replace('1A', uid));
-	});
-
-	if (!(uid in monsters)) {
-		monsters[uid] = new MonsterModel(uid, monster);
-	}
-
-	ko.applyBindings(monsters[uid], $$(uid)[0]);
-
-	var popover = $("#dummyModifiable").html();
-	popover = popover.split("1A").join(uid);
-	$("#health_" + uid).popover({
-		html: true,
-		placement: 'bottom',
-		content: popover,
-		title: "Modify HP"
-	}).click(function () {
-		$(".modify-hp").click(function () {
-			var modHp = parseInt($$(uid + "_hp_mod").val());
-			if ($(this).hasClass('subtract')) {
-				modifyHp(uid, -modHp);
-			} else {
-				modifyHp(uid, modHp);
-			}
-		});
-	});
-
-	var nice = $('#monsterList').niceScroll({ horizrailenabled: false, zindex: 9, railalign: "left" });
-	$('#monsterList').css('overflow', 'hidden');
-
-	setupGrids(uid);
-
-	tabChangeScrollbars($a);
-
-	setupRollables($parent);
-
-	var newLog = $("#dummyLog").html();
-	$("#curMon").append(newLog);
-
-	var $pLog = $(".log[data-for='none']").not("#dummyLog > [data-for='none']");
-	$pLog.attr('id', uid + "_log").attr('data-for', uid);
-
-	$li.appendTo($("#monsterList"));
-
-	$a.tab('show');
-}
-
-function sortMonsters() {
-	var mylist = $('#monsterList');
-	var listitems = mylist.children('li').get();
-	listitems.sort(function (a, b) {
-		var leftId = $(a).children("a").attr('data-uid');
-		var rightId = $(b).children("a").attr('data-uid');
-
-		var left = parseInt($$(leftId + "_init").text());
-		var right = parseInt($$(rightId + "_init").text());
-		//var left = monsters[leftId].initiative.init.num().val();
-		//var right = monsters[rightId].initiative.init.num().val();
-
-		if ((right-left) == 0) {
-			var leftDex = monsters[leftId].stats.dex.bonus();
-			var rightDex = monsters[rightId].stats.dex.bonus();
-
-			//TODO if rightDex-leftDex <0 sort by alpha
-
-			return rightDex - leftDex;
-		}
-
-		return right - left;
-	});
-	$.each(listitems, function (idx, itm) { mylist.append(itm); });
-}
-
-function modifyHp(uid, mod, notLog) {
-	if (isNaN(mod)) return;
-	monsters[uid].hp.mod().relative(mod);
-
-	var curHp = monsters[uid].hp.total();
-	var maxHp = monsters[uid].hp.max();
-	var $monsterNode = $("[href=#" + uid + "]");
-	var monsterName = $monsterNode.html();
-
-	var hpPerc = Math.round((curHp/maxHp)*100);
-	if(hpPerc <= 15)	  $monsterNode.attr('class','hp-critical');
-	else if(hpPerc <= 50) $monsterNode.attr('class','hp-warning');
-	else 				  $monsterNode.attr('class','hp-good');
-
-	if(!notLog)
-		addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp. ("+curHp+"/"+maxHp+") ["+hpPerc+"%]");
-
-	saveMonsters();
-
-	if(curHp <= 0) {		
-		bootbox.confirm("It looks like "+$monsterNode.text()+" has died. Would you like to mark it as 'killed'?", function(result) {
-			if(result)
-				remove(uid, true);
-		});
-	}
-}
-
-function remove(uid, killed) {
-	var $node = $("#monsterList a[href='#"+uid+"']");
-	var pos = parseInt($node.find('.logCount').text());
-
-	var count = 0;
-
-	$("#monsterList li").each(function(i, e) {
-		count++;
-	});
-	
-	var $a = $("#monsterList li a").first();
-
-	$a.tab('show');
-
-	if (count > 0) {
-		$a = $("#monsterList li:nth-child("+(pos-1)+")").find("a");
-		$a.tab('show');
-	} else {
-		if(killed) {
-			$("#winAlert").show();
-		} else {
-			$("#genAlert").show();
-		}
-		$("#monsterList").hide();
-	}
-
-	$node.parent().remove();
-	$(".tab-pane[data-for='" + uid + "']").remove();
-	$("div[data-nice-uid='" + uid + "']").hide();
-	$("#" + uid + "_log").remove();
-
-	saveMonsters();
-
-	updateLogNumbers(uid, killed);
-}
-
-function updateLogNumbers(uid, killed) {
-	$("#allInfo div p span.logCount").each(function(i,e){
-		var uid = $(this).closest('[data-uid]').attr('data-uid');
-
-		if($(this).text() == 'DEAD' || $(this).text() == 'GONE');
-
-		var $monNode = $("#monsterList a[href='#"+uid+"']");
-
-		if($monNode.length == 0) {
-			$(this).text(killed ? 'DEAD' : 'GONE');
-		} else {
-			//$(this).text($monNode.find('.logCount').text());
-		}
-	});
-}
 ///#source 1 1 /monsters/js/sync.global.js
 
 var hasReloadedSession = false;
@@ -4058,7 +4056,7 @@ function saveMonsters() {
 	$("#monsterList li a").each(function (i, e) {
 		var uid = $(this).attr('data-uid');
 
-		var arrMon = monsters[uid];
+		var arrMon = monsters.getMonster(uid);
 
 		var mon = {
 			id: arrMon.id,
@@ -4099,9 +4097,9 @@ function loadMonsters(monsterSet) {
 				var uid = addNewMonster(mon);
 				var oldMonData = monsterSet[i];
 
-				monsters[uid].hp.hp().num().val(oldMonData.maxHp);
+				monsters.getMonster(uid).hp.hp().num().val(oldMonData.maxHp);
 				modifyHp(uid, oldMonData.modHp, true);
-				monsters[uid].initiative.init.num().val(oldMonData.init);
+				monsters.getMonster(uid).initiative.init.num().val(oldMonData.init);
 
 				setupGrids(uid);
 				sortMonsters();
@@ -4124,7 +4122,7 @@ function removeAllMonsters() {
 	_hideAllMiniboxScrollbars();
 }
 
-///#source 1 1 /monsters/js/sync.sessions.models.js
+///#source 1 1 /monsters/js/sync.models.js
 
 var SESSIONS_VARIABLE = "sessions";
 var LAST_SESSION_VARIABLE = "lastSessionId";
@@ -4850,7 +4848,7 @@ function setupRollables($parent) {
 					$set.removeClass('info');
 					$(this).addClass('info');
 				}
-				monsters[uid].roller.invalidate();
+				monsters.getMonster(uid).roller.invalidate();
 			});
 		});
 
@@ -5294,6 +5292,58 @@ var LogMessage = function (message, classification, uid, atkUid, bundleId) {
 	};
 }
 
+var logModel;
+
+function initialiseLog() {
+	logModel = new LogModel();
+	logModel.startSession(sessionManager.currentSessionId());
+	ko.applyBindings(logModel, $("#log")[0]);
+
+	$("#log .tab-pane > div").niceScroll({ horizrailenabled: false });
+	$("#log .tab-pane > div").css('overflow', 'hidden');
+}
+
+function addToLog(string, selector, uid, atkUid, bundle) {
+	logModel.addMessage(string, selector, uid, atkUid, bundle);
+}
+
+function changeLogEntrySize() {
+	newLogEntryWidth = $("#allInfo").width() - 70;
+	$("#log .attackSide").width(newLogEntryWidth);
+}
+
+var logMessages = {
+	skill: function(ent, att, text, num) {
+		return ent + " rolled <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a> on its \""+att+"\" check."
+	},
+
+	hit: function(ent, att, text, num) {
+		return ent + " hits with \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a> damage."
+	},
+
+	initiate: function(ent, att, text, num) {
+		return ent + " attacked with \""+att+"\" rolling <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+	},
+
+	critAttempt: function(ent, att, text, num) {
+		return ent + " attempted to crit using \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+	},
+
+	critSecond: function(ent, att, text, num) {
+		return ent + " rolls critical confirm using \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+	},
+
+	critMiss: function(ent, att, text, num) {
+		return ">> If "+ent+" fails the critical, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+	},
+
+	critSuccess: function(ent, att, text, num) {
+		return ">> If "+ent+" confirms the critical, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
+	}
+};
+///#source 1 1 /monsters/js/ui.log.models.js
+
+
 var LogModel = function () {
 	var self = this;
 
@@ -5377,56 +5427,35 @@ var LogModel = function () {
 	});
 
 }
+///#source 1 1 /monsters/js/ui.monsterlist.models.js
 
-var logModel;
 
-function initialiseLog() {
-	logModel = new LogModel();
-	logModel.startSession(sessionManager.currentSessionId());
-	ko.applyBindings(logModel, $("#log")[0]);
+var MonsterListModel = function () {
+	var self = this;
 
-	$("#log .tab-pane > div").niceScroll({ horizrailenabled: false });
-	$("#log .tab-pane > div").css('overflow', 'hidden');
-}
+	self.monsters = ko.observable({});
 
-function addToLog(string, selector, uid, atkUid, bundle) {
-	logModel.addMessage(string, selector, uid, atkUid, bundle);
-}
+	self.getMonster = function(uid) {
+		return self.monsters()[uid];
+	};
 
-function changeLogEntrySize() {
-	newLogEntryWidth = $("#allInfo").width() - 70;
-	$("#log .attackSide").width(newLogEntryWidth);
-}
+	self.addMonster = function (uid, monster) {
+		var monsters = self.monsters();
+		if (!monsters) monsters = {};
+		monsters[uid] = monster;
+		self.monsters(monsters);
+	};
 
-var logMessages = {
-	skill: function(ent, att, text, num) {
-		return ent + " rolled <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a> on its \""+att+"\" check."
-	},
-
-	hit: function(ent, att, text, num) {
-		return ent + " hits with \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a> damage."
-	},
-
-	initiate: function(ent, att, text, num) {
-		return ent + " attacked with \""+att+"\" rolling <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
-	},
-
-	critAttempt: function(ent, att, text, num) {
-		return ent + " attempted to crit using \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
-	},
-
-	critSecond: function(ent, att, text, num) {
-		return ent + " rolls critical confirm using \""+att+"\" for <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
-	},
-
-	critMiss: function(ent, att, text, num) {
-		return ">> If "+ent+" fails the critical, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
-	},
-
-	critSuccess: function(ent, att, text, num) {
-		return ">> If "+ent+" confirms the critical, the damage is <a rel='tooltip' href='#' title='"+text+"'>"+num+"</a>."
-	}
+	self.allMonsters = function () {
+		return self.monsters();
+	};
 };
+
+var monsters;
+
+function initializeMonsterModel() {
+	monsters = new MonsterListModel();
+}
 ///#source 1 1 /monsters/js/ui.notifier.js
 var Notifier = {
 	decodeObject: function() {

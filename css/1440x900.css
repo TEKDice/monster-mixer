@@ -16,3 +16,7 @@
 .shorten-total:before {
 	content: "Total";
 }
+
+.shorten-encounter:before {
+	content: "Encounter";
+}

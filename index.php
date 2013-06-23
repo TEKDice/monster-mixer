@@ -122,12 +122,7 @@ function build_autocomplete() {
 							</div>
 						</div>
 						<div id="encounterStats" class="row-fluid">
-								<button class="btn span2 disabled">Encounter CR</button>
-								<button class="btn span2 disabled"><span class='shorten-average'></span> Level</button>
-								<button class="btn span2 disabled" data-toggle='modal' data-target="#damageStatisticsModal"><span class='shorten-damage'></span> Stats</button>
-								<button class="btn span2 disabled"><span class='shorten-average'></span> <span class='shorten-damage'></span> Taken</button>
-								<button class="btn span2 disabled"><span class='shorten-total'></span> <span class='shorten-damage'></span> Dealt</button>
-								<button class="btn span2 disabled"><span class='shorten-total'></span> <span class='shorten-damage'></span> Taken</button>
+							<button class="btn span2 offset10" data-toggle='modal' data-target="#damageStatisticsModal"><span class='shorten-encounter'></span> Stats</button>
 						</div>
 					</div>
 
@@ -207,7 +202,7 @@ function build_autocomplete() {
 			</div>
 
 			<div id="dummyData" style="display: none;">
-				<div class="tab-pane" data-for="none" data-bind="with: monsters[$element.id]">
+				<div class="tab-pane" data-for="none" data-bind="with: monsters.getMonster($element.id)">
 					<div class="header lead" style="margin-bottom: 7px">
 						<span class="pull-left">Initiative: <span class="reg-has-tt" data-uid="1A" id="1A_init" data-bind="text: $parent.initiative.totalInit(), bootstrapTooltip: {title: $parent.initiative.toolTip(), html: true, placement: 'bottom'}"></span></span>
 						<span class="pull-right">CR: <span id="1A_cr" data-bind="text: $parent.formatCR($parent.monsterBaseStats['cr'])"></span>&nbsp;<i class='icon-trash delete' id="1A_remove" data-uid="1A"></i></span>
@@ -727,24 +722,39 @@ function build_autocomplete() {
 				</div>
 			</div>
 		</div>
+        
 		<div id='damageStatisticsModal' class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="session" aria-hidden="true" >
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-				<h3 id="totalDamageHeader">Damage Statistics</h3>
+				<h3 id="totalDamageHeader">Encounter Statistics</h3>
 			</div>
 			<div class="modal-body">
+                <h4 class="pagination-centered">Static Statistics</h4>
 				<table class='table'>
-					<thead><tr><td></td><td>Total</td><td>Average</td></tr></thead>
 					<tbody>
 						<tr>
-							<td>Taken</td>
-							<td id="totalDamageTaken">0</td>
-							<td id="averageDamageTaken">0</td>
+							<th>Average CR</th>
+							<td>0</td>
 						</tr>
 						<tr>
-							<td>Dealt</td>
-							<td id="totalDamageDealt">0</td>
-							<td id="averageDamageDealt">0</td>
+							<th>Total Monsters</th>
+							<td>0</td>
+						</tr>
+					</tbody>
+				</table>
+                <h4 class="pagination-centered">Dynamic Statistics</h4>
+				<table class='table'>
+					<thead><tr><th></th><th>Total</th><th>Average</th></tr></thead>
+					<tbody>
+						<tr>
+							<th>Taken</th>
+							<td >0</td>
+							<td >0</td>
+						</tr>
+						<tr>
+							<th>Dealt</th>
+							<td>0</td>
+							<td>0</td>
 						</tr>
 					</tbody>
 				</table>
@@ -753,6 +763,7 @@ function build_autocomplete() {
 				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 			</div>
 		</div>
+        
 		<div style="display: none; visibility: hidden">
 			<div id="advGenTemplate">
 				<div class='control-group'>

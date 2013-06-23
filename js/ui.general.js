@@ -45,7 +45,7 @@ function setupRollables($parent) {
 					$set.removeClass('info');
 					$(this).addClass('info');
 				}
-				monsters[uid].roller.invalidate();
+				monsters.getMonster(uid).roller.invalidate();
 			});
 		});
 

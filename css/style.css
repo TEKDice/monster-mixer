@@ -73,6 +73,10 @@ Encounter Stats
 	content: "Ttl.";
 }
 
+.shorten-encounter:before {
+	content: "Enc.";
+}
+
 /*
 --------------------------------
 

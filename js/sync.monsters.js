@@ -8,7 +8,7 @@ function saveMonsters() {
 	$("#monsterList li a").each(function (i, e) {
 		var uid = $(this).attr('data-uid');
 
-		var arrMon = monsters[uid];
+		var arrMon = monsters.getMonster(uid);
 
 		var mon = {
 			id: arrMon.id,
@@ -49,9 +49,9 @@ function loadMonsters(monsterSet) {
 				var uid = addNewMonster(mon);
 				var oldMonData = monsterSet[i];
 
-				monsters[uid].hp.hp().num().val(oldMonData.maxHp);
+				monsters.getMonster(uid).hp.hp().num().val(oldMonData.maxHp);
 				modifyHp(uid, oldMonData.modHp, true);
-				monsters[uid].initiative.init.num().val(oldMonData.init);
+				monsters.getMonster(uid).initiative.init.num().val(oldMonData.init);
 
 				setupGrids(uid);
 				sortMonsters();

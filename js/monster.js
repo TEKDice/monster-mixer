@@ -1,8 +1,6 @@
 
 var monsterCount = 0;
 
-var monsters = {};
-
 function addNewMonster(monster) {
 
 	$(".alert").hide();
@@ -52,11 +50,13 @@ function _addNewMonster(monster, uid, name) {
 		$(this).attr('data-uid', $(this).attr('data-uid').replace('1A', uid));
 	});
 
-	if (!(uid in monsters)) {
-		monsters[uid] = new MonsterModel(uid, monster);
+	if (!(uid in monsters.allMonsters())) {
+		monsters.addMonster(uid, new MonsterModel(uid, monster));
 	}
 
-	ko.applyBindings(monsters[uid], $$(uid)[0]);
+	var monsterModel = monsters.getMonster(uid);
+
+	ko.applyBindings(monsterModel, $$(uid)[0]);
 
 	var popover = $("#dummyModifiable").html();
 	popover = popover.split("1A").join(uid);
@@ -85,12 +85,6 @@ function _addNewMonster(monster, uid, name) {
 
 	setupRollables($parent);
 
-	var newLog = $("#dummyLog").html();
-	$("#curMon").append(newLog);
-
-	var $pLog = $(".log[data-for='none']").not("#dummyLog > [data-for='none']");
-	$pLog.attr('id', uid + "_log").attr('data-for', uid);
-
 	$li.appendTo($("#monsterList"));
 
 	$a.tab('show');
@@ -109,8 +103,8 @@ function sortMonsters() {
 		//var right = monsters[rightId].initiative.init.num().val();
 
 		if ((right-left) == 0) {
-			var leftDex = monsters[leftId].stats.dex.bonus();
-			var rightDex = monsters[rightId].stats.dex.bonus();
+			var leftDex = monsters.getMonster(leftId).stats.dex.bonus();
+			var rightDex = monsters.getMonster(rightId).stats.dex.bonus();
 
 			//TODO if rightDex-leftDex <0 sort by alpha
 
@@ -124,10 +118,10 @@ function sortMonsters() {
 
 function modifyHp(uid, mod, notLog) {
 	if (isNaN(mod)) return;
-	monsters[uid].hp.mod().relative(mod);
+	monsters.getMonster(uid).hp.mod().relative(mod);
 
-	var curHp = monsters[uid].hp.total();
-	var maxHp = monsters[uid].hp.max();
+	var curHp = monsters.getMonster(uid).hp.total();
+	var maxHp = monsters.getMonster(uid).hp.max();
 	var $monsterNode = $("[href=#" + uid + "]");
 	var monsterName = $monsterNode.html();
 

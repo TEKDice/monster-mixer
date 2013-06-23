@@ -18,16 +18,18 @@
   <file>/monsters/js/functions.global.js</file>
 	<file>/monsters/js/functions.hotkeys.js</file>
   <file>/monsters/js/init.js</file>
-  <file>/monsters/js/models.js</file>
   <file>/monsters/js/monster.js</file>
+  <file>/monsters/js/monster.models.js</file>
   <file>/monsters/js/sync.global.js</file>
   <file>/monsters/js/sync.monsters.js</file>
-	<file>/monsters/js/sync.sessions.models.js</file>
+	<file>/monsters/js/sync.models.js</file>
   <file>/monsters/js/sync.status.js</file>
   <file>/monsters/js/ui.filters.js</file>
   <file>/monsters/js/ui.general.js</file>
   <file>/monsters/js/ui.generator.js</file>
   <file>/monsters/js/ui.log.js</file>
+	<file>/monsters/js/ui.log.models.js</file>
+	<file>/monsters/js/ui.monsterlist.models.js</file>
 	<file>/monsters/js/ui.notifier.js</file>
   <file>/monsters/js/ui.tooltiptext.js</file>
 </bundle>

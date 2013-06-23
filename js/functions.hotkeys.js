@@ -1,21 +1,20 @@
 ﻿function initHotkeys() {
-	var $input = $("input");
-	KeyboardJS.on("g", function () { callIfNotActive($input, genMonster) });
-	KeyboardJS.on("h", function () { callIfNotActive($input, openHpPopup) });
+	KeyboardJS.on("g", function () { callIfNotActive(genMonster) });
+	KeyboardJS.on("h", function () { callIfNotActive(openHpPopup) });
 	KeyboardJS.on("right", function () {
-		callIfNotActive($input,
+		callIfNotActive(
 			determineContext({ 'default': nextMonster })
 		);
 	});
 	KeyboardJS.on("left", function () {
-		callIfNotActive($input,
+		callIfNotActive(
 			determineContext({ 'default': prevMonster })
 		);
 	});
 }
 
-var callIfNotActive = function ($input, call) {
-	if ($input.is(":focus")) return;
+var callIfNotActive = function (call) {
+	if ($("input:focus").length > 0) return;
 	call();
 }
 

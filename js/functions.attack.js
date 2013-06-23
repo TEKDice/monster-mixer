@@ -296,7 +296,7 @@ function displayAttacks(attacks) {
 	for (var atk = 0; atk < attacks.length; atk++) {
 		var curAtk = attacks[atk];
 
-		if (!curAtk.isRanged && curAtk.isAttack && monsters[curAtk.monUid].feats.hasFeat("Cleave")) {
+		if (!curAtk.isRanged && curAtk.isAttack && monsters.getMonster(curAtk.monUid).feats.hasFeat("Cleave")) {
 			var newUid = new Date().getTime();
 			curAtk.uid = newUid;
 			cleaveAtks[curAtk.uid] = curAtk;
@@ -325,7 +325,7 @@ function _critStatus(roll, i, threatRange, canThreat) {
 function _buildRoll(uid, roll, isAttack, isRanged, isDamage) {
 	var retRoll = $.parseJSON(roll);
 
-	var featModel = monsters[uid].feats;
+	var featModel = monsters.getMonster(uid).feats;
 
 	if(isAttack) {
 		if(featModel.hasFeat('Combat Expertise')) {
