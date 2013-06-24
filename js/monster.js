@@ -24,15 +24,7 @@ function addNewMonster(monster) {
 
 function _addNewMonster(monster, uid, name) {
 
-	var $li = $("<li/>");
-
 	var realName = monster == null ? name : monster.data[0].name;
-
-	var $a = $("<a/>", {
-		href: "#" + uid
-	}).html("[<span class='logCount'>" + (++monsterCount) + "</span>] " + realName).attr('data-toggle', 'tab').attr('data-uid', uid);
-
-	$a.appendTo($li);
 
 	var newHtml = $("#dummyData").html();
 	$("#monsterData").append(newHtml);
@@ -79,13 +71,15 @@ function _addNewMonster(monster, uid, name) {
 	var nice = $('#monsterList').niceScroll({ horizrailenabled: false, zindex: 9, railalign: "left" });
 	$('#monsterList').css('overflow', 'hidden');
 
-	setupGrids(uid);
+	//setupGrids(uid);
+
+	var $a = $("a[data-uid='" + uid + "']");
 
 	tabChangeScrollbars($a);
 
-	setupRollables($parent);
+	//setupRollables($parent);
 
-	$li.appendTo($("#monsterList"));
+	//$li.appendTo($("#monsterList"));
 
 	$a.tab('show');
 }
@@ -145,13 +139,9 @@ function modifyHp(uid, mod, notLog) {
 
 function remove(uid, killed) {
 	var $node = $("#monsterList a[href='#"+uid+"']");
-	var pos = parseInt($node.find('.logCount').text());
+	var pos = parseInt($node.find('.logCount').attr('data-pos'));
 
-	var count = 0;
-
-	$("#monsterList li").each(function(i, e) {
-		count++;
-	});
+	var count = $("#monsterList li").size();
 	
 	var $a = $("#monsterList li a").first();
 
@@ -172,7 +162,6 @@ function remove(uid, killed) {
 	$node.parent().remove();
 	$(".tab-pane[data-for='" + uid + "']").remove();
 	$("div[data-nice-uid='" + uid + "']").hide();
-	$("#" + uid + "_log").remove();
 
 	saveMonsters();
 

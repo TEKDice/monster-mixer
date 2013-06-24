@@ -33,7 +33,7 @@ function setupRoller() {
 function setupRollables($parent) {
 	var uid = $parent.find("[data-uid]").attr('data-uid');
 
-	$parent.find(".rollable").each(function () {
+	$parent.find(".rollable:not(.set-up)").each(function () {
 
 		var $set = $(this).find("tr:not(.unrollable)");
 		$set.each(function () {
@@ -60,6 +60,7 @@ function setupRollables($parent) {
 			attack($rollable, $(this), uid);
 		});
 		$(this).append($roller);
+		$(this).addClass("set-up");
 	});
 
 }
@@ -92,14 +93,15 @@ function tabChangeScrollbars($a) {
 
 		$("#curMon > div[data-for='" + uid + "']").show().siblings().hide();
 
+		monsters.currentMonsterId(uid);
+
 		//hide the popup if it's visible
 		_hidePopup();
 
 		$("[data-nice-uid='" + uid + "']").show();
 
 		setupGrids(uid);
-
-		logModel.currentMonsterId(uid);
+		setupRollables($$(uid));
 	});
 }
 

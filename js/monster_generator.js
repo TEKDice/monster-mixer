@@ -2472,13 +2472,13 @@ $(function() {
 	bodyBinding();
 
 	loadFilters();
-	
-	initializeMonsterModel();
 
 	initialiseSessionManager();
 
+	initializeMonsterModel();
+
 	initialiseLog();
-	
+
 	changeLogEntrySize();
 	
 	overlayLoadingGif();
@@ -2583,15 +2583,7 @@ function addNewMonster(monster) {
 
 function _addNewMonster(monster, uid, name) {
 
-	var $li = $("<li/>");
-
 	var realName = monster == null ? name : monster.data[0].name;
-
-	var $a = $("<a/>", {
-		href: "#" + uid
-	}).html("[<span class='logCount'>" + (++monsterCount) + "</span>] " + realName).attr('data-toggle', 'tab').attr('data-uid', uid);
-
-	$a.appendTo($li);
 
 	var newHtml = $("#dummyData").html();
 	$("#monsterData").append(newHtml);
@@ -2638,13 +2630,15 @@ function _addNewMonster(monster, uid, name) {
 	var nice = $('#monsterList').niceScroll({ horizrailenabled: false, zindex: 9, railalign: "left" });
 	$('#monsterList').css('overflow', 'hidden');
 
-	setupGrids(uid);
+	//setupGrids(uid);
+
+	var $a = $("a[data-uid='" + uid + "']");
 
 	tabChangeScrollbars($a);
 
-	setupRollables($parent);
+	//setupRollables($parent);
 
-	$li.appendTo($("#monsterList"));
+	//$li.appendTo($("#monsterList"));
 
 	$a.tab('show');
 }
@@ -2704,13 +2698,9 @@ function modifyHp(uid, mod, notLog) {
 
 function remove(uid, killed) {
 	var $node = $("#monsterList a[href='#"+uid+"']");
-	var pos = parseInt($node.find('.logCount').text());
+	var pos = parseInt($node.find('.logCount').attr('data-pos'));
 
-	var count = 0;
-
-	$("#monsterList li").each(function(i, e) {
-		count++;
-	});
+	var count = $("#monsterList li").size();
 	
 	var $a = $("#monsterList li a").first();
 
@@ -2731,7 +2721,6 @@ function remove(uid, killed) {
 	$node.parent().remove();
 	$(".tab-pane[data-for='" + uid + "']").remove();
 	$("div[data-nice-uid='" + uid + "']").hide();
-	$("#" + uid + "_log").remove();
 
 	saveMonsters();
 
@@ -4836,7 +4825,7 @@ function setupRoller() {
 function setupRollables($parent) {
 	var uid = $parent.find("[data-uid]").attr('data-uid');
 
-	$parent.find(".rollable").each(function () {
+	$parent.find(".rollable:not(.set-up)").each(function () {
 
 		var $set = $(this).find("tr:not(.unrollable)");
 		$set.each(function () {
@@ -4863,6 +4852,7 @@ function setupRollables($parent) {
 			attack($rollable, $(this), uid);
 		});
 		$(this).append($roller);
+		$(this).addClass("set-up");
 	});
 
 }
@@ -4895,14 +4885,15 @@ function tabChangeScrollbars($a) {
 
 		$("#curMon > div[data-for='" + uid + "']").show().siblings().hide();
 
+		monsters.currentMonsterId(uid);
+
 		//hide the popup if it's visible
 		_hidePopup();
 
 		$("[data-nice-uid='" + uid + "']").show();
 
 		setupGrids(uid);
-
-		logModel.currentMonsterId(uid);
+		setupRollables($$(uid));
 	});
 }
 
@@ -5417,7 +5408,7 @@ var LogModel = function () {
 		self.uiLookManagement();
 	};
 
-	self.currentMonsterId.subscribe(function (value) {
+	monsters.currentMonsterId.subscribe(function (value) {
 		self.recalculateIndividualMonsterMessages();
 		self.uiLookManagement()
 	});
@@ -5439,6 +5430,8 @@ var MonsterListModel = function () {
 		return self.monsters()[uid];
 	};
 
+	self.currentMonsterId = ko.observable();
+
 	self.addMonster = function (uid, monster) {
 		var monsters = self.monsters();
 		if (!monsters) monsters = {};
@@ -5449,12 +5442,31 @@ var MonsterListModel = function () {
 	self.allMonsters = function () {
 		return self.monsters();
 	};
+
+	self.toArray = ko.computed(function () {
+		var monsterObj = self.monsters();
+
+		var array = [];
+
+		for (var key in monsterObj) {
+			array.push(monsterObj[key]);
+		}
+
+		return array;
+	});
+
+	self.currentMonster = ko.computed(function () {
+		return self.getMonster(self.currentMonsterId());
+	});
+
 };
 
 var monsters;
+var monsterList;
 
 function initializeMonsterModel() {
-	monsters = new MonsterListModel();
+	monsterList = monsters = new MonsterListModel();
+	ko.applyBindings(monsterList, $("#monsterListCont")[0]);
 }
 ///#source 1 1 /monsters/js/ui.notifier.js
 var Notifier = {

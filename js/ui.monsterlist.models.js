@@ -9,6 +9,8 @@ var MonsterListModel = function () {
 		return self.monsters()[uid];
 	};
 
+	self.currentMonsterId = ko.observable();
+
 	self.addMonster = function (uid, monster) {
 		var monsters = self.monsters();
 		if (!monsters) monsters = {};
@@ -19,10 +21,29 @@ var MonsterListModel = function () {
 	self.allMonsters = function () {
 		return self.monsters();
 	};
+
+	self.toArray = ko.computed(function () {
+		var monsterObj = self.monsters();
+
+		var array = [];
+
+		for (var key in monsterObj) {
+			array.push(monsterObj[key]);
+		}
+
+		return array;
+	});
+
+	self.currentMonster = ko.computed(function () {
+		return self.getMonster(self.currentMonsterId());
+	});
+
 };
 
 var monsters;
+var monsterList;
 
 function initializeMonsterModel() {
-	monsters = new MonsterListModel();
+	monsterList = monsters = new MonsterListModel();
+	ko.applyBindings(monsterList, $("#monsterListCont")[0]);
 }

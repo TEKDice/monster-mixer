@@ -109,8 +109,14 @@ function build_autocomplete() {
 				<div class="row-fluid" id="main">
 					<div class="span9" id="monstersContainer">
 						<div class="row-fluid">
-							<div class="tabbable tabs-left" id="monsterListCont">
-								<ul class="nav nav-tabs" id="monsterList"></ul>
+							<div class="tabbable tabs-left" id="monsterListCont" data-bind="with: monsterList">
+								<ul class="nav nav-tabs" id="monsterList" data-bind="foreach: $parent.toArray()">
+                                    <li>
+                                        <a data-toggle="tab" data-bind="attr: {'href': '#'+$data.uid, 'data-uid': $data.uid}">
+                                            <span class="logCount" data-bind="html: '['+(++monsterCount)+'] '+$data.stats.name(), attr: {'data-pos': monsterCount}"></span>
+                                        </a>
+                                    </li>
+                                </ul>
 								<div class="tab-content" id="monsterData">
 									<div class="alert" id="genAlert">
 										<strong>Hey!</strong> You should click the arrow above this to generate some monsters.
@@ -193,11 +199,6 @@ function build_autocomplete() {
 						</div>
 					</div>
 
-				</div>
-			</div>
-
-			<div id="dummyLog" style="display: none;">
-				<div class="log" data-for="none">
 				</div>
 			</div>
 

@@ -73,7 +73,7 @@ var LogModel = function () {
 		self.uiLookManagement();
 	};
 
-	self.currentMonsterId.subscribe(function (value) {
+	monsters.currentMonsterId.subscribe(function (value) {
 		self.recalculateIndividualMonsterMessages();
 		self.uiLookManagement()
 	});

@@ -34,13 +34,13 @@ $(function() {
 	bodyBinding();
 
 	loadFilters();
-	
-	initializeMonsterModel();
 
 	initialiseSessionManager();
 
+	initializeMonsterModel();
+
 	initialiseLog();
-	
+
 	changeLogEntrySize();
 	
 	overlayLoadingGif();
