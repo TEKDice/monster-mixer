@@ -2630,15 +2630,9 @@ function _addNewMonster(monster, uid, name) {
 	var nice = $('#monsterList').niceScroll({ horizrailenabled: false, zindex: 9, railalign: "left" });
 	$('#monsterList').css('overflow', 'hidden');
 
-	//setupGrids(uid);
-
 	var $a = $("a[data-uid='" + uid + "']");
 
 	tabChangeScrollbars($a);
-
-	//setupRollables($parent);
-
-	//$li.appendTo($("#monsterList"));
 
 	$a.tab('show');
 }
@@ -2700,15 +2694,18 @@ function remove(uid, killed) {
 	var $node = $("#monsterList a[href='#"+uid+"']");
 	var pos = parseInt($node.find('.logCount').attr('data-pos'));
 
-	var count = $("#monsterList li").size();
-	
-	var $a = $("#monsterList li a").first();
+	var count = $("#monsterList li").size() - 1;
 
-	$a.tab('show');
+	var selPos;
 
 	if (count > 0) {
-		$a = $("#monsterList li:nth-child("+(pos-1)+")").find("a");
-		$a.tab('show');
+
+		var $liElem = $node.parent();
+
+		var listPos = $liElem.parent().children().index($liElem);
+
+		selPos = listPos == 0 ? 1 : listPos;
+		
 	} else {
 		if(killed) {
 			$("#winAlert").show();
@@ -2721,6 +2718,9 @@ function remove(uid, killed) {
 	$node.parent().remove();
 	$(".tab-pane[data-for='" + uid + "']").remove();
 	$("div[data-nice-uid='" + uid + "']").hide();
+
+	if (selPos)
+		$("#monsterList li:nth-child(" + (selPos) + ")").find("a").tab('show');
 
 	saveMonsters();
 
