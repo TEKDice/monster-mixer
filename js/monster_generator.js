@@ -1803,30 +1803,60 @@ var Atk = function() {
 
 			if (this.isAttack) {
 				if (this.critStatus == 'threat' || this.critStatus == 'success') {
-					addToLog(this.atkPreText + logMessages.critAttempt(this.isFor.name, this.isFor.expr,
-						bH.text, bH.result), this.critStatus, this.isFor.id, null, bundle);
+					addToLog({
+						message: this.atkPreText + logMessages.critAttempt(this.isFor.name, this.isFor.expr, bH.text, bH.result),
+						selector: this.critStatus,
+						uid: this.isFor.id,
+						bundle: bundle
+					});
 
-					addToLog(this.atkPreText + logMessages.critMiss(this.isFor.name, this.isFor.expr,
-						tA.text, tA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid, bundle);
+					addToLog({
+						message: this.atkPreText + logMessages.critMiss(this.isFor.name, this.isFor.expr, tA.text, tA.result) + (this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''),
+						selector: this.critStatus,
+						uid: this.isFor.id,
+						bundle: bundle,
+						atkUid: this.uid,
+						damage: tA.result
+					});
 
-					addToLog(this.atkPreText + logMessages.critSecond(this.isFor.name, this.isFor.expr,
-						tH.text, tH.result), this.critStatus, this.isFor.id, null, bundle);
+					addToLog({
+						message: this.atkPreText + logMessages.critSecond(this.isFor.name, this.isFor.expr, tH.text, tH.result),
+						selector: this.critStatus,
+						uid: this.isFor.id,
+						bundle: bundle
+					});
 
-					addToLog(this.atkPreText + logMessages.critSuccess(this.isFor.name, this.isFor.expr,
-						bA.text, bA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, null, bundle);
+					addToLog({
+						message: this.atkPreText + logMessages.critSuccess(this.isFor.name, this.isFor.expr, bA.text, bA.result) + (this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''),
+						selector: this.critStatus,
+						uid: this.isFor.id,
+						bundle: bundle,
+						damage: bA.result
+					});
 				} else {
-					addToLog(this.atkPreText + logMessages.initiate(this.isFor.name, this.isFor.expr,
-						bH.text, bH.result), this.critStatus, this.isFor.id, null, bundle);
+					addToLog({
+						message: this.atkPreText + logMessages.initiate(this.isFor.name, this.isFor.expr, bH.text, bH.result),
+						selector: this.critStatus,
+						uid: this.isFor.id,
+						bundle: bundle
+					});
 
-					addToLog(this.atkPreText + logMessages.hit(this.isFor.name, this.isFor.expr,
-						bA.text, bA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid, bundle);
+					addToLog({
+						message: this.atkPreText + logMessages.hit(this.isFor.name, this.isFor.expr, bA.text, bA.result) + (this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''),
+						selector: this.critStatus,
+						uid: this.isFor.id,
+						bundle: bundle,
+						atkUid: this.uid,
+						damage: bA.result
+					});
 				}
 			} else {
-				addToLog(this.atkPreText + logMessages.skill(this.isFor.name, this.isFor.expr,
-						bA.text, bA.result), this.critStatus, this.isFor.id, null, bundle);
+				addToLog({
+					message: this.atkPreText + logMessages.skill(this.isFor.name, this.isFor.expr, bA.text, bA.result),
+					selector: this.critStatus,
+					uid: this.isFor.id,
+					bundle: bundle
+				});
 			}
 		},
 
@@ -2038,13 +2068,15 @@ function attack($rollable, $roller, uid) {
 
 function displayAttacks(attacks) {
 	for (var atk = 0; atk < attacks.length; atk++) {
-		var curAtk = attacks[atk];
+		var curAtk = $.extend(true, {}, attacks[atk]);
 
 		if (!curAtk.isRanged && curAtk.isAttack && monsters.getMonster(curAtk.monUid).feats.hasFeat("Cleave")) {
-			var newUid = new Date().getTime();
+			var newUid = now();
 			curAtk.uid = newUid;
 			cleaveAtks[curAtk.uid] = curAtk;
 		}
+
+		curAtk.bundleId = now();
 
 		curAtk.display();
 	}
@@ -2479,6 +2511,8 @@ $(function() {
 
 	initialiseLog();
 
+	initializeStatistics();
+
 	changeLogEntrySize();
 	
 	overlayLoadingGif();
@@ -2522,16 +2556,16 @@ function bodyBinding() {
 		
 			if ($target.width() - relX < 100
 			&& $target.height() - relY > 30)
-				$target.find(".threat-status").removeClass($target.attr('data-type')).addClass('remove').trigger('change-to');
+				$target.find(".threat-status:not(.health-mod)").removeClass($target.attr('data-type')).addClass('remove').trigger('change-to');
 			else 
-				$target.find(".threat-status").removeClass('remove').addClass($target.attr('data-type')).trigger('change-from');
+				$target.find(".threat-status:not(.health-mod)").removeClass('remove').addClass($target.attr('data-type')).trigger('change-from');
 		});
 
 		$this.mouseleave(function (e) {
-			$this.find(".threat-status").removeClass('remove').addClass($this.attr('data-type')).trigger('change-from');
+			$this.find(".threat-status:not(.health-mod)").removeClass('remove').addClass($this.attr('data-type')).trigger('change-from');
 		});
 
-		$this.find(".threat-status").click(function () {
+		$this.find(".threat-status:not(.health-mod)").click(function () {
 			var bundle = $this.attr('data-bundle');
 			var bundled = $("#allInfo [data-bundle='" + bundle + "']");
 
@@ -2678,7 +2712,11 @@ function modifyHp(uid, mod, notLog) {
 	else 				  $monsterNode.attr('class','hp-good');
 
 	if(!notLog)
-		addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp. ("+curHp+"/"+maxHp+") ["+hpPerc+"%]");
+		addToLog({
+			message: monsterName + (mod < 0 ? " lost " : " gained ") +Math.abs(mod) + " hp. ("+curHp+"/"+maxHp+") ["+hpPerc+"%]",
+			selector: 'health-mod',
+			damage: Math.abs(mod)
+		});
 
 	saveMonsters();
 
@@ -2776,6 +2814,7 @@ var MonsterModel = function (uid, data) {
 		space: self.monsterBaseStats['space_taken'],
 		treasure: self.monsterBaseStats['treasure'],
 
+		cr: ko.observable(parseFloat(self.monsterBaseStats.cr)),
 		size: ko.observable(self.monsterBaseStats.size),
 		category: ko.observable(self.monsterBaseStats.category),
 		name: ko.observable(self.monsterBaseStats.name)
@@ -4813,7 +4852,7 @@ function setupRoller() {
 		var toRoll = $(this).val();
 		var roll = rollExpression(toRoll);
 		if (roll === 0) return;
-		addToLog("Custom roll: " + toRoll + " rolled " + roll + ".", "customRoll");
+		addToLog({message:"Custom roll: " + toRoll + " rolled " + roll + ".",selector:"custom"});
 	});
 
 	$("#dice button").click(function () {
@@ -5272,13 +5311,14 @@ function _makeSelect(monster, data) {
 
 var newLogEntryWidth;
 
-var LogMessage = function (message, classification, uid, atkUid, bundleId) {
+var LogMessage = function (message, classification, uid, atkUid, bundleId, damage) {
 	return {
 		message: message,
-		type: classification || 'none',
+		type: classification,
 		attack: atkUid,
 		monster: uid,
 		bundle: bundleId,
+		damage: damage,
 		created: now()
 	};
 }
@@ -5294,8 +5334,15 @@ function initialiseLog() {
 	$("#log .tab-pane > div").css('overflow', 'hidden');
 }
 
-function addToLog(string, selector, uid, atkUid, bundle) {
-	logModel.addMessage(string, selector, uid, atkUid, bundle);
+function addToLog(args) {
+	var string = args.message;
+	var selector = args.selector;
+	var uid = args.uid;
+	var atkUid = args.atkUid;
+	var bundle = args.bundle;
+	var damage = args.damage;
+
+	logModel.addMessage(string, selector, uid, atkUid, bundle, damage);
 }
 
 function changeLogEntrySize() {
@@ -5355,9 +5402,9 @@ var LogModel = function () {
 		self.currentSessionId(session);
 	};
 
-	self.addMessage = function (msg, cls, uid, auid, bundle) {
+	self.addMessage = function (msg, cls, uid, auid, bundle, damage) {
 		
-		var logEntry = new LogMessage(msg, cls, uid, auid, bundle);
+		var logEntry = new LogMessage(msg, cls, uid, auid, bundle, damage);
 
 		if(self.currentMonsterId() == uid) 
 			self.currentMonsterMessages.push(logEntry);
@@ -5462,6 +5509,8 @@ var MonsterListModel = function () {
 };
 
 var monsters;
+
+//why? because javascript said so.
 var monsterList;
 
 function initializeMonsterModel() {
@@ -5501,6 +5550,74 @@ var Notifier = {
 	}
 };
 
+///#source 1 1 /monsters/js/ui.statistics.models.js
+
+var StatisticsModel = function () {
+	var self = this;
+
+	self.averageCR = ko.observable(0);
+	self.monsterCount = ko.observable(0);
+
+	self.totalDamageGiven = ko.observable(0);
+	self.averageDamageGiven = ko.observable(0);
+
+	self.totalDamageTaken = ko.observable(0);
+	self.averageDamageTaken = ko.observable(0);
+
+	self.isApproximating = ko.observable(false);
+
+	monsterList.monsters.subscribe(function (newValue) {
+		self.monsterCount(Object.keys(newValue).length);
+
+		var unAvgCR = 0;
+
+		for (var prop in newValue) {
+			unAvgCR += newValue[prop].stats.cr();
+		}
+
+		self.averageCR((unAvgCR / self.monsterCount()).toFixed(2));
+	});
+
+	logModel.currentSessionMessages.subscribe(function (newValue) {
+
+		var totalDmgGiven = 0;
+		var totalDmgTaken = 0;
+
+		$.each(newValue, function (i, e) {
+			if (typeof e.damage !== 'number') return;
+
+			if (e.type == "health-mod")
+				totalDmgTaken += e.damage;
+			else
+				totalDmgGiven += e.damage;
+
+			if (e.type == "threat" || e.type == "success")
+				self.isApproximating(true);
+		});
+
+		self.totalDamageTaken(totalDmgTaken);
+		self.totalDamageGiven(totalDmgGiven);
+
+		self.averageDamageGiven((totalDmgGiven / self.monsterCount()).toFixed(2));
+		self.averageDamageTaken((totalDmgTaken / self.monsterCount()).toFixed(2));
+	});
+
+	self.formatAverageDamageGiven = ko.computed(function () {
+		return (self.isApproximating() ? "~" : "") + self.averageDamageGiven() + "/monster";
+	});
+
+	self.formatAverageDamageTaken = ko.computed(function () {
+		return (self.isApproximating() ? "~" : "") + self.averageDamageTaken() + "/monster";
+	});
+
+};
+
+var statsModel;
+
+function initializeStatistics() {
+	statsModel = new StatisticsModel();
+	ko.applyBindings(statsModel, $("#statisticsModal")[0]);
+}
 ///#source 1 1 /monsters/js/ui.tooltiptext.js
 
 function combatManeuverTooltipText(maneuver) {

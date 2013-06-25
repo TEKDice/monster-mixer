@@ -20,9 +20,9 @@ var LogModel = function () {
 		self.currentSessionId(session);
 	};
 
-	self.addMessage = function (msg, cls, uid, auid, bundle) {
+	self.addMessage = function (msg, cls, uid, auid, bundle, damage) {
 		
-		var logEntry = new LogMessage(msg, cls, uid, auid, bundle);
+		var logEntry = new LogMessage(msg, cls, uid, auid, bundle, damage);
 
 		if(self.currentMonsterId() == uid) 
 			self.currentMonsterMessages.push(logEntry);

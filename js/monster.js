@@ -119,7 +119,11 @@ function modifyHp(uid, mod, notLog) {
 	else 				  $monsterNode.attr('class','hp-good');
 
 	if(!notLog)
-		addToLog(monsterName + (mod < 0 ? " lost " : " gained ") + Math.abs(mod) + " hp. ("+curHp+"/"+maxHp+") ["+hpPerc+"%]");
+		addToLog({
+			message: monsterName + (mod < 0 ? " lost " : " gained ") +Math.abs(mod) + " hp. ("+curHp+"/"+maxHp+") ["+hpPerc+"%]",
+			selector: 'health-mod',
+			damage: Math.abs(mod)
+		});
 
 	saveMonsters();
 

@@ -41,6 +41,8 @@ var MonsterListModel = function () {
 };
 
 var monsters;
+
+//why? because javascript said so.
 var monsterList;
 
 function initializeMonsterModel() {

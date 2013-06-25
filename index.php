@@ -128,7 +128,7 @@ function build_autocomplete() {
 							</div>
 						</div>
 						<div id="encounterStats" class="row-fluid">
-							<button class="btn span2 offset10" data-toggle='modal' data-target="#damageStatisticsModal"><span class='shorten-encounter'></span> Stats</button>
+							<button class="btn span2 offset10" data-toggle='modal' data-target="#statisticsModal"><span class='shorten-encounter'></span> Stats</button>
 						</div>
 					</div>
 
@@ -724,7 +724,7 @@ function build_autocomplete() {
 			</div>
 		</div>
         
-		<div id='damageStatisticsModal' class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="session" aria-hidden="true" >
+		<div id='statisticsModal' class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="session" aria-hidden="true" data-bind="with: statsModel">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
 				<h3 id="totalDamageHeader">Encounter Statistics</h3>
@@ -735,11 +735,11 @@ function build_autocomplete() {
 					<tbody>
 						<tr>
 							<th>Average CR</th>
-							<td>0</td>
+							<td data-bind="text: $parent.averageCR"></td>
 						</tr>
 						<tr>
 							<th>Total Monsters</th>
-							<td>0</td>
+							<td data-bind="text: $parent.monsterCount"></td>
 						</tr>
 					</tbody>
 				</table>
@@ -749,13 +749,13 @@ function build_autocomplete() {
 					<tbody>
 						<tr>
 							<th>Taken</th>
-							<td >0</td>
-							<td >0</td>
+							<td data-bind="text: $parent.totalDamageTaken"></td>
+							<td data-bind="text: $parent.formatAverageDamageTaken"></td>
 						</tr>
 						<tr>
 							<th>Dealt</th>
-							<td>0</td>
-							<td>0</td>
+							<td data-bind="text: $parent.totalDamageGiven"></td>
+							<td data-bind="text: $parent.formatAverageDamageGiven"></td>
 						</tr>
 					</tbody>
 				</table>

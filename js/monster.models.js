@@ -31,6 +31,7 @@ var MonsterModel = function (uid, data) {
 		space: self.monsterBaseStats['space_taken'],
 		treasure: self.monsterBaseStats['treasure'],
 
+		cr: ko.observable(parseFloat(self.monsterBaseStats.cr)),
 		size: ko.observable(self.monsterBaseStats.size),
 		category: ko.observable(self.monsterBaseStats.category),
 		name: ko.observable(self.monsterBaseStats.name)

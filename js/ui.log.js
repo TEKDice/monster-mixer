@@ -1,13 +1,14 @@
 
 var newLogEntryWidth;
 
-var LogMessage = function (message, classification, uid, atkUid, bundleId) {
+var LogMessage = function (message, classification, uid, atkUid, bundleId, damage) {
 	return {
 		message: message,
-		type: classification || 'none',
+		type: classification,
 		attack: atkUid,
 		monster: uid,
 		bundle: bundleId,
+		damage: damage,
 		created: now()
 	};
 }
@@ -23,8 +24,15 @@ function initialiseLog() {
 	$("#log .tab-pane > div").css('overflow', 'hidden');
 }
 
-function addToLog(string, selector, uid, atkUid, bundle) {
-	logModel.addMessage(string, selector, uid, atkUid, bundle);
+function addToLog(args) {
+	var string = args.message;
+	var selector = args.selector;
+	var uid = args.uid;
+	var atkUid = args.atkUid;
+	var bundle = args.bundle;
+	var damage = args.damage;
+
+	logModel.addMessage(string, selector, uid, atkUid, bundle, damage);
 }
 
 function changeLogEntrySize() {

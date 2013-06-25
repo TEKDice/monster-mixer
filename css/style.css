@@ -127,6 +127,8 @@ html {
 
 #log .tab-pane div p {
 	width: 80%;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 .threat-status {

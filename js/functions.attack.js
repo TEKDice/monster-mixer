@@ -59,30 +59,60 @@ var Atk = function() {
 
 			if (this.isAttack) {
 				if (this.critStatus == 'threat' || this.critStatus == 'success') {
-					addToLog(this.atkPreText + logMessages.critAttempt(this.isFor.name, this.isFor.expr,
-						bH.text, bH.result), this.critStatus, this.isFor.id, null, bundle);
+					addToLog({
+						message: this.atkPreText + logMessages.critAttempt(this.isFor.name, this.isFor.expr, bH.text, bH.result),
+						selector: this.critStatus,
+						uid: this.isFor.id,
+						bundle: bundle
+					});
 
-					addToLog(this.atkPreText + logMessages.critMiss(this.isFor.name, this.isFor.expr,
-						tA.text, tA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid, bundle);
+					addToLog({
+						message: this.atkPreText + logMessages.critMiss(this.isFor.name, this.isFor.expr, tA.text, tA.result) + (this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''),
+						selector: this.critStatus,
+						uid: this.isFor.id,
+						bundle: bundle,
+						atkUid: this.uid,
+						damage: tA.result
+					});
 
-					addToLog(this.atkPreText + logMessages.critSecond(this.isFor.name, this.isFor.expr,
-						tH.text, tH.result), this.critStatus, this.isFor.id, null, bundle);
+					addToLog({
+						message: this.atkPreText + logMessages.critSecond(this.isFor.name, this.isFor.expr, tH.text, tH.result),
+						selector: this.critStatus,
+						uid: this.isFor.id,
+						bundle: bundle
+					});
 
-					addToLog(this.atkPreText + logMessages.critSuccess(this.isFor.name, this.isFor.expr,
-						bA.text, bA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, null, bundle);
+					addToLog({
+						message: this.atkPreText + logMessages.critSuccess(this.isFor.name, this.isFor.expr, bA.text, bA.result) + (this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''),
+						selector: this.critStatus,
+						uid: this.isFor.id,
+						bundle: bundle,
+						damage: bA.result
+					});
 				} else {
-					addToLog(this.atkPreText + logMessages.initiate(this.isFor.name, this.isFor.expr,
-						bH.text, bH.result), this.critStatus, this.isFor.id, null, bundle);
+					addToLog({
+						message: this.atkPreText + logMessages.initiate(this.isFor.name, this.isFor.expr, bH.text, bH.result),
+						selector: this.critStatus,
+						uid: this.isFor.id,
+						bundle: bundle
+					});
 
-					addToLog(this.atkPreText + logMessages.hit(this.isFor.name, this.isFor.expr,
-						bA.text, bA.result) +
-							(this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''), this.critStatus, this.isFor.id, this.uid, bundle);
+					addToLog({
+						message: this.atkPreText + logMessages.hit(this.isFor.name, this.isFor.expr, bA.text, bA.result) + (this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''),
+						selector: this.critStatus,
+						uid: this.isFor.id,
+						bundle: bundle,
+						atkUid: this.uid,
+						damage: bA.result
+					});
 				}
 			} else {
-				addToLog(this.atkPreText + logMessages.skill(this.isFor.name, this.isFor.expr,
-						bA.text, bA.result), this.critStatus, this.isFor.id, null, bundle);
+				addToLog({
+					message: this.atkPreText + logMessages.skill(this.isFor.name, this.isFor.expr, bA.text, bA.result),
+					selector: this.critStatus,
+					uid: this.isFor.id,
+					bundle: bundle
+				});
 			}
 		},
 
@@ -294,13 +324,15 @@ function attack($rollable, $roller, uid) {
 
 function displayAttacks(attacks) {
 	for (var atk = 0; atk < attacks.length; atk++) {
-		var curAtk = attacks[atk];
+		var curAtk = $.extend(true, {}, attacks[atk]);
 
 		if (!curAtk.isRanged && curAtk.isAttack && monsters.getMonster(curAtk.monUid).feats.hasFeat("Cleave")) {
-			var newUid = new Date().getTime();
+			var newUid = now();
 			curAtk.uid = newUid;
 			cleaveAtks[curAtk.uid] = curAtk;
 		}
+
+		curAtk.bundleId = now();
 
 		curAtk.display();
 	}

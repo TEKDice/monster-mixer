@@ -31,5 +31,6 @@
 	<file>/monsters/js/ui.log.models.js</file>
 	<file>/monsters/js/ui.monsterlist.models.js</file>
 	<file>/monsters/js/ui.notifier.js</file>
+	<file>/monsters/js/ui.statistics.models.js</file>
   <file>/monsters/js/ui.tooltiptext.js</file>
 </bundle>

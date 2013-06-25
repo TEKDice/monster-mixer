@@ -41,6 +41,8 @@ $(function() {
 
 	initialiseLog();
 
+	initializeStatistics();
+
 	changeLogEntrySize();
 	
 	overlayLoadingGif();
@@ -84,16 +86,16 @@ function bodyBinding() {
 		
 			if ($target.width() - relX < 100
 			&& $target.height() - relY > 30)
-				$target.find(".threat-status").removeClass($target.attr('data-type')).addClass('remove').trigger('change-to');
+				$target.find(".threat-status:not(.health-mod)").removeClass($target.attr('data-type')).addClass('remove').trigger('change-to');
 			else 
-				$target.find(".threat-status").removeClass('remove').addClass($target.attr('data-type')).trigger('change-from');
+				$target.find(".threat-status:not(.health-mod)").removeClass('remove').addClass($target.attr('data-type')).trigger('change-from');
 		});
 
 		$this.mouseleave(function (e) {
-			$this.find(".threat-status").removeClass('remove').addClass($this.attr('data-type')).trigger('change-from');
+			$this.find(".threat-status:not(.health-mod)").removeClass('remove').addClass($this.attr('data-type')).trigger('change-from');
 		});
 
-		$this.find(".threat-status").click(function () {
+		$this.find(".threat-status:not(.health-mod)").click(function () {
 			var bundle = $this.attr('data-bundle');
 			var bundled = $("#allInfo [data-bundle='" + bundle + "']");
 
