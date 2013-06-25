@@ -2076,8 +2076,6 @@ function displayAttacks(attacks) {
 			cleaveAtks[curAtk.uid] = curAtk;
 		}
 
-		curAtk.bundleId = now();
-
 		curAtk.display();
 	}
 }
@@ -2193,6 +2191,7 @@ function addFeatFunctions() {
 			var cleaveAtk = cleaveAtks[$(this).attr('data-cleave-uid')];
 			if (!monsters.getMonster(cleaveAtk.monUid).feats.hasFeat("Great Cleave"))
 				cleaveAtk.uid = null;
+			cleaveAtk.bundleId = now();
 			cleaveAtk.critStatus = 'cleave';
 			cleaveAtk.baseHit.roll();
 			cleaveAtk.rerollForCleave();

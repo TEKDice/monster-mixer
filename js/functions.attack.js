@@ -332,8 +332,6 @@ function displayAttacks(attacks) {
 			cleaveAtks[curAtk.uid] = curAtk;
 		}
 
-		curAtk.bundleId = now();
-
 		curAtk.display();
 	}
 }
