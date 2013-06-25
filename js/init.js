@@ -85,7 +85,7 @@ function bodyBinding() {
 			var relY = e.pageY - parentOffset.top;
 		
 			if ($target.width() - relX < 100
-			&& $target.height() - relY > 30)
+			&& $target.height() - relY > 10)
 				$target.find(".threat-status:not(.health-mod)").removeClass($target.attr('data-type')).addClass('remove').trigger('change-to');
 			else 
 				$target.find(".threat-status:not(.health-mod)").removeClass('remove').addClass($target.attr('data-type')).trigger('change-from');

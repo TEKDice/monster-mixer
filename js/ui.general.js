@@ -21,7 +21,7 @@ function setupRoller() {
 		var toRoll = $(this).val();
 		var roll = rollExpression(toRoll);
 		if (roll === 0) return;
-		addToLog({message:"Custom roll: " + toRoll + " rolled " + roll + ".",selector:"custom"});
+		addToLog({message:"Custom roll: " + toRoll + " rolled " + roll + ".",selector:"custom", bundle: now()});
 	});
 
 	$("#dice button").click(function () {
