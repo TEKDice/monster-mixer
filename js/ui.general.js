@@ -73,11 +73,21 @@ function setupGrids(uid) {
 	});
 	$("div[data-for='" + uid + "'].sortable").disableSelection();
 
-	$("div[data-for='" + uid + "'] .draggable").find(".minibox-content").each(function () {
+	resizeGrids(uid);
+}
+
+function resizeGrids(uid) {
+
+	var $parent;
+	if (uid) $parent = $("div[data-for='" + uid + "'] .draggable");
+	else $parent = $("body");
+	$parent.find(".minibox-content").each(function () {
 		$(this).height($(this).parent().height() - 22);
-		var nice = $(this).niceScroll({ horizrailenabled: false, zindex: 9 });
-		$$(nice.id).attr('data-nice-uid', uid);
-		$$(nice.id + "-hr").remove();
+		if (uid) {
+			var nice = $(this).niceScroll({ horizrailenabled: false, zindex: 9 });
+			$$(nice.id).attr('data-nice-uid', uid);
+			$$(nice.id + "-hr").remove();
+		}
 	});
 }
 
@@ -107,7 +117,7 @@ function tabChangeScrollbars($a) {
 
 function timedResizeElements() {
 	clearTimeout(resizeTimer);
-	resizeTimer = setTimeout(resizeElements, 100);
+	resizeTimer = setTimeout(resizeElements, 50);
 }
 
 function handleResizing() {
@@ -128,6 +138,8 @@ function resizeElements() {
 	$("#log .tab-pane > div").css('height', $("#log").height() - 38);
 
 	$("#monstersContainer > .row-fluid").first().css('height', $("#monsterListCont").height());
+
+	resizeGrids();
 
 	changeLogEntrySize();
 

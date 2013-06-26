@@ -436,7 +436,6 @@ function FullAttackModel(fatks, mname) {
 	self.formatName = function (fatk) {
 		var retStr = [];
 		$.each(fatk, function (i, e) {
-			console.log(e);
 			var name;
 			try {
 				name = self.formatNameStr(e.spatkname || e.aname || e.wname);
