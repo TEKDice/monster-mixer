@@ -1,0 +1,10 @@
+
+.draggable {
+	width: 190px;
+	max-width: 190px;
+	min-width: 190px;
+
+	height: 280px;
+	max-height: 280px;
+	min-height: 280px;
+}

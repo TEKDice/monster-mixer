@@ -1641,8 +1641,13 @@ var Data = {
 	},
 
 	_html5VarSet: function(check, val) {
-		if(!Data.isHtml5()) throw new Error("You don't have an HTML5 compliant browser, don't try to fool me!");
-		localStorage[check] = val;
+		if (!Data.isHtml5()) throw new Error("You don't have an HTML5 compliant browser, don't try to fool me!");
+		try {
+			localStorage[check] = val;
+		} catch (e) {
+			bootbox.alert("You do not have enough local storage space to save any more data. Please seek support in the forums.");
+			throw new Error("The user does not have enough storage space to put " + check + " (" + val + ") in localStorage.");
+		}
 	},
 
 	_cookieVarSet: function(check, val) {
@@ -4836,7 +4841,7 @@ var height = 360;
 var heightAdjust = 140;
 var width;
 var pnotification;
-var MIN_X_RES = 1356;
+var MIN_X_RES = 1265;
 var MIN_Y_RES = 662;
 
 var resizeTimer;
@@ -4971,7 +4976,7 @@ function resolutionNotification() {
 			pnotification.pnotify({ text: screenResolutionMessage() });
 		} else
 			pnotification = $.pnotify({
-				title: "Screen Resolution Problem Detected",
+				title: "Potential Screen Resolution Problem Detected",
 				text: screenResolutionMessage(),
 				type: "info",
 				width: "70%",
@@ -4990,7 +4995,7 @@ function resolutionNotification() {
 }
 
 function screenResolutionMessage() {
-	return "Hey, so it looks like your screen is currently running at "+width+"x"+height+", which is fine, but it might cause a problem while using this application! We recommend at least a resolution of "+MIN_X_RES+"x"+MIN_Y_RES+" (or 1366x768). If this notification is in error, please contact a member of the team and we'll sort out the issue. Thanks!";
+	return "Hey, so it looks like your screen is currently running at "+width+"x"+height+", which is fine, but it might cause a problem while using this application! We recommend at least a resolution of "+MIN_X_RES+"x"+MIN_Y_RES+" (1366x768 or 1024x768 are the next common resolutions). If this notification is in error, please contact a member of the team and we'll sort out the issue. Thanks!";
 }
 
 function overlayLoadingGif() {

@@ -57,10 +57,11 @@ function build_autocomplete() {
 		<?php $pos='../'; include('../include/head.php'); ?>
 		<link href="../css/jquery-ui-1.10.0.custom.css" rel="stylesheet" />
 		<link href="css/style.min.css" 		rel="stylesheet" />
-		<link href="css/1280x1024.min.css" 	rel="stylesheet" media="screen and (min-width: 1019px) and (min-height: 1024px)" />
-		<link href="css/1280x800.min.css" 	rel="stylesheet" media="screen and (min-width: 1270px) and (min-height: 800px)" />
-		<link href="css/1366x768.min.css" 	rel="stylesheet" media="screen and (min-width: 1356px)" />
+		<link href="css/1280x1024.min.css" 	rel="stylesheet" media="screen and (min-width: 1270px) and (min-height: 825px)" />
+		<link href="css/1280x800.min.css" 	rel="stylesheet" media="screen and (min-width: 1270px) and (min-height: 715px)" />
+		<link href="css/1366x768.min.css" 	rel="stylesheet" media="screen and (min-width: 1355px)" />
 		<link href="css/1440x900.min.css" 	rel="stylesheet" media="screen and (min-width: 1430px)" />
+		<link href="css/1600x900.min.css" 	rel="stylesheet" media="screen and (min-width: 1590px)" />
 		<link href="css/1680x1050.min.css" 	rel="stylesheet" media="screen and (min-width: 1645px)" />
 
 		<script src="../js/jquery-ui-1.9.2.custom.min.js"></script>

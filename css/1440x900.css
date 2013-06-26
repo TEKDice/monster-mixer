@@ -3,6 +3,10 @@
 	width: 165px;
 	max-width: 165px;
 	min-width: 165px;
+
+	height: 280px;
+	max-height: 280px;
+	min-height: 280px;
 }
 
 .shorten-damage:before {

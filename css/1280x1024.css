@@ -3,6 +3,10 @@
 	width: 175px;
 	max-width: 175px;
 	min-width: 175px;
+
+	height: 285px;
+	max-height: 285px;
+	min-height: 285px;
 }
 
 .invisible:nth-child(2n) {

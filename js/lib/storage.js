@@ -55,8 +55,13 @@ var Data = {
 	},
 
 	_html5VarSet: function(check, val) {
-		if(!Data.isHtml5()) throw new Error("You don't have an HTML5 compliant browser, don't try to fool me!");
-		localStorage[check] = val;
+		if (!Data.isHtml5()) throw new Error("You don't have an HTML5 compliant browser, don't try to fool me!");
+		try {
+			localStorage[check] = val;
+		} catch (e) {
+			bootbox.alert("You do not have enough local storage space to save any more data. Please seek support in the forums.");
+			throw new Error("The user does not have enough storage space to put " + check + " (" + val + ") in localStorage.");
+		}
 	},
 
 	_cookieVarSet: function(check, val) {
