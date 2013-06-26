@@ -24,6 +24,7 @@ var LogModel = function () {
 		
 		var logEntry = new LogMessage(msg, cls, uid, auid, bundle, damage);
 
+
 		if(self.currentMonsterId() == uid) 
 			self.currentMonsterMessages.push(logEntry);
 
@@ -74,6 +75,7 @@ var LogModel = function () {
 	};
 
 	monsters.currentMonsterId.subscribe(function (value) {
+		self.currentMonsterId(value);
 		self.recalculateIndividualMonsterMessages();
 		self.uiLookManagement()
 	});
