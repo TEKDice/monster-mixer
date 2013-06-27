@@ -24,17 +24,6 @@ function initialiseLog() {
 	$("#log .tab-pane > div").css('overflow', 'hidden');
 }
 
-function addToLog(args) {
-	var string = args.message;
-	var selector = args.selector;
-	var uid = args.uid;
-	var atkUid = args.atkUid;
-	var bundle = args.bundle;
-	var damage = args.damage;
-
-	logModel.addMessage(string, selector, uid, atkUid, bundle, damage);
-}
-
 function changeLogEntrySize() {
 	newLogEntryWidth = $("#allInfo").width() - 70;
 	$("#log .attackSide").width(newLogEntryWidth);

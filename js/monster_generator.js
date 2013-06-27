@@ -1806,16 +1806,18 @@ var Atk = function() {
 			var bA = _rollArray(this.rollBaseAtk());
 			var bundle = this.bundleId;
 
+			var messages = [];
+
 			if (this.isAttack) {
 				if (this.critStatus == 'threat' || this.critStatus == 'success') {
-					addToLog({
+					messages.push({
 						message: this.atkPreText + logMessages.critAttempt(this.isFor.name, this.isFor.expr, bH.text, bH.result),
 						selector: this.critStatus,
 						uid: this.isFor.id,
 						bundle: bundle
 					});
 
-					addToLog({
+					messages.push({
 						message: this.atkPreText + logMessages.critMiss(this.isFor.name, this.isFor.expr, tA.text, tA.result) + (this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''),
 						selector: this.critStatus,
 						uid: this.isFor.id,
@@ -1824,14 +1826,14 @@ var Atk = function() {
 						damage: tA.result
 					});
 
-					addToLog({
+					messages.push({
 						message: this.atkPreText + logMessages.critSecond(this.isFor.name, this.isFor.expr, tH.text, tH.result),
 						selector: this.critStatus,
 						uid: this.isFor.id,
 						bundle: bundle
 					});
 
-					addToLog({
+					messages.push({
 						message: this.atkPreText + logMessages.critSuccess(this.isFor.name, this.isFor.expr, bA.text, bA.result) + (this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''),
 						selector: this.critStatus,
 						uid: this.isFor.id,
@@ -1839,14 +1841,14 @@ var Atk = function() {
 						damage: bA.result
 					});
 				} else {
-					addToLog({
+					messages.push({
 						message: this.atkPreText + logMessages.initiate(this.isFor.name, this.isFor.expr, bH.text, bH.result),
 						selector: this.critStatus,
 						uid: this.isFor.id,
 						bundle: bundle
 					});
 
-					addToLog({
+					messages.push({
 						message: this.atkPreText + logMessages.hit(this.isFor.name, this.isFor.expr, bA.text, bA.result) + (this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''),
 						selector: this.critStatus,
 						uid: this.isFor.id,
@@ -1856,13 +1858,15 @@ var Atk = function() {
 					});
 				}
 			} else {
-				addToLog({
+				messages.push({
 					message: this.atkPreText + logMessages.skill(this.isFor.name, this.isFor.expr, bA.text, bA.result),
 					selector: this.critStatus,
 					uid: this.isFor.id,
 					bundle: bundle
 				});
 			}
+
+			logModel.addBundleMessage(messages);
 		},
 
 		hasSpatk: function () {
@@ -2716,9 +2720,10 @@ function modifyHp(uid, mod, notLog) {
 	else 				  $monsterNode.attr('class','hp-good');
 
 	if(!notLog)
-		addToLog({
+		logModel.addSingleMessage({
 			message: monsterName + (mod < 0 ? " lost " : " gained ") +Math.abs(mod) + " hp. ("+curHp+"/"+maxHp+") ["+hpPerc+"%]",
 			selector: 'health-mod',
+			bundle: now(),
 			damage: Math.abs(mod)
 		});
 
@@ -4855,7 +4860,7 @@ function setupRoller() {
 		var toRoll = $(this).val();
 		var roll = rollExpression(toRoll);
 		if (roll === 0) return;
-		addToLog({message:"Custom roll: " + toRoll + " rolled " + roll + ".",selector:"custom", bundle: now()});
+		logModel.addSingleMessage({message:"Custom roll: " + toRoll + " rolled " + roll + ".",selector:"custom", bundle: now()});
 	});
 
 	$("#dice button").click(function () {
@@ -5349,17 +5354,6 @@ function initialiseLog() {
 	$("#log .tab-pane > div").css('overflow', 'hidden');
 }
 
-function addToLog(args) {
-	var string = args.message;
-	var selector = args.selector;
-	var uid = args.uid;
-	var atkUid = args.atkUid;
-	var bundle = args.bundle;
-	var damage = args.damage;
-
-	logModel.addMessage(string, selector, uid, atkUid, bundle, damage);
-}
-
 function changeLogEntrySize() {
 	newLogEntryWidth = $("#allInfo").width() - 70;
 	$("#log .attackSide").width(newLogEntryWidth);
@@ -5417,10 +5411,21 @@ var LogModel = function () {
 		self.currentSessionId(session);
 	};
 
+	self.addBundleMessage = function (logMessages) {
+		$.each(logMessages, function (i, e) {
+			self.addMessage(e.msg, e.cls, e.uid, e.auid, e.bundle, e.damage);
+		});
+		self.pushMessages(logMessages);
+	};
+
+	self.addSingleMessage = function (logMessage) {
+		self.addMessage(logMessage.msg, logMessage.cls, logMessage.uid, logMessage.auid, logMessage.bundle, logMessage.damage);
+		self.pushMessages([logMessage]);
+	};
+
 	self.addMessage = function (msg, cls, uid, auid, bundle, damage) {
 		
 		var logEntry = new LogMessage(msg, cls, uid, auid, bundle, damage);
-
 
 		if(self.currentMonsterId() == uid) 
 			self.currentMonsterMessages.push(logEntry);
@@ -5429,6 +5434,15 @@ var LogModel = function () {
 
 		self.uiLogManagement(logEntry);
 	};
+
+	self.pushMessages = function (messages) {
+		//push to cloud
+		//add bundle id to server
+	};
+
+	self.removeMessages = function (bundle) {
+		//remove messages by bundle id and user id
+	}
 
 	self.recalculateIndividualMonsterMessages = function () {
 		self.currentMonsterMessages.removeAll();

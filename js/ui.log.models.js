@@ -20,10 +20,21 @@ var LogModel = function () {
 		self.currentSessionId(session);
 	};
 
+	self.addBundleMessage = function (logMessages) {
+		$.each(logMessages, function (i, e) {
+			self.addMessage(e.msg, e.cls, e.uid, e.auid, e.bundle, e.damage);
+		});
+		self.pushMessages(logMessages);
+	};
+
+	self.addSingleMessage = function (logMessage) {
+		self.addMessage(logMessage.msg, logMessage.cls, logMessage.uid, logMessage.auid, logMessage.bundle, logMessage.damage);
+		self.pushMessages([logMessage]);
+	};
+
 	self.addMessage = function (msg, cls, uid, auid, bundle, damage) {
 		
 		var logEntry = new LogMessage(msg, cls, uid, auid, bundle, damage);
-
 
 		if(self.currentMonsterId() == uid) 
 			self.currentMonsterMessages.push(logEntry);
@@ -32,6 +43,15 @@ var LogModel = function () {
 
 		self.uiLogManagement(logEntry);
 	};
+
+	self.pushMessages = function (messages) {
+		//push to cloud
+		//add bundle id to server
+	};
+
+	self.removeMessages = function (bundle) {
+		//remove messages by bundle id and user id
+	}
 
 	self.recalculateIndividualMonsterMessages = function () {
 		self.currentMonsterMessages.removeAll();

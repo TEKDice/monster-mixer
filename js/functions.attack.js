@@ -57,16 +57,18 @@ var Atk = function() {
 			var bA = _rollArray(this.rollBaseAtk());
 			var bundle = this.bundleId;
 
+			var messages = [];
+
 			if (this.isAttack) {
 				if (this.critStatus == 'threat' || this.critStatus == 'success') {
-					addToLog({
+					messages.push({
 						message: this.atkPreText + logMessages.critAttempt(this.isFor.name, this.isFor.expr, bH.text, bH.result),
 						selector: this.critStatus,
 						uid: this.isFor.id,
 						bundle: bundle
 					});
 
-					addToLog({
+					messages.push({
 						message: this.atkPreText + logMessages.critMiss(this.isFor.name, this.isFor.expr, tA.text, tA.result) + (this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''),
 						selector: this.critStatus,
 						uid: this.isFor.id,
@@ -75,14 +77,14 @@ var Atk = function() {
 						damage: tA.result
 					});
 
-					addToLog({
+					messages.push({
 						message: this.atkPreText + logMessages.critSecond(this.isFor.name, this.isFor.expr, tH.text, tH.result),
 						selector: this.critStatus,
 						uid: this.isFor.id,
 						bundle: bundle
 					});
 
-					addToLog({
+					messages.push({
 						message: this.atkPreText + logMessages.critSuccess(this.isFor.name, this.isFor.expr, bA.text, bA.result) + (this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''),
 						selector: this.critStatus,
 						uid: this.isFor.id,
@@ -90,14 +92,14 @@ var Atk = function() {
 						damage: bA.result
 					});
 				} else {
-					addToLog({
+					messages.push({
 						message: this.atkPreText + logMessages.initiate(this.isFor.name, this.isFor.expr, bH.text, bH.result),
 						selector: this.critStatus,
 						uid: this.isFor.id,
 						bundle: bundle
 					});
 
-					addToLog({
+					messages.push({
 						message: this.atkPreText + logMessages.hit(this.isFor.name, this.isFor.expr, bA.text, bA.result) + (this.hasSpatk() ? " (" + this.isFor.spatk + " occurs)" : ''),
 						selector: this.critStatus,
 						uid: this.isFor.id,
@@ -107,13 +109,15 @@ var Atk = function() {
 					});
 				}
 			} else {
-				addToLog({
+				messages.push({
 					message: this.atkPreText + logMessages.skill(this.isFor.name, this.isFor.expr, bA.text, bA.result),
 					selector: this.critStatus,
 					uid: this.isFor.id,
 					bundle: bundle
 				});
 			}
+
+			logModel.addBundleMessage(messages);
 		},
 
 		hasSpatk: function () {
