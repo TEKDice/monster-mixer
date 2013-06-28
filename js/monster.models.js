@@ -1251,7 +1251,7 @@ function SpeedModel(speeds) {
 //#endregion
 
 function formatMonsterNamedItems(itemName, mname) {
-	if (itemName == null) return "ERROR";
+	if (itemName == null) return;
 	if (name.indexOf(mname) != -1) return name.substring(mname.length).trim();
 
 	var nameStr = "";
