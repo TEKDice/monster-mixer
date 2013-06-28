@@ -12,6 +12,7 @@ function saveMonsters() {
 
 		var mon = {
 			id: arrMon.id,
+			uid: arrMon.uid,
 			modHp: arrMon.hp.mod().val(),
 			maxHp: arrMon.hp.initTotal(),
 			init: arrMon.initiative.init.num().val()
@@ -46,8 +47,8 @@ function loadMonsters(monsterSet) {
 		$.eachAsync(arr, {
 			loop: function (i, e) {
 				var mon = e;
-				var uid = addNewMonster(mon);
 				var oldMonData = monsterSet[i];
+				var uid = addNewMonster(mon, oldMonData.uid);
 
 				monsters.getMonster(uid).hp.hp().num().val(oldMonData.maxHp);
 				modifyHp(uid, oldMonData.modHp, true);

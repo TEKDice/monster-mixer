@@ -2602,12 +2602,12 @@ function bodyBinding() {
 
 var monsterCount = 0;
 
-function addNewMonster(monster) {
+function addNewMonster(monster, oldUid) {
 
 	$(".alert").hide();
 	$("#monsterList").show();
 
-	var uid = new Date().getTime();
+	var uid = oldUid || now();
 
 	_addNewMonster(monster, uid);
 
@@ -4096,6 +4096,7 @@ function saveMonsters() {
 
 		var mon = {
 			id: arrMon.id,
+			uid: arrMon.uid,
 			modHp: arrMon.hp.mod().val(),
 			maxHp: arrMon.hp.initTotal(),
 			init: arrMon.initiative.init.num().val()
@@ -4130,8 +4131,8 @@ function loadMonsters(monsterSet) {
 		$.eachAsync(arr, {
 			loop: function (i, e) {
 				var mon = e;
-				var uid = addNewMonster(mon);
 				var oldMonData = monsterSet[i];
+				var uid = addNewMonster(mon, oldMonData.uid);
 
 				monsters.getMonster(uid).hp.hp().num().val(oldMonData.maxHp);
 				modifyHp(uid, oldMonData.modHp, true);
@@ -5413,13 +5414,13 @@ var LogModel = function () {
 
 	self.addBundleMessage = function (logMessages) {
 		$.each(logMessages, function (i, e) {
-			self.addMessage(e.msg, e.cls, e.uid, e.auid, e.bundle, e.damage);
+			self.addMessage(e.message, e.selector, e.uid, e.atkUid, e.bundle, e.damage);
 		});
 		self.pushMessages(logMessages);
 	};
 
 	self.addSingleMessage = function (logMessage) {
-		self.addMessage(logMessage.msg, logMessage.cls, logMessage.uid, logMessage.auid, logMessage.bundle, logMessage.damage);
+		self.addMessage(logMessage.message, logMessage.selector, logMessage.uid, logMessage.atkUid, logMessage.bundle, logMessage.damage);
 		self.pushMessages([logMessage]);
 	};
 

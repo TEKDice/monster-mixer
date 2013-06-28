@@ -1,12 +1,12 @@
 
 var monsterCount = 0;
 
-function addNewMonster(monster) {
+function addNewMonster(monster, oldUid) {
 
 	$(".alert").hide();
 	$("#monsterList").show();
 
-	var uid = new Date().getTime();
+	var uid = oldUid || now();
 
 	_addNewMonster(monster, uid);
 

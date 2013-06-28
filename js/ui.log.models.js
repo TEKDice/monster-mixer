@@ -22,13 +22,13 @@ var LogModel = function () {
 
 	self.addBundleMessage = function (logMessages) {
 		$.each(logMessages, function (i, e) {
-			self.addMessage(e.msg, e.cls, e.uid, e.auid, e.bundle, e.damage);
+			self.addMessage(e.message, e.selector, e.uid, e.atkUid, e.bundle, e.damage);
 		});
 		self.pushMessages(logMessages);
 	};
 
 	self.addSingleMessage = function (logMessage) {
-		self.addMessage(logMessage.msg, logMessage.cls, logMessage.uid, logMessage.auid, logMessage.bundle, logMessage.damage);
+		self.addMessage(logMessage.message, logMessage.selector, logMessage.uid, logMessage.atkUid, logMessage.bundle, logMessage.damage);
 		self.pushMessages([logMessage]);
 	};
 
