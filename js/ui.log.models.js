@@ -48,6 +48,18 @@ var LogModel = function () {
 		sessionManager.saveCurrentLog(self.currentSessionMessages());
 	};
 
+	self.countMessagesByAttack = function (attack) {
+		var session = self.currentSessionId();
+
+		var ct = 0;
+
+		$.each(self.messages[session](), function (i, e) {
+			if (e.attack == attack) ct++;
+		});
+
+		return ct;
+	};
+
 	self.recalculateIndividualMonsterMessages = function () {
 		self.currentMonsterMessages.removeAll();
 
@@ -71,7 +83,8 @@ var LogModel = function () {
 		});
 
 		$.each(removed, function (i, e) {
-			delete cleaveAtks[e.attack];
+			if(self.countMessagesByAttack(e.attack) == 0)
+				delete cleaveAtks[e.attack];
 		});
 
 		sessionManager.saveCurrentLog(self.currentSessionMessages());
