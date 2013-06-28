@@ -234,11 +234,7 @@ function RollerHandler(monModel) {
 		return { min: minCrit, mult: critMult };
 	}
 
-	self.formatName = function (name) {
-		if (name == undefined) return;
-		if (name.indexOf(self.monster.stats.name()) != -1) return name.substring(self.monster.stats.name().length + 1).trim();
-		return name;
-	};
+	self.formatName = function (name) { return formatMonsterNamedItems(name, self.monster.stats.name()) };
 
 	self.rollBullrush = ko.computed(function () {
 		self.dummy();
@@ -697,11 +693,7 @@ function SpecialAttackModel(spatks, mname) {
 		return retStr;
 	};
 
-	self.formatName = function (name) {
-		if (!name) return;
-		if (name.indexOf(mname) != -1) return name.substring(mname.length);
-		return name;
-	};
+	self.formatName = function (name) { return formatMonsterNamedItems(name, self.mname) };
 
 	self.isRollable = function (spatk) {
 		return spatk.hit_dice != '0' || spatk.dmgred_nm != null;
@@ -834,11 +826,7 @@ function WeaponAttackModel(damagers, mname) {
 		return retStr;
 	};
 
-	self.formatName = function (name) {
-		if (name == undefined) return;
-		if (name.indexOf(mname) != -1) return name.substring(mname.length).trim();
-		return name;
-	};
+	self.formatName = function (name) { return formatMonsterNamedItems(name, self.mname) };
 
 	self.attackToHitRoll = function (obj, bab, size, dexBonus, strBonus, hasWeaponFocus, hasWeaponFinesse) {
 		var ret = {};
@@ -1209,16 +1197,13 @@ function QualityModel(qualities, mname) {
 	self.qualities = ko.observableArray(qualities);
 
 	self.isMeasurable = function (name) {
-		name = self.formatName(name);
+		name = self.formatName(name, self.mname);
 		return name != 'Spell Resistance' && name != "Regeneration" && name != "Turn Resistance" && name != "Fast Healing";
 	};
 	self.format = function (qual) {
 		return qual.value + (self.isMeasurable(qual.name) ? "ft" : "");
 	};
-	self.formatName = function (name) {
-		if (name.indexOf(mname) != -1) return name.substring(mname.length).trim();
-		return name.trim();
-	};
+	self.formatName = function (name) { return formatMonsterNamedItems(name, self.mname) };
 }
 
 function SkillModel(skills) {
@@ -1264,3 +1249,17 @@ function SpeedModel(speeds) {
 	this.speeds = ko.observableArray(speeds);
 }
 //#endregion
+
+function formatMonsterNamedItems(itemName, mname) {
+	if (itemName == null) return "ERROR";
+	if (name.indexOf(mname) != -1) return name.substring(mname.length).trim();
+
+	var nameStr = "";
+	var arr = itemName.trim().split(" ");
+	$.each(arr, function (i, e) {
+		if (mname.toLowerCase().indexOf(e.toLowerCase()) == -1)
+			nameStr += e+" ";
+	});
+
+	return nameStr.trim();
+}

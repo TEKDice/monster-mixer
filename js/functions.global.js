@@ -65,4 +65,4 @@ function formatCR(cr) {
 		case '0.50': return $("<div/>").html("&frac12;").text();
 	}
 	return parseInt(cr);
-};
+}
