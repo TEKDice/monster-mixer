@@ -37,6 +37,8 @@ function loadMonsters(monsterSet) {
 
 	$("#overlay").fadeIn();
 
+	loadCleaveData();
+
 	$.each(monsterSet, function (i, e) {
 		loadTheseMonsters.push(e.id);
 	});
@@ -61,10 +63,32 @@ function loadMonsters(monsterSet) {
 			},
 			end: function () {
 				$("#overlay").fadeOut();
+				loadLogMessages();
 				IS_RELOADING_SESSION = false;
 			}
 		});
 	});
+}
+
+function loadCleaveData() {
+	var sessId = sessionManager.currentSessionId();
+	cleaveAtks = sessionManager.getCleaveDataBySession(sessId) || {};
+
+	for (var attack in cleaveAtks) {
+		cleaveAtks[attack] = $.extend(new Atk(), cleaveAtks[attack]);
+
+		for (var roll in cleaveAtks[attack].baseAttack) {
+			cleaveAtks[attack].baseAttack[roll] = new Roll(cleaveAtks[attack].baseAttack[roll].rollData);
+		}
+
+		cleaveAtks[attack].baseHit = new Roll(cleaveAtks[attack].baseHit.rollData);
+
+		if(cleaveAtks[attack].threatAttack.hasOwnProperty("rollData"))
+			cleaveAtks[attack].threatAttack = new Roll(cleaveAtks[attack].threatAttack.rollData);
+
+		if (cleaveAtks[attack].threatHit.hasOwnProperty("rollData"))
+			cleaveAtks[attack].threatHit = new Roll(cleaveAtks[attack].threatHit.rollData);
+	}
 }
 
 function removeAllMonsters() {
@@ -73,4 +97,11 @@ function removeAllMonsters() {
 	$("#monsterData .tab-pane").remove();
 	$("#genAlert").show();
 	_hideAllMiniboxScrollbars();
+}
+
+function loadLogMessages() {
+	var sessId = sessionManager.currentSessionId();
+	var messages = sessionManager.getLogDataBySession(sessId);
+	logModel.currentSessionMessages(messages);
+	logModel.uiLookManagement();
 }

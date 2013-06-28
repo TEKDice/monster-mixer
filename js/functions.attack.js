@@ -334,6 +334,7 @@ function displayAttacks(attacks) {
 			var newUid = now();
 			curAtk.uid = newUid;
 			cleaveAtks[curAtk.uid] = curAtk;
+			sessionManager.saveCurrentCleaveData(cleaveAtks);
 		}
 
 		curAtk.display();

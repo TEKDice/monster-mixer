@@ -2083,6 +2083,7 @@ function displayAttacks(attacks) {
 			var newUid = now();
 			curAtk.uid = newUid;
 			cleaveAtks[curAtk.uid] = curAtk;
+			sessionManager.saveCurrentCleaveData(cleaveAtks);
 		}
 
 		curAtk.display();
@@ -4121,6 +4122,8 @@ function loadMonsters(monsterSet) {
 
 	$("#overlay").fadeIn();
 
+	loadCleaveData();
+
 	$.each(monsterSet, function (i, e) {
 		loadTheseMonsters.push(e.id);
 	});
@@ -4145,10 +4148,32 @@ function loadMonsters(monsterSet) {
 			},
 			end: function () {
 				$("#overlay").fadeOut();
+				loadLogMessages();
 				IS_RELOADING_SESSION = false;
 			}
 		});
 	});
+}
+
+function loadCleaveData() {
+	var sessId = sessionManager.currentSessionId();
+	cleaveAtks = sessionManager.getCleaveDataBySession(sessId) || {};
+
+	for (var attack in cleaveAtks) {
+		cleaveAtks[attack] = $.extend(new Atk(), cleaveAtks[attack]);
+
+		for (var roll in cleaveAtks[attack].baseAttack) {
+			cleaveAtks[attack].baseAttack[roll] = new Roll(cleaveAtks[attack].baseAttack[roll].rollData);
+		}
+
+		cleaveAtks[attack].baseHit = new Roll(cleaveAtks[attack].baseHit.rollData);
+
+		if(cleaveAtks[attack].threatAttack.hasOwnProperty("rollData"))
+			cleaveAtks[attack].threatAttack = new Roll(cleaveAtks[attack].threatAttack.rollData);
+
+		if (cleaveAtks[attack].threatHit.hasOwnProperty("rollData"))
+			cleaveAtks[attack].threatHit = new Roll(cleaveAtks[attack].threatHit.rollData);
+	}
 }
 
 function removeAllMonsters() {
@@ -4159,10 +4184,20 @@ function removeAllMonsters() {
 	_hideAllMiniboxScrollbars();
 }
 
+function loadLogMessages() {
+	var sessId = sessionManager.currentSessionId();
+	var messages = sessionManager.getLogDataBySession(sessId);
+	logModel.currentSessionMessages(messages);
+	logModel.uiLookManagement();
+}
 ///#source 1 1 /monsters/js/sync.models.js
 
 var SESSIONS_VARIABLE = "sessions";
 var LAST_SESSION_VARIABLE = "lastSessionId";
+
+var MONSTER_KEY = "monsters_";
+var LOG_KEY = "log_";
+var CLEAVE_KEY = "attacks_";
 
 var SessionModel = function() {
 	var self = this;
@@ -4301,7 +4336,7 @@ var SessionModel = function() {
 	};
 
 	self.saveMonsters = function (id, data, dontSync) {
-		Data.setVar("monsters_" + id, data);
+		Data.setVar(MONSTER_KEY + id, data);
 		if(!dontSync)
 			self.saveSession(false);
 	};
@@ -4309,6 +4344,24 @@ var SessionModel = function() {
 	self.saveCurrentMonsters = function (data) {
 		self.invalidate();
 		self.saveMonsters(self.currentSessionId(), data);
+	};
+
+	self.saveLog = function (id, data) {
+		Data.setVar(LOG_KEY + id, data);
+	};
+
+	self.saveCurrentLog = function (data) {
+		self.invalidate();
+		self.saveLog(self.currentSessionId(), data);
+	};
+
+	self.saveCleaveData = function (id, data) {
+		Data.setVar(CLEAVE_KEY + id, data);
+	};
+
+	self.saveCurrentCleaveData = function (data) {
+		self.invalidate();
+		self.saveCleaveData(self.currentSessionId(), data);
 	};
 
 	self.saveCurrentSessionInfo = function () {
@@ -4339,7 +4392,15 @@ var SessionModel = function() {
 	};
 
 	self.getMonsterDataBySession = function (id) {
-		return Data.getVar("monsters_" + id);
+		return Data.getVar(MONSTER_KEY + id);
+	};
+
+	self.getLogDataBySession = function (id) {
+		return Data.getVar(LOG_KEY + id);
+	};
+
+	self.getCleaveDataBySession = function (id) {
+		return Data.getVar(CLEAVE_KEY + id);
 	};
 	//#endregion
 
@@ -4347,7 +4408,9 @@ var SessionModel = function() {
 	self.deleteSession = function (uid) {
 		if (!loggedIn) return;
 
-		Data.clearVar("monsters_" + uid);
+		Data.clearVar(MONSTER_KEY + uid);
+		Data.clearVar(LOG_KEY + uid);
+		Data.clearVar(CLEAVE_KEY + uid);
 
 		var sessionList = self.allSessions();
 
@@ -5437,13 +5500,8 @@ var LogModel = function () {
 	};
 
 	self.pushMessages = function (messages) {
-		//push to cloud
-		//add bundle id to server
+		sessionManager.saveCurrentLog(self.currentSessionMessages());
 	};
-
-	self.removeMessages = function (bundle) {
-		//remove messages by bundle id and user id
-	}
 
 	self.recalculateIndividualMonsterMessages = function () {
 		self.currentMonsterMessages.removeAll();
@@ -5461,12 +5519,18 @@ var LogModel = function () {
 	};
 
 	self.removeMessagesByBundle = function (bundle) {
-
 		var session = self.currentSessionId();
 
-		self.messages[session].remove(function (item) {
+		var removed = self.messages[session].remove(function (item) {
 			return item.bundle == bundle;
 		});
+
+		$.each(removed, function (i, e) {
+			delete cleaveAtks[e.attack];
+		});
+
+		sessionManager.saveCurrentLog(self.currentSessionMessages());
+		sessionManager.saveCurrentCleaveData(cleaveAtks);
 	};
 
 	self.generateIdForEntry = function (message) {
@@ -5489,7 +5553,7 @@ var LogModel = function () {
 	monsters.currentMonsterId.subscribe(function (value) {
 		self.currentMonsterId(value);
 		self.recalculateIndividualMonsterMessages();
-		self.uiLookManagement()
+		self.uiLookManagement();
 	});
 
 	self.currentSessionId.subscribe(function (value) {

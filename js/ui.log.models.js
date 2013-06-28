@@ -45,13 +45,8 @@ var LogModel = function () {
 	};
 
 	self.pushMessages = function (messages) {
-		//push to cloud
-		//add bundle id to server
+		sessionManager.saveCurrentLog(self.currentSessionMessages());
 	};
-
-	self.removeMessages = function (bundle) {
-		//remove messages by bundle id and user id
-	}
 
 	self.recalculateIndividualMonsterMessages = function () {
 		self.currentMonsterMessages.removeAll();
@@ -69,12 +64,18 @@ var LogModel = function () {
 	};
 
 	self.removeMessagesByBundle = function (bundle) {
-
 		var session = self.currentSessionId();
 
-		self.messages[session].remove(function (item) {
+		var removed = self.messages[session].remove(function (item) {
 			return item.bundle == bundle;
 		});
+
+		$.each(removed, function (i, e) {
+			delete cleaveAtks[e.attack];
+		});
+
+		sessionManager.saveCurrentLog(self.currentSessionMessages());
+		sessionManager.saveCurrentCleaveData(cleaveAtks);
 	};
 
 	self.generateIdForEntry = function (message) {
@@ -97,7 +98,7 @@ var LogModel = function () {
 	monsters.currentMonsterId.subscribe(function (value) {
 		self.currentMonsterId(value);
 		self.recalculateIndividualMonsterMessages();
-		self.uiLookManagement()
+		self.uiLookManagement();
 	});
 
 	self.currentSessionId.subscribe(function (value) {
