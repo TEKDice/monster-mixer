@@ -4480,7 +4480,7 @@ var SessionModel = function() {
 		var lastSessId = Data.getVar(LAST_SESSION_VARIABLE);
 
 		if (!self.hasMonsterDataFor(lastSessId)) return false;
-		if (self.getMonsterDataBySession(lastSessId).length == 0) return false;
+		if (self.getMonsterDataBySession(lastSessId) == null ||  self.getMonsterDataBySession(lastSessId).length == 0) return false;
 		return true;
 	};
 
