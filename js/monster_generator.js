@@ -4346,8 +4346,10 @@ var SessionModel = function() {
 		self.saveMonsters(self.currentSessionId(), data);
 	};
 
-	self.saveLog = function (id, data) {
+	self.saveLog = function (id, data, dontSync) {
 		Data.setVar(LOG_KEY + id, data);
+		if (!dontSync)
+			self.saveSession(false);
 	};
 
 	self.saveCurrentLog = function (data) {
@@ -4355,8 +4357,10 @@ var SessionModel = function() {
 		self.saveLog(self.currentSessionId(), data);
 	};
 
-	self.saveCleaveData = function (id, data) {
+	self.saveCleaveData = function (id, data, dontSync) {
 		Data.setVar(CLEAVE_KEY + id, data);
+		if (!dontSync)
+			self.saveSession(false);
 	};
 
 	self.saveCurrentCleaveData = function (data) {
@@ -4443,7 +4447,18 @@ var SessionModel = function() {
 	self.mergeCloudSessionsToLocal = function () {
 		var localSessions = self.allSessions();
 		$.each(self.syncedSessions(), function (i, e) {
-			self.saveMonsters(e.startTime, $.parseJSON(e.json), true);
+
+			var parsedData = $.parseJSON(e.json);
+
+			//backwards compatibility... may remove this down the line
+			if (parsedData.hasOwnProperty("monsters")) {
+				self.saveMonsters(e.startTime, parsedData.monsters, true);
+				self.saveCleaveData(e.startTime, parsedData.attacks, true);
+				self.saveLog(e.startTime, parsedData.log, true);
+			} else {
+				self.saveMonsters(e.startTime, parsedData, true);
+			}
+
 			localSessions[e.startTime] = {
 				name: e.name,
 				startTime: parseInt(e.startTime),
@@ -4510,13 +4525,21 @@ var SessionModel = function() {
 
 	//#region Sync Functions
 	self.sync = function (sessionInfo, $button) {
-		if (!_canBeginSync()) return
+		if (!_canBeginSync()) return;
+
+		var syncData = {
+			monsters: self.getMonsterDataBySession(sessionInfo.startTime),
+			log: self.getLogDataBySession(sessionInfo.startTime),
+			attacks: self.getCleaveDataBySession(sessionInfo.startTime)
+		};
+
+
 		$.ajax("sessions.php", {
 			type: "POST",
 			data: {
 				action: "new",
 				sessname: sessionInfo.name,
-				json: JSON.stringify(self.getMonsterDataBySession(sessionInfo.startTime)),
+				json: JSON.stringify(syncData),
 				sttime: sessionInfo.startTime,
 				uptime: sessionInfo.lastUpdate
 			}
