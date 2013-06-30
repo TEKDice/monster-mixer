@@ -57,6 +57,7 @@ function build_autocomplete() {
 		<?php $pos='../'; include('../include/head.php'); ?>
 		<link href="../css/jquery-ui-1.10.0.custom.css" rel="stylesheet" />
 		<link href="css/style.min.css" 		rel="stylesheet" />
+		<link href="css/slider.css" 		rel="stylesheet" />
 		<link href="css/1280x1024.min.css" 	rel="stylesheet" media="screen and (min-width: 1270px) and (min-height: 825px)" />
 		<link href="css/1280x800.min.css" 	rel="stylesheet" media="screen and (min-width: 1270px) and (min-height: 715px)" />
 		<link href="css/1366x768.min.css" 	rel="stylesheet" media="screen and (min-width: 1355px)" />

@@ -2,6 +2,7 @@
 <bundle minify="true" runOnBuild="true" output="monster_generator.js">
   <!--The order of the <file> elements determines the order of them when bundled.-->
   <file>/monsters/js/lib/bootbox.min.js</file>
+  <file>/monsters/js/lib/bootstrap-slider.js</file>
   <file>/monsters/js/lib/dateformat.js</file>
   <file>/monsters/js/lib/jquery.async.loops.js</file>
   <file>/monsters/js/lib/jquery.boxshadow.min.js</file>

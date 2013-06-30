@@ -102,6 +102,8 @@ function removeAllMonsters() {
 function loadLogMessages() {
 	var sessId = sessionManager.currentSessionId();
 	var messages = sessionManager.getLogDataBySession(sessId);
+
+	if (messages == null) return;
 	logModel.currentSessionMessages(messages);
 	logModel.uiLookManagement();
 }
