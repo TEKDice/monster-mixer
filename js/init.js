@@ -60,7 +60,7 @@ function bodyBinding() {
 	$("body").on('click', '.left', prevMonster);
 
 	$("body").on('click', '.right', nextMonster);
-
+	
 	$(".delete").livequery(function () {
 		$(this).click(function () {
 			var uid = $(this).attr('data-uid');

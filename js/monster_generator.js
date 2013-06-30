@@ -2135,6 +2135,34 @@ function maneuverModifier(size) {
 		case 8: case "Colossal": return 4;
 	}
 }
+
+function numToSize(size) {
+	switch (size) {
+		case 1: case "Fine": return "Fine";
+		case 2: case "Diminutive": return "Diminuitive";
+		case 3: case "Tiny": return "Tiny";
+		case 4: case "Small": return "Small";
+		case 5: case "Medium": return "Medium";
+		case 6: case "Large": return "Large";
+		case 7: case "Huge": return "Huge";
+		case 8: case "Gargantuan": return "Gargantuan";
+		case 9: case "Colossal": return "Colossal";
+	}
+}
+
+function sizeToNum(size) {
+	switch (size) {
+		case 1: case "Fine": return 1;
+		case 2: case "Diminutive": return 2;
+		case 3: case "Tiny": return 3;
+		case 4: case "Small": return 4;
+		case 5: case "Medium": return 5;
+		case 6: case "Large": return 6;
+		case 7: case "Huge": return 7;
+		case 8: case "Gargantuan": return 8;
+		case 9: case "Colossal": return 9;
+	}
+}
 ///#source 1 1 /monsters/js/functions.attack.js
 
 var Roll = function (data) {
@@ -2928,7 +2956,7 @@ function bodyBinding() {
 	$("body").on('click', '.left', prevMonster);
 
 	$("body").on('click', '.right', nextMonster);
-
+	
 	$(".delete").livequery(function () {
 		$(this).click(function () {
 			var uid = $(this).attr('data-uid');
@@ -3040,6 +3068,13 @@ function _addNewMonster(monster, uid, name) {
 	var monsterModel = monsters.getMonster(uid);
 
 	ko.applyBindings(monsterModel, $$(uid)[0]);
+
+	var $slider = $parent.find(".slider");
+
+	$slider.slider({ value: sizeToNum(monsterModel.stats.size()), formater: numToSize });
+	$slider.on('slide', function (value) {
+		monsterModel.stats.size(numToSize(value.value));
+	});
 
 	var popover = $("#dummyModifiable").html();
 	popover = popover.split("1A").join(uid);
@@ -3219,7 +3254,7 @@ var MonsterModel = function (uid, data) {
 		name: ko.observable(self.monsterBaseStats.name)
 	};
 
-	self.skills = new SkillModel(data.mskill);
+	self.skills = new SkillModel(data.mskill, this);
 
 	self.reductions = new DRModel(data.mdmgred);
 
@@ -4388,7 +4423,7 @@ function QualityModel(qualities, mname) {
 	self.formatName = function (name) { return formatMonsterNamedItems(name, self.mname) };
 }
 
-function SkillModel(skills) {
+function SkillModel(skills, monModel) {
 	var self = this;
 
 	if (skills.length == 1) if (skills[0].name == 'No Skills') skills.pop();
@@ -4408,7 +4443,10 @@ function SkillModel(skills) {
 	};
 
 	self.primaryRoll = function (skill) {
-		return { "Base": "1d20", "Bonus": skill.skill_level };
+		var ret = { "Base": "1d20", "Bonus": skill.skill_level };
+		if (skill.name == "Hide")
+			ret["Size Mod (" + monModel.stats.size() + ")"] = -maneuverModifier(monModel.stats.size()) * 4;
+		return ret;
 	};
 
 	self.hasSkill = function (skill) {

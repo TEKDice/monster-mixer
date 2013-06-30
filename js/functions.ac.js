@@ -88,3 +88,31 @@ function maneuverModifier(size) {
 		case 8: case "Colossal": return 4;
 	}
 }
+
+function numToSize(size) {
+	switch (size) {
+		case 1: case "Fine": return "Fine";
+		case 2: case "Diminutive": return "Diminuitive";
+		case 3: case "Tiny": return "Tiny";
+		case 4: case "Small": return "Small";
+		case 5: case "Medium": return "Medium";
+		case 6: case "Large": return "Large";
+		case 7: case "Huge": return "Huge";
+		case 8: case "Gargantuan": return "Gargantuan";
+		case 9: case "Colossal": return "Colossal";
+	}
+}
+
+function sizeToNum(size) {
+	switch (size) {
+		case 1: case "Fine": return 1;
+		case 2: case "Diminutive": return 2;
+		case 3: case "Tiny": return 3;
+		case 4: case "Small": return 4;
+		case 5: case "Medium": return 5;
+		case 6: case "Large": return 6;
+		case 7: case "Huge": return 7;
+		case 8: case "Gargantuan": return 8;
+		case 9: case "Colossal": return 9;
+	}
+}

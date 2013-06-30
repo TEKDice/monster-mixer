@@ -207,19 +207,33 @@ function build_autocomplete() {
 			<div id="dummyData" style="display: none;">
 				<div class="tab-pane" data-for="none" data-bind="with: monsters.getMonster($element.id)">
 					<div class="header lead" style="margin-bottom: 7px">
-						<span class="pull-left">Initiative: <span class="reg-has-tt" data-uid="1A" id="1A_init" data-bind="text: $parent.initiative.totalInit(), bootstrapTooltip: {title: $parent.initiative.toolTip(), html: true, placement: 'bottom'}"></span></span>
-						<span class="pull-right">CR: <span id="1A_cr" data-bind="text: $parent.formatCR($parent.monsterBaseStats['cr'])"></span>&nbsp;<i class='icon-trash delete' id="1A_remove" data-uid="1A"></i></span>
-						<center>
-							<span class="left"><i class="icon-backward"></i></span>
+                        <div class="container-fluid" style="height: 30px;">
+                            <div class="row-fluid">
+                                <div class="span2">
+                                    Initiative: <span class="reg-has-tt" data-uid="1A" id="1A_init" data-bind="text: $parent.initiative.totalInit(), bootstrapTooltip: {title: $parent.initiative.toolTip(), html: true, placement: 'bottom'}"></span>
+                                </div>
+                                <div class="span1">
+                                    <input type="text" id="1A_size_slider" style="width: 100px" class="slider" data-slider-min="1" data-slider-max="9" data-slider-step="1" data-slider-selection="none">
+                                </div>
+                                <div class="span5 pagination-centered">
+                                    <span class="left"><i class="icon-backward"></i></span>
 
-							<span id="1A_name" rel='tooltip' href='#' class='reg-has-tt' data-bind="text: $parent.monsterBaseStats['name'], bootstrapTooltip: {title: $parent.nameTooltip(),html: true, placement: 'bottom'}"></span>
-							<span class="hp">
-								(<span class="reg-has-tt" id="1A_hp" data-bind="text: $parent.hp.total(), bootstrapTooltip: {title: $parent.hp.toolTip(),html: true, placement: 'bottom'}"></span><i class="icon-heart" data-bind="attr: {id: 'health_'+$parent.uid}"></i> 
-								hp)
-							</span>
+							        <span id="1A_name" rel='tooltip' href='#' class='reg-has-tt' data-bind="text: $parent.monsterBaseStats['name'], bootstrapTooltip: {title: $parent.nameTooltip(),html: true, placement: 'bottom'}"></span>
+							        <span class="hp">
+								        (<span class="reg-has-tt" id="1A_hp" data-bind="text: $parent.hp.total(), bootstrapTooltip: {title: $parent.hp.toolTip(),html: true, placement: 'bottom'}"></span><i class="icon-heart" data-bind="attr: {id: 'health_'+$parent.uid}"></i> 
+								        hp)
+							        </span>
 
-							<span class="right"><i class="icon-forward"></i></span>
-						</center>
+							        <span class="right"><i class="icon-forward"></i></span>
+                                </div>
+                                <div class="span2">
+                                    <span class="pull-right">
+                                        CR: <span id="1A_cr" data-bind="text: $parent.formatCR($parent.monsterBaseStats['cr'])"></span>&nbsp;<i class='icon-trash delete' id="1A_remove" data-uid="1A"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
 						<span style="display: none;" id="1A_size" data-bind="with: $parent.monsterBaseStats['size']"></span>
 						<span style="display: none;" id="1A_id"></span>
 					</div>

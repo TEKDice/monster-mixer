@@ -37,7 +37,7 @@ var MonsterModel = function (uid, data) {
 		name: ko.observable(self.monsterBaseStats.name)
 	};
 
-	self.skills = new SkillModel(data.mskill);
+	self.skills = new SkillModel(data.mskill, this);
 
 	self.reductions = new DRModel(data.mdmgred);
 
@@ -1206,7 +1206,7 @@ function QualityModel(qualities, mname) {
 	self.formatName = function (name) { return formatMonsterNamedItems(name, self.mname) };
 }
 
-function SkillModel(skills) {
+function SkillModel(skills, monModel) {
 	var self = this;
 
 	if (skills.length == 1) if (skills[0].name == 'No Skills') skills.pop();
@@ -1226,7 +1226,10 @@ function SkillModel(skills) {
 	};
 
 	self.primaryRoll = function (skill) {
-		return { "Base": "1d20", "Bonus": skill.skill_level };
+		var ret = { "Base": "1d20", "Bonus": skill.skill_level };
+		if (skill.name == "Hide")
+			ret["Size Mod (" + monModel.stats.size() + ")"] = -maneuverModifier(monModel.stats.size()) * 4;
+		return ret;
 	};
 
 	self.hasSkill = function (skill) {
