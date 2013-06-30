@@ -2139,7 +2139,7 @@ function maneuverModifier(size) {
 function numToSize(size) {
 	switch (size) {
 		case 1: case "Fine": return "Fine";
-		case 2: case "Diminutive": return "Diminuitive";
+		case 2: case "Diminutive": return "Diminutive";
 		case 3: case "Tiny": return "Tiny";
 		case 4: case "Small": return "Small";
 		case 5: case "Medium": return "Medium";
@@ -3577,12 +3577,16 @@ function ACModel(monsterModel, props) {
 
 	monsterModel.stats.size.subscribe(function (newValue) {
 		self.sizeBonus(_getSizeModifier(newValue));
-		self.arrayProps()["Size Mod"] = self.sizeBonus();
+		var props = self.arrayProps();
+		props["Size Mod"] = self.sizeBonus();
+		self.arrayProps(props);
 	});
 
 	monsterModel.stats.dex.bonus.subscribe(function (newValue) {
 		self.dex(newValue);
-		self.arrayProps()["DEX Bonus"] = self.dex();
+		var props = self.arrayProps();
+		props["DEX Bonus"] = self.dex();
+		self.arrayProps(props);
 	});
 
 	self.arrayProps = ko.observable(props);

@@ -360,12 +360,16 @@ function ACModel(monsterModel, props) {
 
 	monsterModel.stats.size.subscribe(function (newValue) {
 		self.sizeBonus(_getSizeModifier(newValue));
-		self.arrayProps()["Size Mod"] = self.sizeBonus();
+		var props = self.arrayProps();
+		props["Size Mod"] = self.sizeBonus();
+		self.arrayProps(props);
 	});
 
 	monsterModel.stats.dex.bonus.subscribe(function (newValue) {
 		self.dex(newValue);
-		self.arrayProps()["DEX Bonus"] = self.dex();
+		var props = self.arrayProps();
+		props["DEX Bonus"] = self.dex();
+		self.arrayProps(props);
 	});
 
 	self.arrayProps = ko.observable(props);

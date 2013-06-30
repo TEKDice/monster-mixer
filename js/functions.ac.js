@@ -92,7 +92,7 @@ function maneuverModifier(size) {
 function numToSize(size) {
 	switch (size) {
 		case 1: case "Fine": return "Fine";
-		case 2: case "Diminutive": return "Diminuitive";
+		case 2: case "Diminutive": return "Diminutive";
 		case 3: case "Tiny": return "Tiny";
 		case 4: case "Small": return "Small";
 		case 5: case "Medium": return "Medium";
