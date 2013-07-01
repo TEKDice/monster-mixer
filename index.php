@@ -226,7 +226,7 @@ function build_autocomplete() {
 
 							        <span class="right"><i class="icon-forward"></i></span>
                                 </div>
-                                <div class="span2">
+                                <div class="span2 pull-right">
                                     <span class="pull-right">
                                         CR: <span id="1A_cr" data-bind="text: $parent.formatCR($parent.monsterBaseStats['cr'])"></span>&nbsp;<i class='icon-trash delete' id="1A_remove" data-uid="1A"></i>
                                     </span>

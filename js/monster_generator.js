@@ -3069,7 +3069,7 @@ function _addNewMonster(monster, uid, name) {
 
 	ko.applyBindings(monsterModel, $$(uid)[0]);
 
-	var $slider = $parent.find(".slider");
+	var $slider = $$(uid + "_size_slider");
 
 	$slider.slider({ value: sizeToNum(monsterModel.stats.size()), formater: numToSize });
 	$slider.on('slide', function (value) {
@@ -4620,7 +4620,7 @@ function loadLogMessages() {
 
 	if (messages == null) return;
 	logModel.currentSessionMessages(messages);
-	logModel.uiLookManagement();
+	logModel.refreshAllTooltips();
 }
 ///#source 1 1 /monsters/js/sync.models.js
 
@@ -6015,6 +6015,11 @@ var LogModel = function () {
 	self.uiLogManagement = function (message) {
 		var elementId = self.generateIdForEntry(message);
 		$("#log ." + elementId).find('a').tooltip({ html: true });
+		self.uiLookManagement();
+	};
+
+	self.refreshAllTooltips = function () {
+		$("#log").find('a').tooltip({ html: true });
 		self.uiLookManagement();
 	};
 

@@ -108,6 +108,11 @@ var LogModel = function () {
 		self.uiLookManagement();
 	};
 
+	self.refreshAllTooltips = function () {
+		$("#log").find('a').tooltip({ html: true });
+		self.uiLookManagement();
+	};
+
 	monsters.currentMonsterId.subscribe(function (value) {
 		self.currentMonsterId(value);
 		self.recalculateIndividualMonsterMessages();

@@ -50,7 +50,7 @@ function _addNewMonster(monster, uid, name) {
 
 	ko.applyBindings(monsterModel, $$(uid)[0]);
 
-	var $slider = $parent.find(".slider");
+	var $slider = $$(uid + "_size_slider");
 
 	$slider.slider({ value: sizeToNum(monsterModel.stats.size()), formater: numToSize });
 	$slider.on('slide', function (value) {

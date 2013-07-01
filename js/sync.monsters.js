@@ -105,5 +105,5 @@ function loadLogMessages() {
 
 	if (messages == null) return;
 	logModel.currentSessionMessages(messages);
-	logModel.uiLookManagement();
+	logModel.refreshAllTooltips();
 }
