@@ -173,6 +173,10 @@ Grid-related
 	top: -40px!important;
 }
 
+.armor .tooltip {
+	width: 100px;
+}
+
 .rightalign {
 	text-align: right;
 }

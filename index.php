@@ -378,19 +378,19 @@ function build_autocomplete() {
 											<tr>
 												<td>Total AC</td>
 												<td>
-													<a id="1A_ac" rel='tooltip' href='#' data-bind="text: $parent.ac.total.sum(), bootstrapTooltip: {title: $parent.ac.total.toolTip(), html: true, placement: 'bottom'}"></a>
+													<a id="1A_ac" rel='tooltip' href='#' data-bind="text: $parent.ac.total.sum(), bootstrapTooltip: {title: $parent.ac.total.toolTip(), html: true, placement: 'bottom', trigger: 'manual'}"></a>
 												</td>
 											</tr>
 											<tr>
 												<td>Flatfoot AC</td>
 												<td>
-													<a id="1A_flatfoot_ac" rel='tooltip' href='#' data-bind="text: $parent.ac.flatfoot.sum(), bootstrapTooltip: {title: $parent.ac.flatfoot.toolTip(), html: true, placement: 'bottom'}"></a>
+													<a id="1A_flatfoot_ac" rel='tooltip' href='#' data-bind="text: $parent.ac.flatfoot.sum(), bootstrapTooltip: {title: $parent.ac.flatfoot.toolTip(), html: true, placement: 'bottom', trigger: 'manual'}"></a>
 												</td>
 											</tr>
 											<tr>
 												<td>Touch AC</td>
 												<td>
-													<a id="1A_touch_ac" rel='tooltip' href='#' data-bind="text: $parent.ac.touch.sum(), bootstrapTooltip: {title: $parent.ac.touch.toolTip(), html: true, placement: 'bottom'}"></a>
+													<a id="1A_touch_ac" rel='tooltip' href='#' data-bind="text: $parent.ac.touch.sum(), bootstrapTooltip: {title: $parent.ac.touch.toolTip(), html: true, placement: 'bottom', trigger: 'manual'}"></a>
 												</td>
 											</tr>
 										</tbody>
