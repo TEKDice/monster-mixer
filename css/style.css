@@ -169,6 +169,10 @@ Grid-related
 	z-index: 9999;
 }
 
+.slider > .tooltip {
+	top: -40px!important;
+}
+
 .rightalign {
 	text-align: right;
 }
