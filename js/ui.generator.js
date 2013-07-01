@@ -133,6 +133,7 @@ function _seeMoreButtonFunctionality($button) {
 			_parseSuggestedMonsters($.parseJSON(monsters), singlesCt);
 		} catch (e) {
 			console.error("an issue parsing suggested monsters has occurred: monsters<" + monsters + "> orgs<" + advObj + ">");
+			Raven.captureException("an issue parsing suggested monsters has occurred", { monsters: monsters, orgs: advObj });
 		}
 		$("#finalAddButton").button('reset');
 
@@ -223,7 +224,7 @@ function _genButtonFunctionality($button) {
 				monster = $.parseJSON(monster);
 			} catch (e) {
 				console.error("error parsing" + monster);
-				throw e;
+				Raven.captureException("error parsing monster", { monster: monster });
 			}
 			var uid = addNewMonster(monster);
 			setupGrids(uid);
@@ -236,7 +237,7 @@ function _genButtonFunctionality($button) {
 			});
 		} catch (e) {
 			console.log("error parsing " + monster);
-			throw e;
+			Raven.captureException("error parsing monster", { monster: monster });
 		}
 		$(".only-positive").change(function () {
 			var val = parseInt($(this).val());

@@ -164,7 +164,7 @@ Grid-related
 	background-color: #f2dede!important;
 }
 
-.tooltip {
+.tooltip:not(.slider>.tooltip) {
 	width: 300px;
 	z-index: 9999;
 }
