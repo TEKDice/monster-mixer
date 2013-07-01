@@ -50,12 +50,7 @@ function _addNewMonster(monster, uid, name) {
 
 	ko.applyBindings(monsterModel, $$(uid)[0]);
 
-	var $slider = $$(uid + "_size_slider");
-
-	$slider.slider({ value: sizeToNum(monsterModel.stats.size()), formater: numToSize });
-	$slider.on('slide', function (value) {
-		monsterModel.stats.size(numToSize(value.value));
-	});
+	initSlider(uid);
 
 	var popover = $("#dummyModifiable").html();
 	popover = popover.split("1A").join(uid);

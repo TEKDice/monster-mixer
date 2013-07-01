@@ -105,6 +105,8 @@ function tabChangeScrollbars($a) {
 
 		monsters.currentMonsterId(uid);
 
+		initSlider(uid);
+
 		//hide the popup if it's visible
 		_hidePopup();
 
@@ -112,6 +114,17 @@ function tabChangeScrollbars($a) {
 
 		setupGrids(uid);
 		setupRollables($$(uid));
+	});
+}
+
+function initSlider(uid) {
+	var $slider = $$(uid + "_size_slider");
+
+	var monster = monsters.getMonster(uid);
+
+	$slider.slider({ value: sizeToNum(monster.stats.size()), formater: numToSize });
+	$slider.on('slide', function (value) {
+		monster.stats.size(numToSize(value.value));
 	});
 }
 
