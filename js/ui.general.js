@@ -123,7 +123,7 @@ function initSlider(uid) {
 	var monster = monsters.getMonster(uid);
 
 	$slider.slider({ value: sizeToNum(monster.stats.size()), formater: numToSize });
-	$slider.on('slide', function (value) {
+	$slider.on('slideStop', function (value) {
 		monster.stats.size(numToSize(value.value));
 	});
 }
