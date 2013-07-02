@@ -35,6 +35,8 @@ CONFIRM:"Akzeptieren"},es:{OK:"OK",CANCEL:"Cancelar",CONFIRM:"Aceptar"},br:{OK:"
  * limitations under the License.
  * ========================================================= */
 
+var GLOBALTT;
+
 !function ($) {
 
 	var Slider = function (element, options) {
@@ -171,9 +173,9 @@ CONFIRM:"Akzeptieren"},es:{OK:"OK",CANCEL:"Cancelar",CONFIRM:"Aceptar"},br:{OK:"
 		inDrag: false,
 
 		showTooltip: function () {
+			GLOBALTT = this;
 			this.tooltip.addClass('in');
-			//var left = Math.round(this.percent*this.width);
-			//this.tooltip.css('left', left - this.tooltip.outerWidth()/2);
+			this.layout();
 			this.over = true;
 		},
 
@@ -185,6 +187,7 @@ CONFIRM:"Akzeptieren"},es:{OK:"OK",CANCEL:"Cancelar",CONFIRM:"Aceptar"},br:{OK:"
 		},
 
 		layout: function () {
+			this.size = this.picker[0][this.sizePos];
 			this.handle1Stype[this.stylePos] = this.percentage[0] + '%';
 			this.handle2Stype[this.stylePos] = this.percentage[1] + '%';
 			if (this.orientation == 'vertical') {
@@ -254,7 +257,7 @@ CONFIRM:"Akzeptieren"},es:{OK:"OK",CANCEL:"Cancelar",CONFIRM:"Aceptar"},br:{OK:"
 				type: 'slide',
 				value: val
 			});
-			this.layout();
+			this.setValue(val);
 			return false;
 		},
 
