@@ -4630,7 +4630,6 @@ var MONSTER_KEY = "monsters_";
 var LOG_KEY = "log_";
 var CLEAVE_KEY = "attacks_";
 
-
 var SessionModel = function() {
 	var self = this;
 
